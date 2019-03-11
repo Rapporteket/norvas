@@ -1,0 +1,13 @@
+Package: norvas
+Type: Package
+Title: Norvas
+Version: 0.1.0
+Author: Kevin Thon
+Maintainer: Kevin Thon <kevin.thon@skde.no>
+Description: Denne pakken samler alt av kode og rapporter for Norvas
+License: GPL2
+Encoding: UTF-8
+Depends: R (>= 3.4.3), rapbase, tidyverse
+Imports: lubridate, kableExtra, DT, shinyjs
+LazyData: true
+RoxygenNote: 6.1.0
