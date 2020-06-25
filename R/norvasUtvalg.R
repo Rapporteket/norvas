@@ -15,7 +15,7 @@ norvasUtvalg <- function(RegData, datoFra, datoTil, datovar='InklusjonDato', min
 
   Ninn <- dim(RegData)[1]
   indVarMed <- 1:Ninn
-  indAld <- which(RegData[, aldervar] >= minald & RegData[, aldervar] <= maxald)
+  indAld <- if ((minald>0) | (maxald<130)) {which(RegData[, aldervar] >= minald & RegData[, aldervar] <= maxald)} else {1:Ninn}
   indDato <- which(RegData[, datovar] >= datoFra & RegData[, datovar] <= datoTil)
   indKj <- if (erMann %in% 0:1) {which(RegData$ErMann == erMann)} else {indKj <- 1:Ninn}
   indDiaggr <- if (diag_gruppe %in% 1:3) {which(RegData$Diag_gr_nr == diag_gruppe)} else {indDiaggr <- 1:Ninn}

@@ -8,13 +8,15 @@
 #'
 norvasPrepvar <- function(RegData, valgtVar) {
 
-  retn= 'V'; tittel <- ''; cexgr <- 1.0; grtxt <- '';
+  retn= 'V'; tittel <- ''; cexgr <- 1.0; grtxt <- ''; flerevar <- 0; stabel <- T;
 
-  if (valgtVar=='erMann') {
+  if (valgtVar=='ErMann') {
     tittel <- 'Kjønn'
+    RegData$Variabel <- RegData$ErMann
     grtxt <- c('Kvinne', 'Mann')
     RegData <- RegData[which(RegData$Variabel %in% c(0,1)), ]
     RegData$VariabelGr <- factor(RegData$Variabel, levels=c(0,1), labels = grtxt)
+    RegData$Gr <- RegData$Diag_gr
     # if (enhetsUtvalg==1) {stabel=T}
   }
 
@@ -100,11 +102,11 @@ norvasPrepvar <- function(RegData, valgtVar) {
   if (valgtVar == 'Navn') {
     tittel <- 'Diagnosefordeling'
     RegData$Variabel <- RegData[, valgtVar]
-    # grtxt <- names(sort(table(RegData$Variabel), decreasing = T))
+    grtxt <- names(sort(table(RegData$Variabel), decreasing = T))
 
-    RegData$VariabelGr <- as.factor(RegData$Variabel)  # Sorter fallende
+    RegData$VariabelGr <- factor(RegData$Variabel, levels=grtxt)  # Sorter fallende
     RegData <- RegData[!is.na(RegData$VariabelGr), ]
-    grtxt <- levels(RegData$VariabelGr)
+    # grtxt <- levels(RegData$VariabelGr)
     retn <- 'H'
   }
 
@@ -112,8 +114,10 @@ norvasPrepvar <- function(RegData, valgtVar) {
     tittel <- 'Fordeling av diagnosegrupper'
     RegData$VariabelGr <- RegData[, valgtVar]
     RegData <- RegData[!is.na(RegData$VariabelGr), ]
+    RegData$Gr <- factor(RegData$ErMann, levels = 0:1, labels = c('Kvinne', 'Mann'))
     grtxt <- levels(RegData$VariabelGr)
-    retn <- 'H'
+    retn <- 'V'
+    stabel <- F
   }
 
 
@@ -210,7 +214,9 @@ norvasPrepvar <- function(RegData, valgtVar) {
     tittel <- 'Sykdomsvurdering'
     RegData$Variabel <- RegData[, valgtVar]
     RegData <- RegData[!is.na(RegData$Variabel), ]
-    RegData$VariabelGr <- as.factor(RegData$Variabel) # debut, alv. residiv, lett res., persisterende, remisjon
+    # RegData$VariabelGr <- as.factor(RegData$Variabel) # debut, alv. residiv, lett res., persisterende, remisjon
+    RegData$VariabelGr <- factor(RegData$Sykdomsvurdering, levels = c('Debut', 'Remisjon', 'PersisterendeSykdom', 'LettResidiv', 'AlvorligResidiv'),
+           labels = c('Debut', 'Remisjon', 'Persisterende sykdom', 'Lett residiv', 'Alvorlig residiv'))
     grtxt <- levels(RegData$VariabelGr)
     retn <- 'H'
   }
@@ -249,7 +255,7 @@ norvasPrepvar <- function(RegData, valgtVar) {
   }
 
 
-  PlotParams <- list(RegData=RegData, tittel=tittel, grtxt=grtxt, retn=retn, cexgr=cexgr)
+  PlotParams <- list(RegData=RegData, tittel=tittel, grtxt=grtxt, retn=retn, cexgr=cexgr, flerevar=flerevar, stabel=stabel)
 
   return(invisible(PlotParams))
 

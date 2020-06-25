@@ -11,38 +11,51 @@
 
 norvasPreprosess <- function(RegData) {
 
+  RegData <- as_tibble(RegData)
   datovars <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Dato/tid')]
   datovars <- intersect(datovars, names(RegData))
-  RegData[, datovars] <- mutate_all(RegData[, datovars], funs(as.Date(., format="%d.%m.%Y")))
+  flyttall <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Numerisk (flyttall)')]
+  flyttall <- intersect(flyttall, names(RegData))
+  boolsk <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Avkrysning')]
+  boolsk <- intersect(boolsk, names(RegData))
+  # RegData[, datovars] <- mutate_all(RegData[, datovars], funs(as.Date(., format="%d.%m.%Y"))) # Fiks datoformat
+  RegData <- RegData %>% mutate_at(datovars, funs(as.Date(., format="%d.%m.%Y"))) # Fiks datoformat
+  # RegData[, flyttall] <- mutate_all(RegData[, flyttall], funs(as.numeric(gsub(',', '\\.', .)))) # les desimaltall som tall
+  RegData <- RegData %>% mutate_at(flyttall, funs(as.numeric(gsub(',', '\\.', .)))) # les desimaltall som tall
+  RegData <- RegData %>% mutate_at(boolsk, funs(as.logical(.))) # Gjør booske variabler til logicals
 
-  mapEnhet <- data.frame(UnitId = c(102977, 104579, 105274, 106841, 601159, 700701),
-                         Sykehusnavn = c('Helse Bergen', 'St. Olavs', 'Helse Førde', 'Haugesund', 'UNN', 'Nordlandsykehuset'))
+  mapEnhet <- data.frame(UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
+                                    103725, 104092, 104209, 110353, 110629, 102708, 4210614),
+                         Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
+                                         'Nordlandsykehuset', 'Levanger', 'Rikshospitalet', 'Drammen', 'Kristiansand',
+                                         'Betanien', 'Lillehammer', 'Martina Hansen', 'Ålesund', 'Helgelandssykehuset'))
   RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
-  names(RegData)[names(RegData)=='UnitId'] <- 'AvdRESH'
+  # names(RegData)[names(RegData)=='UnitId'] <- 'AvdRESH'  ## Denne må sjekkes for ev. konsekvenser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   RegData$ErMann <- NA
   RegData$ErMann[RegData$PatientGender=='Male'] <- 1
   RegData$ErMann[RegData$PatientGender=='Female'] <- 0
 
   mapDiagKode <- data.frame(navn=c("Takayasu Arteritt"
-                                    ,"Granulomatøs Polyangitt (Wegeners)"
-                                    ,"Eosinofilisk Granulomatøs Polyangitt (Churg-Strauss)"
-                                    ,"Kjempecelle Arteritt"
-                                    ,"Polymyalgia Rheumatica"
-                                    ,"Behcets sykdom"
-                                    ,"Mikroskopisk Polyangiitis"
-                                    ,"Aortitt INA"
-                                    ,"Kawasakis syndrom"
-                                    ,"Kryoglobulin Vaskulitt"
-                                    ,"Uspesifisert nekrotiserende vaskulitt"
-                                    ,"Polyarteritis Nodosa"
-                                    ,"IgA Vaskulitt (Henoch-Schoenlein)"
-                                    ,"Systemisk Vaskulitt sykdom"), gtiKode = c(3, 7, 8, 4, 98, 13, 9, 15, 6, 11, 14, 5, 10, 99),
+                                   ,"Granulomatøs Polyangitt (Wegener’s)"
+                                   ,"Eosinofilisk Granulomatøs Polyangitt (Churg-Strauss)"
+                                   ,"Kjempecelle Arteritt"
+                                   ,"Polymyalgia Rheumatica"
+                                   ,"Behcets sykdom"
+                                   ,"Mikroskopisk Polyangiitis"
+                                   ,"Aortitt INA"
+                                   ,"Kawasakis syndrom"
+                                   ,"Kryoglobulin Vaskulitt"
+                                   ,"Uspesifisert nekrotiserende vaskulitt"
+                                   ,"Polyarteritis Nodosa"
+                                   ,"IgA Vaskulitt (Henoch-Schoenlein)"
+                                   ,"Systemisk Vaskulitt sykdom"
+                                   ,"Annen Immunkompleks Vaskulitt (Goodpasture)"), gtiKode = c(3, 7, 8, 4, 98, 13, 9, 15, 6, 11, 14, 5, 10, 99, 12),
                             gruppering=c('Storkarsvaskulitt (LVV)', 'ANCA assosiert vaskulitt (AAV)', 'ANCA assosiert vaskulitt (AAV)',
                                          'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'ANCA assosiert vaskulitt (AAV)',
-                                         'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre'),
-                            gr_nr= c(1,2,2,1,3,3,2,1,3,3,3,3,3,3))
+                                         'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre'),
+                            gr_nr= c(1,2,2,1,3,3,2,1,3,3,3,3,3,3,3))
 
-
+  if ('Diagnose' %in% names(RegData)) {names(RegData)[names(RegData)=='Diagnose'] <- 'Navn'}
   if ('Navn' %in% names(RegData) & 'Icd' %in% names(RegData)) {
     # Kun store bokstaver
     RegData$Icd <- toupper(RegData$Icd)
@@ -63,48 +76,75 @@ norvasPreprosess <- function(RegData) {
     RegData$tid_symp_diagnose <- difftime(RegData$Diagnose_Klinisk_Dato, RegData$SymptomStartDato, units = 'days')
   }
 
-  handelsnavn <- c("Arava", "CellCept", "Cimzia", "Enbrel", "Everolimus", "Folsyre",
-                   "HumantImmunoglobulinGiv", "HumantImmunoglobulinGsc", "Imurel", "Inflektra",
-                   "Lodotra", "MabThera", "MethotrexateImSc", "Prednisolon", "Remicade", "Remsima",
-                   "RoActemraInfusjon", "Sandimmun", "SendoxanIv", "Tacrolimus", "AnnetImportert", "Benepali",
-                   "Humira", "Kineret", "MetylprednisolonPo", "Plaquenil", "Salazopyrin", "Simponi", "Stelara", "Talidomid")
-  kode <- c(15, 16, 1, 2, 31, 17, 36, 37, 18, 5, 19, 7, 20, 23, 10, 11, 12, 25, 26, 34, 999, 29, 3, 6, 38, 22, 24, 14, 28, 35)
-  kobl_hnavn_kode <- data.frame(kode, handelsnavn)
-  generisknavn <- c("Cetolizumab", "Etanercept", "Etanercept", "Adalimumab", "Infliximab", "Infliximab",
-                    "Infliximab", "Golimumab", "Anakinra", "Canakinumab", "Tocilizumab", "Tocilizumab",
-                    "Ustekinumab", "Sekunikumab", "Rituximab", "Abatacept", "Abatacept", "Leflunomid",
-                    "Mycofenolatmofetil", "Mycofenolsyre", "Azatioprin", "Methotrexat", "Methotrexat",
-                    "Hydroxychlochin", "Sulfasalazin", "Everolimus", "Sirolimus", "Tallidomid", "Ciclosporin A",
-                    "Tacrolimus", "Prednisolon/Prednison", "Prednisolon/Prednison", "Methylprednisolon", "Methylprednisolon",
-                    "Humant immunglobulin", "Humant immunglobulin", "Cyclofosfamid", "Cyclofosfamid", "Folsyre", "Annet") ## SPØR WENCHE!!!!
-  kode2 <- c(1, 2, 29, 3, 5, 10, 11, 14, 6, 4, 12, 13, 28, 30, 7, 8, 9, 15, 16, 32,
-             18, 20, 21, 22, 24, 31, 33, 35, 25, 34, 19, 23, 38, 39, 36, 37, 26, 27, 17, 999)
-  kobl_gennavn_kode <- data.frame(kode2, generisknavn)
+  # handelsnavn <- c("Arava", "CellCept", "Cimzia", "Enbrel", "Everolimus", "Folsyre",
+  #                  "HumantImmunoglobulinGiv", "HumantImmunoglobulinGsc", "Imurel", "Inflektra",
+  #                  "Lodotra", "MabThera", "MethotrexateImSc", "Prednisolon", "Remicade", "Remsima",
+  #                  "RoActemraInfusjon", "Sandimmun", "SendoxanIv", "Tacrolimus", "AnnetImportert", "Benepali",
+  #                  "Humira", "Kineret", "MetylprednisolonPo", "Plaquenil", "Salazopyrin", "Simponi", "Stelara", "Talidomid",
+  #                  "Rixathon", "Mycofenolsyre", "Sekukinumab")
+  # kode <- c(15, 16, 1, 2, 31, 17, 36, 37, 18, 5, 19, 7, 20, 23, 10, 11, 12, 25, 26, 34, 999, 29, 3, 6, 38, 22, 24, 14, 28, 35, 1001, 1002, 1003)
+  # kobl_hnavn_kode <- data.frame(kode, handelsnavn)
+  # generisknavn <- c("Cetolizumab", "Etanercept", "Etanercept", "Adalimumab", "Infliximab", "Infliximab",
+  #                   "Infliximab", "Golimumab", "Anakinra", "Canakinumab", "Tocilizumab", "Tocilizumab",
+  #                   "Ustekinumab", "Sekunikumab", "Rituximab", "Abatacept", "Abatacept", "Leflunomid",
+  #                   "Mycofenolatmofetil", "Mycofenolsyre", "Azatioprin", "Methotrexat", "Methotrexat",
+  #                   "Hydroxychlochin", "Sulfasalazin", "Everolimus", "Sirolimus", "Tallidomid", "Ciclosporin A",
+  #                   "Tacrolimus", "Prednisolon/Prednison", "Prednisolon/Prednison", "Methylprednisolon", "Methylprednisolon",
+  #                   "Humant immunglobulin", "Humant immunglobulin", "Cyclofosfamid", "Cyclofosfamid", "Folsyre", "Annet",
+  #                   "Rituximab", "Mycofenolsyre", "Sekukinumab") ## SPØR WENCHE!!!!
+  # kode2 <- c(1, 2, 29, 3, 5, 10, 11, 14, 6, 4, 12, 13, 28, 30, 7, 8, 9, 15, 16, 32,
+  #            18, 20, 21, 22, 24, 31, 33, 35, 25, 34, 19, 23, 38, 39, 36, 37, 26, 27, 17, 999, 1001, 1002, 1003)
+  # kobl_gennavn_kode <- data.frame(kode2, generisknavn)
+  #
+  #
+  # Legemiddelgruppe <- c("Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  #                       "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD",
+  #                       "DMARD", "DMARD", "DMARD", "Kortikosteroider", "Kortikosteroider", "Kortikosteroider",
+  #                       "Kortikosteroider", "Cyclofosfamid", "Cyclofosfamid", "Rituximab", "Immunglob.G", "Immunglob.G",
+  #                       "Annet", "Annet", "Rituximab", "DMARD", "Biologiske legemidler \n (Rituximab ekskludert)")
+  #
+  # kode3 <- c(1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 28, 29, 30, 15, 16, 18, 20, 21, 22, 24, 25, 31, 32, 33, 34,
+  #            35, 38, 39, 19, 23, 26, 27, 7, 36, 37, 17, 999, 1001, 1002, 1003)
 
-
+  kode <- c(1, 2, 3, 5, 6, 8, 12, 14, 15, 16, 18, 19, 20, 22, 23, 24, 25, 26, 28, 30,
+            31, 32, 34, 35, 36, 38, 39, 40, 42, 43, 999)
   Legemiddelgruppe <- c("Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
                         "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
                         "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
                         "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+                        "DMARD", "DMARD", "DMARD", "Kortikosteroider", "DMARD",
+                        "DMARD", "Kortikosteroider", "DMARD", "DMARD", "cyclofosfamid",
                         "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "DMARD",
-                        "DMARD", "DMARD", "DMARD", "Kortikosteroider", "Kortikosteroider", "Kortikosteroider",
-                        "Kortikosteroider", "Cytostatika", "Cytostatika", "Rituximab", "Immunglob.G", "Immunglob.G",
-                        "Annet", "Annet")
-
-  kode3 <- c(1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 28, 29, 30, 15, 16, 18, 20, 21, 22, 24, 25, 31, 32, 33, 34,
-             35, 38, 39, 19, 23, 26, 27, 7, 36, 37, 17, 999)
-
-  kobl_gruppe_kode <- data.frame(kode3, Legemiddelgruppe)
+                        "DMARD", "DMARD", "DMARD", "DMARD", "Immunglob.G", "Kortikosteroider",
+                        "Biologiske legemidler \n (Rituximab ekskludert)",
+                        "Rituximab", "Biologiske legemidler \n (Rituximab ekskludert)", "DMARD", "Annet")
+  kobl_gruppe_kode <- data.frame(kode, Legemiddelgruppe)
 
   if ('LegemiddelType' %in% names(RegData)){
-    RegData$LegemiddelKode <- kobl_hnavn_kode$kode[match(RegData$LegemiddelType, kobl_hnavn_kode$handelsnavn)]
-    RegData$LegemiddelGenerisk <- kobl_gennavn_kode$generisknavn[match(RegData$LegemiddelKode, kobl_gennavn_kode$kode2)]
-    RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelKode, kobl_gruppe_kode$kode3)]
-    # Medisiner$Legemiddel[which(is.na(Medisiner$Legemiddelgruppe))]
+    RegData <- RegData[RegData$LegemiddelType != 17, ]
+    varnavn <- kodebok_norvas[which(!is.na(kodebok_norvas$Variabelnavn)), c("Variabelnavn", "skjema")]
+    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType' & kodebok_norvas$skjema == 'Medisinering'):
+      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType' & varnavn$skjema == 'Medisinering')+1])-1)
+    kobl_generisknavn_kode <- data.frame(kode=as.numeric(kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
+                                         label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
+
+    RegData$LegemiddelKode <- RegData$LegemiddelType
+    RegData$LegemiddelKode[RegData$LegemiddelKode==7] <- 40
+    RegData$LegemiddelKode[RegData$LegemiddelKode %in% c(10,11)] <- 5
+    RegData$LegemiddelKode[RegData$LegemiddelKode==29] <- 2
+    RegData$LegemiddelKode[RegData$LegemiddelKode==37] <- 36
+
+    RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelKode, kobl_gruppe_kode$kode)]
+    RegData$LegemiddelGenerisk <-  kobl_generisknavn_kode$label[match(RegData$LegemiddelKode, kobl_generisknavn_kode$kode)]
+    RegData$LegemiddelTypeLabel <- factor(RegData$LegemiddelKode, levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
+                                          labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
   }
 
   if ('BvasPersistentTotal' %in% names(RegData)){
