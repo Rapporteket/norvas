@@ -33,6 +33,8 @@ library(lubridate)
                                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Utredning <- read.table('I:/norvas/DataDump_Prod_BilledDiagnostikkSkjema_2019-01-07.csv', header=TRUE, sep=";",
                           stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  Labskjema <- read.table('I:/norvas/DataDump_Prod_BlodprøvesvarSkjema_2019-01-07.csv', header=TRUE, sep=";",
+                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 # }
 
 Inklusjon <- norvasPreprosess(Inklusjon)
@@ -43,6 +45,8 @@ BVAS <- norvasPreprosess(BVAS)
 KERR <- norvasPreprosess(KERR)
 VDI <- norvasPreprosess(VDI)
 Alvorlig_infeksjon <- norvasPreprosess(Alvorlig_infeksjon)
+Utredning <- norvasPreprosess(Utredning)
+Labskjema <- norvasPreprosess(Labskjema)
 
 Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
 Inklusjon <- Inklusjon[match(unique(Inklusjon$Fødselsnummer), Inklusjon$Fødselsnummer), ]
@@ -79,7 +83,7 @@ varvalg <- c('Inklusjonsalder', 'DiagnoseAlder', 'Diag_gr', 'Navn', 'ErMann', 'b
 names(varvalg) <- c('Inklusjonsalder', 'Diagnosealder', 'Diagnosegruppe', 'Diagnoser', 'Kjønn', 'BVAS', 'BVAS (kun siste registrering)', 'KerrsKriterierScore', 'KerrsKriterierScore (kun siste registrering)',
                     'Legemiddelgruppe', 'Legemiddel', 'Vdi-skår', 'Sykdomsvurdering', 'Sykdomsvurdering (kun siste registrering)',
                     'Antall infeksjoner', 'Sum antall infeksjoner', 'Tid fra symptom til diagnose', 'Tid til remisjon')
-
+varvalg_andel <- c('Andel_LVV', 'Andel_ANCA', 'Andel_remisjon', 'erMann')
 
 ######################################################################
 
@@ -109,6 +113,33 @@ ui <- navbarPage(title = "RAPPORTEKET NORVAS", theme = "bootstrap.css",
                                      # uiOutput("utvalg"),
                                      # tableOutput("Tabell1"), downloadButton("lastNed", "Last ned tabell")
                                      )
+                          )
+                          )
+                 ),
+                 tabPanel("Andelsfigurer",
+                          # sidebarLayout(
+                          sidebarPanel(
+                            shinyjs::useShinyjs(),
+                            selectInput(inputId = "valgtVar_andel", label = "Velg variabel",
+                                        choices = varvalg_andel),
+                            dateRangeInput(inputId="datovalg_andel", label = "Dato fra og til", min = '1920-01-01',
+                                           max = Sys.Date(), start  = '2010-01-01', end = Sys.Date(), language = "nb", separator = " til "),
+                            selectInput(inputId = "enhetsUtvalg_andel", label = "Kjør rapport for",
+                                        choices = c('Hele landet'=0, 'Egen avd. mot landet forøvrig'=1, 'Egen avd.'=2)),
+                            selectInput(inputId = "diag_gruppe_andel", label = "Diagnosegruppe",
+                                        choices = c('Alle'=99, 'Storkarsvaskulitt'=1, 'ANCA assosiert vaskulitt'=2,
+                                                    'Andre'=3)),
+                            selectInput(inputId = "erMann_andel", label = "Kjønn",
+                                        choices = c('Begge'=99, 'Kvinne'=0, 'Mann'=1))
+                          ),
+                          mainPanel(tabsetPanel(
+                            tabPanel("Figur" #,
+                                     #plotOutput("Figur_andel", height="auto"), downloadButton("lastNedBilde", "Last ned bilde")
+                            ),
+                            tabPanel("Tabell"#,
+                                     # uiOutput("utvalg"),
+                                     # tableOutput("Tabell1"), downloadButton("lastNed", "Last ned tabell")
+                            )
                           )
                           )
                  )

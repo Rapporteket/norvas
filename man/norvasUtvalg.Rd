@@ -4,9 +4,19 @@
 \alias{norvasUtvalg}
 \title{Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og utvalgsteksten.}
 \usage{
-norvasUtvalg(RegData, datoFra, datoTil, datovar = "InklusjonDato",
-  minald, maxald, aldervar = "PatientAge", erMann, valgtShus = "",
-  fargepalett = "BlaaRapp", diag_gruppe = 99)
+norvasUtvalg(
+  RegData,
+  datoFra,
+  datoTil,
+  datovar = "InklusjonDato",
+  minald,
+  maxald,
+  aldervar = "PatientAge",
+  erMann,
+  valgtShus = "",
+  fargepalett = "BlaaRapp",
+  diag_gruppe = 99
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}

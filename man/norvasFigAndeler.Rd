@@ -4,12 +4,25 @@
 \alias{norvasFigAndeler}
 \title{Lag søylediagram eller stabelplott som viser andeler av ulike variabler}
 \usage{
-norvasFigAndeler(RegData = 0, valgtVar = "Inklusjonsalder",
-  datoFra = "2014-01-01", datoTil = "2050-12-31", minald = 0,
-  maxald = 130, erMann = 99, outfile = "", reshID,
-  enhetsUtvalg = 0, preprosess = F, valgtShus = c(""),
-  hentData = F, datovar = "InklusjonDato", aldervar = "PatientAge",
-  diag_gruppe = 99)
+norvasFigAndeler(
+  RegData = 0,
+  valgtVar = "Inklusjonsalder",
+  datoFra = "2014-01-01",
+  datoTil = "2050-12-31",
+  minald = 0,
+  maxald = 130,
+  erMann = 99,
+  outfile = "",
+  reshID,
+  enhetsUtvalg = 0,
+  preprosess = F,
+  valgtShus = c(""),
+  hentData = F,
+  datovar = "InklusjonDato",
+  aldervar = "PatientAge",
+  diag_gruppe = 99,
+  inkl_N = F
+)
 }
 \arguments{
 \item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
