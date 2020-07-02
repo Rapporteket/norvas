@@ -3,7 +3,7 @@
 #' Denne funksjonen lager et søylediagram eller stabelplot som viser andeler av valgt variabel
 #' filtrert på de utvalg som er gjort.
 #'
-#' @param RegData En dataramme med alle nødvendige variabler fra registeret
+#' @param RegData En dataramme med alle nodvendige variabler fra registeret
 #' @param valgtVar Hvilken variabel skal plottes
 #' @param datoFra Tidligste dato i utvalget (vises alltid i figuren).
 #' @param datoTil Seneste dato i utvalget (vises alltid i figuren).

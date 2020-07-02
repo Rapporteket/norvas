@@ -25,7 +25,7 @@ norvasFigAndeler(
 )
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+\item{RegData}{En dataramme med alle nodvendige variabler fra registeret}
 
 \item{valgtVar}{Hvilken variabel skal plottes}
 

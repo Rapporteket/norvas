@@ -19,7 +19,7 @@ norvasUtvalg(
 )
 }
 \arguments{
-\item{RegData}{En dataramme med alle nødvendige variabler fra registeret}
+\item{RegData}{En dataramme med alle nodvendige variabler fra registeret}
 
 \item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
 

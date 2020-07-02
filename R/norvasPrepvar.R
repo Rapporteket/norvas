@@ -212,29 +212,30 @@ norvasPrepvar <- function(RegData, valgtVar) {
 
   if (valgtVar == 'Sykdomsvurdering') {
     tittel <- 'Sykdomsvurdering'
-    RegData$Variabel <- RegData[, valgtVar]
+    RegData$Variabel <- RegData[, "SykdomsvurderingLabel"]
     RegData <- RegData[!is.na(RegData$Variabel), ]
+    RegData$VariabelGr <- RegData$Variabel
     # RegData$VariabelGr <- as.factor(RegData$Variabel) # debut, alv. residiv, lett res., persisterende, remisjon
-    RegData$VariabelGr <- factor(RegData$Sykdomsvurdering, levels = c('Debut', 'Remisjon', 'PersisterendeSykdom', 'LettResidiv', 'AlvorligResidiv'),
-           labels = c('Debut', 'Remisjon', 'Persisterende sykdom', 'Lett residiv', 'Alvorlig residiv'))
+    # RegData$VariabelGr <- factor(RegData$Sykdomsvurdering, levels = c('Debut', 'Remisjon', 'PersisterendeSykdom', 'LettResidiv', 'AlvorligResidiv'),
+    #        labels = c('Debut', 'Remisjon', 'Persisterende sykdom', 'Lett residiv', 'Alvorlig residiv'))
     grtxt <- levels(RegData$VariabelGr)
     retn <- 'H'
   }
 
   if (valgtVar == 'Sykdomsvurdering_nyeste') {
     tittel <- 'Sykdomsvurdering'
-    RegData$Variabel <- RegData[, 'Sykdomsvurdering']
+    RegData$Variabel <- RegData[, 'SykdomsvurderingLabel']
     RegData <- RegData[order(RegData$BVAS_Dato, decreasing = T), ]
     RegData <- RegData[match(unique(RegData$PasientGUID), RegData$PasientGUID), ]
     RegData <- RegData[!is.na(RegData$Variabel), ]
-    RegData$VariabelGr <- as.factor(RegData$Variabel) # debut, alv. residiv, lett res., persisterende, remisjon
+    RegData$VariabelGr <- RegData$Variabel # debut, alv. residiv, lett res., persisterende, remisjon
     grtxt <- levels(RegData$VariabelGr)
     retn <- 'H'
   }
 
   if (valgtVar == 'AntallInfeksjoner') {
     tittel <- 'Antall infeksjoner pr. registrering'
-    RegData$Variabel <- RegData[, 'AntallInfeksjoner_num']
+    RegData$Variabel <- RegData[, 'AntallInfeksjoner']
     RegData <- RegData[!is.na(RegData$Variabel), ]
     RegData$VariabelGr <- as.factor(RegData$Variabel) # fiks rekkefølge
     grtxt <- levels(RegData$VariabelGr)
@@ -245,8 +246,8 @@ norvasPrepvar <- function(RegData, valgtVar) {
 
     RegData$Variabel <- RegData[, 'AntallInfeksjoner']
     RegData <- RegData[!is.na(RegData$Variabel), ]
-    RegData <- RegData[, c("PasientGUID", "AntallInfeksjoner_num", 'UnitId')] %>% group_by(PasientGUID) %>%
-      summarise(sum_infeksjon=sum(AntallInfeksjoner_num), UnitId=UnitId[1])
+    RegData <- RegData[, c("PasientGUID", "AntallInfeksjoner", 'UnitId')] %>% group_by(PasientGUID) %>%
+      summarise(sum_infeksjon=sum(AntallInfeksjoner), UnitId=UnitId[1])
 
     RegData$VariabelGr <- as.factor(RegData$sum_infeksjon) # fiks rekkefølge
     grtxt <- levels(RegData$VariabelGr)
