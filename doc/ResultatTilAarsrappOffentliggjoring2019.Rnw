@@ -50,6 +50,8 @@ library(lubridate)
 library(rapFigurer)
 rm(list = ls())
 
+rap_aar <- 2019
+
 Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2020-07-01_1427.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Inklusjon_pguid <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2020-07-01_1428.csv', header=TRUE, sep=";",
@@ -431,7 +433,7 @@ outfile <- paste0('Kortikosteroider_gr1.', utformat)
 # outfile<-''
 grtxt <- ant_pas_pr_med_gr1$Sykehusnavn
 figinfo <- rapFigurer::figtype(outfile = outfile)
-vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
+vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.85)))
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(ant_pas_pr_med_gr1$Kortikosteroider/ant_pas_pr_med_gr1$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
 mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr1$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
@@ -833,6 +835,9 @@ ind2_Andelminimum_2oppf_NorVas <- ind2_Andelminimum_2oppf_NorVas[, c(2,3,5,6)]
 
 write.csv2(ind2_Andelminimum_2oppf_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/ind2_Andelminimum_2oppf_NorVas.csv', row.names = F)
 
+ind2_Andelminimum_2oppf_NorVas$ind_id <- "norvas_minimum_2oppf"
+Indikatorer <- ind2_Andelminimum_2oppf_NorVas
+
 min2oppf <- ind2_Andelminimum_2oppf_NorVas[ind2_Andelminimum_2oppf_NorVas$Oppfolgingsaar ==2019, ] %>% group_by(UnitId) %>% summarise(Andel = sum(Teller)/sum(Nevner)*100,
                                                           N=n())
 
@@ -894,6 +899,9 @@ Ind3_AndelBVAS_NorVas <- Ind3_AndelBVAS_NorVas[ , -3]
 
 write.csv2(Ind3_AndelBVAS_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/Ind3_AndelBVAS_NorVas.csv', row.names = F)
 
+Ind3_AndelBVAS_NorVas$ind_id <- "norvas_bvas"
+Indikatorer <- bind_rows(Indikatorer, Ind3_AndelBVAS_NorVas)
+
 ##########################################################################################
 
 ########  KERR ##############
@@ -925,23 +933,25 @@ ind4_AndelKerr_NorVas <- ind4_AndelKerr_NorVas[ , -3]
 
 write.csv2(ind4_AndelKerr_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/ind4_AndelKerr_NorVas.csv', row.names = F)
 
+ind4_AndelKerr_NorVas$ind_id <- "norvas_kerr"
+Indikatorer <- bind_rows(Indikatorer, ind4_AndelKerr_NorVas)
+
 ##########################################################################################
 
 
 @
 
 <<'Tab: ANCA test ved debut', results='asis', echo=FALSE, warning=F>>=
+# Nysyke definert som de med diagnosedato innen 30 dager av inklusjonsdato
 nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30), ]
-# nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30 & Inklusjon$Inklusjonsaar <= 2019), ]
-antall_nysyke_anca <- length(which(nysyke$Diag_gr_nr == 2))
-# table(nysyke$Sykehusnavn[which(nysyke$Diag_gr_nr == 2)], useNA = 'ifany')
-aux <- merge(nysyke, Labskjema, by = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
-aux <- aux[which(aux$Diag_gr_nr == 2), ]
+aux <- merge(nysyke, Labskjema, by = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)   # Henter info fra labskjema
+aux <- aux[which(aux$Diag_gr_nr == 2), ]                                                  # Ser kun på ANCA
 
-aux2 <- aux[which(abs(difftime(aux$Diagnose_Klinisk_Dato, aux$Blodprover_Dato, units = 'days')) <= 30), ]
-
-# tmp <- aux2 %>% group_by(SkjemaGUID) %>% summarise(anca = (('Positiv' %in% CAncaPositiv) | ('Negativ' %in% CAncaPositiv)))
-tmp2 <- aux2 %>% group_by(Sykehusnavn.x, SkjemaGUID) %>% summarise(anca = ((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv)))
+aux2 <- aux[which(abs(difftime(aux$Diagnose_Klinisk_Dato, aux$Blodprover_Dato, units = 'days')) <= 30), ] # Avgrenser til tilfeller med
+                                                                                                          # blodprøvedato innen 30 dager
+                                                                                                          # av diagnosedato
+tmp2 <- aux2 %>% group_by(Sykehusnavn.x, SkjemaGUID) %>%
+  summarise(anca = ((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv))) # Ett resultat per sykehus og skjemaguid,
 
 #resultat
 res1 <- tapply(tmp2$anca, tmp2$Sykehusnavn.x, sum, na.rm=T)/table(nysyke$Sykehusnavn[which(nysyke$Diag_gr_nr == 2)])*100
@@ -991,6 +1001,10 @@ anca_debut_v3 <- Ind1_ANCAvdebut_NorVas[Ind1_ANCAvdebut_NorVas$Aar <=2019, ] %>%
   summarise(Andel = sum(Teller)/sum(Nevner)*100,
             N=n())
 
+anca_debut_v3 <- bind_rows(anca_debut_v3,
+                           tibble(Sykehusnavn = "Total", Andel = sum(anca_debut_v3$Andel*anca_debut_v3$N)/sum(anca_debut_v3$N),
+                                  N = sum(anca_debut_v3$N)))
+
 
 
 print(xtable::xtable(anca_debut_v3, align= c('l','l','r','r'), digits=c(0, 0,1,0), caption='Andel ANCA test ved debut for gruppe 2. T.o.m. 2019'), include.rownames = F)
@@ -998,6 +1012,9 @@ print(xtable::xtable(anca_debut_v3, align= c('l','l','r','r'), digits=c(0, 0,1,0
 Ind1_ANCAvdebut_NorVas <- Ind1_ANCAvdebut_NorVas[, c(4,6,3,5)]
 
 write.csv2(Ind1_ANCAvdebut_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/Ind1_ANCAvdebut_NorVas.csv', row.names = F)
+
+Ind1_ANCAvdebut_NorVas$ind_id <- "norvas_anca_ved_debut"
+Indikatorer <- bind_rows(Indikatorer, Ind1_ANCAvdebut_NorVas)
 
 @
 
@@ -1033,7 +1050,7 @@ total <- tibble(Sykehusnavn= 'Totalt',
 andel_remisjon_6mnd <- bind_rows(andel_remisjon_6mnd, total)
 
 
-print(xtable::xtable(andel_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption='Andel i remisjon ved 6 måneder ut fra BVAS for ANCA assosiert vaskulitter før 2019. Gjelder nysyke som definert ved at bvasdato ved debut og inklusjonsdato er innenfor plussminus 30 dager.'), include.rownames = F)
+print(xtable::xtable(andel_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption='Andel i remisjon innen 6 måneder ut fra BVAS for ANCA assosiert vaskulitter t.o.m. 2019. Gjelder nysyke som definert ved at bvasdato ved debut og inklusjonsdato er innenfor plussminus 30 dager.'), include.rownames = F)
 
 ################ Data til Resultatportalen ###################################
 
@@ -1042,6 +1059,9 @@ ind5_AndelAnCA_remisjon_NorVas$Nevner <- 1
 names(ind5_AndelAnCA_remisjon_NorVas)[2:3] <- c("Aar", "Teller")
 
 write.csv2(ind5_AndelAnCA_remisjon_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/ind5_AndelAnCA_remisjon_NorVas.csv', row.names = F)
+
+ind5_AndelAnCA_remisjon_NorVas$ind_id <- "norvas_anca_remisjon"
+Indikatorer <- bind_rows(Indikatorer, ind5_AndelAnCA_remisjon_NorVas)
 
 ###############################################################################
 @
@@ -1082,6 +1102,9 @@ ind6_AndelANCA_Prednisolon_NorVas <- ind6_AndelANCA_Prednisolon_NorVas[, -3]
 names(ind6_AndelANCA_Prednisolon_NorVas)[1:2] <- c("UnitId", "Aar")
 
 write.csv2(ind6_AndelANCA_Prednisolon_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/ind6_AndelANCA_Prednisolon_NorVas.csv', row.names = F)
+
+ind6_AndelANCA_Prednisolon_NorVas$ind_id <- "norvas_anca_prednisolon"
+Indikatorer <- bind_rows(Indikatorer, ind6_AndelANCA_Prednisolon_NorVas)
 
 pas_paaprednisolon <- ind6_AndelANCA_Prednisolon_NorVas[ind6_AndelANCA_Prednisolon_NorVas$Aar <=2019, ] %>%
   group_by(UnitId) %>%
@@ -1133,6 +1156,9 @@ ind7_Andelstorvas_Prednisolon_NorVas <- ind7_Andelstorvas_Prednisolon_NorVas[, -
 names(ind7_Andelstorvas_Prednisolon_NorVas)[1:2] <- c("UnitId", "Aar")
 
 write.csv2(ind7_Andelstorvas_Prednisolon_NorVas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/Indikatorer/ind7_Andelstorvas_Prednisolon_NorVas.csv', row.names = F)
+
+ind7_Andelstorvas_Prednisolon_NorVas$ind_id <- "norvas_storvas_prednisolon"
+Indikatorer <- bind_rows(Indikatorer, ind7_Andelstorvas_Prednisolon_NorVas)
 
 pas_paaprednisolon <- ind7_Andelstorvas_Prednisolon_NorVas[ind7_Andelstorvas_Prednisolon_NorVas$Aar <=2019, ] %>% group_by(UnitId) %>% summarise(Andel = sum(Teller)/sum(Nevner)*100,
                                                           N=n())
@@ -1403,6 +1429,31 @@ nokkeltall <- Inklusjon %>% group_by(Inklusjonsaar) %>% summarise("Antall avdeli
                                                     "Andel kvinner" = sum(ErMann==0)/n()*100)
 
 write.csv2(nokkeltall, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/nokkeltall.csv', row.names = F)
+
+Diagnoser$Inklusjonsaar <- as.numeric(format(Diagnoser$InklusjonDato, "%Y"))
+
+table(Diagnoser$Navn, Diagnoser$Inklusjonsaar, useNA = 'ifany')
+
+diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Navn) %>%
+  summarise(Antall=n()) %>% spread(key = Inklusjonsaar, value = Antall, fill = NA)
+
+write.csv2(diag_tbl, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/diagnosetabell.csv', na = '', fileEncoding = 'Latin1', row.names = F)
+
+Indikatorer$Oppfolgingsaar[is.na(Indikatorer$Oppfolgingsaar)] <- Indikatorer$Aar[is.na(Indikatorer$Oppfolgingsaar)]
+kobl_unitid_shusnavn_norvas$Sykehusnavn <- as.character(kobl_unitid_shusnavn_norvas$Sykehusnavn)
+
+kobl_unitid_shusnavn_norvas <- data.frame(kobl_unitid_shusnavn_norvas, qmongrdata::SykehusNavnStruktur[stringdist::amatch(kobl_unitid_shusnavn_norvas$Sykehusnavn, qmongrdata::SykehusNavnStruktur$SykehusNavn ), c("SykehusnavnLang", "OrgNrShus")])
+
+kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 974749025
+kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 974795787
+kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 974795361
+kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 983974929
+
+Indikatorer$orgnr <- kobl_unitid_shusnavn_norvas$OrgNrShus[match(Indikatorer$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
+Indikatorer <- Indikatorer[, c(7,2,3,4,5)]
+names(Indikatorer)[2:4] <- c("year", "var", "denominator")
+
+write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20102020.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
 
 @
 %
