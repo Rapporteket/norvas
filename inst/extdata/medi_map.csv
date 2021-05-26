@@ -1,0 +1,44 @@
+Gammel;Ny
+1 = Certolizumab pegol (Cimzia) injeksjon;1 = Certolizumab pegol 
+2 = Etanercept (Enbrel) injeksjon;2 = Etanercept 
+3 = Adalimumab (Humira) injeksjon;3 = Adalimumab
+4 = Canakinumab (Ilaris) injeksjon;4 = Canakinumab 
+5 = Infliximab (Inflektra) infusjon;5 = Infliximab 
+6 = Anakinra (Kineret) injeksjon;6 = Anakinra
+7 = Rituximab (MabThera) infusjon;40 = Rituximab 
+8 = Abatacept (Orencia) infusjon;8 = Abatacept
+9 = Abatacept (Orencia) s.c.;8 = Abatacept
+10 = Infliximab (Remicade) infusjon;5 = Infliximab 
+11 = Infliximab (Remsima) infusjon;5 = Infliximab 
+12 = Tocilizumab (RoActemra) infusjon;12 = Tocilizumab 
+13 = Tocilizumab (RoActemra) s.c.;12 = Tocilizumab 
+14 = Golimumab (Simponi) injeksjon;14 = Golimumab
+40 = Rituximab (Rixathon);40 = Rituximab 
+15 = Leflunomid (Arava) p.o.;15 = Leflunomid
+16 = Mycofenolat mofetil (CellCept, Myfenax, Mycophenolatemofetil) p.o.;16 = Mycofenolat mofetil 
+17 = Folsyre p.o.;17 = Folsyre fjernes
+18 = Azathioprin (Imurel) p.o.;18 = Azathioprin 
+19 = Prednison (Lodotra) p.o.;19 = Prednison 
+20 = Methotrexate i.m / s.c;20 = Methotrexate
+21 = Methotrexate p.o.;20 = Methotrexate
+22 = Hydroxychlorochin (Plaquenil) p.o.;22 = Hydroxychlorochin
+23 = Prednisolon p.o.;23 = Prednisolon
+24 = Sulfasalazin (Salazopyrin EN) p.o.;24 = Sulfasalazin
+25 = Ciclosporin A (Sandimmun neoral) p.o.;25 = Ciclosporin A 
+26 = Cyclofosfamid (Sendoxan) i.v.;26 = Cyclofosfamid 
+27 = Cyclofosfamid (Sendoxan) p.o.;26 = Cyclofosfamid 
+28 = Ustekinumab (Stelara)  s.c.;28 = Ustekinumab
+29 = Etanercept (Benepali ) s.c.;2 = Etanercept 
+30 = Sekukinumab (Cosentyx) s.c.;30 = Sekukinumab 
+31 = Everolimus (Certican) p.o.;31 = Everolimus
+32 = Mycofenolsyre (Myfortic) p.o.;32 = Mycofenolsyre
+33 = Sirolimus (Rapamune) p.o.;33 = Sirolimus 
+34 = Tacrolimus (Prograf, Advagraf, Tacni, Modigraf, Envarsus, Adport) p.o.;34 = Tacrolimus
+35 = Talidomid (Talidomide) p.o.;35 = Talidomid 
+36 = Humant Immunoglobulin G IV (Kiovig, Octagam, Privigen);36 = Humant Immunoglobulin G 
+37 = Humant Immunoglobulin G SC (Gammanorm, Hizentra, HyQvia);36 = Humant Immunoglobulin G 
+38 = Metylprednisolon (Methylprednisolone, Medrol) p.o.;38 = Metylprednisolon 
+39 = Metylprednisolon (Solu-Medrol) infusjon;38 = Metylprednisolon 
+42 = Belimumab;42 = Belimumab
+43 = Colchicine;43 = Colchicine
+999 = Annet (importert);999 = Annet (importert)

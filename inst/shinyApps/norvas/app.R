@@ -13,27 +13,29 @@ library(lubridate)
 #   # RegData <- norvasHentRegData()
 #   # skjemaoversikt <- NorvasHentSkjemaOversikt()
 # } else {
-  Inklusjon <- read.table('I:/norvas/DataDump_Prod_Inklusjonskjema_2019-01-07.csv', header=TRUE, sep=";",
+  Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2021-03-08_0852.csv', header=TRUE, sep=";",
                           stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Inklusjon_pguid <- read.table('I:/norvas/DataDump_Prod_Inklusjonskjema_2019-01-07 (1).csv', header=TRUE, sep=";",
-                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Oppfolging <- read.table('I:/norvas/DataDump_Prod_OppfølgingSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  Inklusjon_pguid <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2021-03-08_0854.csv', header=TRUE, sep=";",
+                                stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Inklusjon$PasientGUID <- Inklusjon_pguid$PasientGUID
+  Inklusjon <- merge(Inklusjon, Inklusjon_pguid[, c("SkjemaGUID", "PasientGUID")], by ='SkjemaGUID')
+  Oppfolging <- read.table('I:/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2021-03-08_1409.csv', header=TRUE, sep=";",
                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Diagnoser <- read.table('I:/norvas/DataDump_Prod_DiagnoseSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2021-03-08_0858.csv', header=TRUE, sep=";",
                           stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Medisiner <- read.table('I:/norvas/DataDump_Prod_MedisineringSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2021-03-08_1410.csv', header=TRUE, sep=";",
                           stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  BVAS <- read.table('I:/norvas/DataDump_Prod_BvasSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  BVAS <- read.table('I:/norvas/DataDump_MRS-PROD_BvasSkjema_2021-03-08_1421.csv', header=TRUE, sep=";",
                      stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  KERR <- read.table('I:/norvas/DataDump_Prod_KerrsKriterierSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  KERR <- read.table('I:/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2021-03-08_1426.csv', header=TRUE, sep=";",
                      stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  VDI <- read.table('I:/norvas/DataDump_Prod_VdiSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2021-03-08_1420.csv', header=TRUE, sep=";",
                     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Alvorlig_infeksjon <- read.table('I:/norvas/DataDump_Prod_SelvrapportertAlvorligInfeksjonSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  Alvorlig_infeksjon <- read.table('I:/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2021-03-08_1426.csv', header=TRUE, sep=";",
                                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Utredning <- read.table('I:/norvas/DataDump_Prod_BilledDiagnostikkSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  Utredning <- read.table('I:/norvas/DataDump_MRS-PROD_Utredning_2021-03-08_1425.csv', header=TRUE, sep=";",
                           stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Labskjema <- read.table('I:/norvas/DataDump_Prod_BlodprøvesvarSkjema_2019-01-07.csv', header=TRUE, sep=";",
+  Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2021-03-08_1425.csv', header=TRUE, sep=";",
                           stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 # }
 

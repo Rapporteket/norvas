@@ -23,6 +23,38 @@ norvasIndikatorOppf(
   diag_gruppe = 99
 )
 }
+\arguments{
+\item{RegData}{En dataramme med alle nodvendige variabler fra registeret}
+
+\item{valgtVar}{Hvilken variabel skal plottes}
+
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{minald}{Alder, fra og med (Default: 0)}
+
+\item{maxald}{Alder, til og med (Default: 130)}
+
+\item{erMann}{kjønn
+1: menn
+0: kvinner
+99: begge (alt annet enn 0 og 1) (Default)}
+
+\item{outfile}{Navn på fil figuren skrives til. Default: '' (Figur skrives
+til systemets default output device (som regel skjerm))}
+
+\item{reshID}{Parameter følger fra innlogging helseregister.no og angir
+hvilken enhet i spesialisthelsetjenesten brukeren tilhører}
+
+\item{enhetsUtvalg}{Lag figur for
+0: Hele landet
+1: Egen enhet mot resten av landet (Default)
+2: Egen enhet}
+
+\item{valgtShus}{Vektor med UnitId over hvilke sykehus man genererer rapporten for.
+Denne overstyrer reshID og er bare tilgjengelig for SC-bruker.}
+}
 \value{
 En figur med søylediagram eller et stabelplot av ønsket variabel
 }
