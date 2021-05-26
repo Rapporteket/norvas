@@ -3,7 +3,7 @@
 #' Denne funksjonen lager et søylediagram eller stabelplot som viser andeler av valgt variabel
 #' filtrert på de utvalg som er gjort.
 #'
-#' @inheritParams  RegData En dataramme med alle nodvendige variabler fra registeret
+#' @inheritParams norvasFigAndeler
 #'
 #' @return En figur med søylediagram eller et stabelplot av ønsket variabel
 #'

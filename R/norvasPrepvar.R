@@ -233,6 +233,19 @@ norvasPrepvar <- function(RegData, valgtVar) {
     retn <- 'H'
   }
 
+  if (valgtVar == 'Sykdomsvurdering_kerr') {
+    tittel <- 'Sykdomsvurdering'
+    RegData$Variabel <- RegData[, "SykdomsvurderingLabel"]
+    RegData <- RegData[!is.na(RegData$Variabel), ]
+    RegData$VariabelGr <- RegData$Variabel
+    # RegData$VariabelGr <- as.factor(RegData$Variabel) # debut, alv. residiv, lett res., persisterende, remisjon
+    # RegData$VariabelGr <- factor(RegData$Sykdomsvurdering, levels = c('Debut', 'Remisjon', 'PersisterendeSykdom', 'LettResidiv', 'AlvorligResidiv'),
+    #        labels = c('Debut', 'Remisjon', 'Persisterende sykdom', 'Lett residiv', 'Alvorlig residiv'))
+    grtxt <- levels(RegData$VariabelGr)
+    retn <- 'H'
+  }
+
+
   if (valgtVar == 'AntallInfeksjoner') {
     tittel <- 'Antall infeksjoner pr. registrering'
     RegData$Variabel <- RegData[, 'AntallInfeksjoner']

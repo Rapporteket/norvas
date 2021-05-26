@@ -104,7 +104,7 @@ norvasFigAndeler  <- function(RegData=0, valgtVar='Inklusjonsalder', datoFra='20
 
   # AggVerdier <- list(Hoved=)
 
-  rapFigurer::FigFordeling(AggVerdier=Andeler, tittel=tittel, hovedgrTxt='Hele landet', smltxt='',
+  generellFigFordeling(AggVerdier=Andeler, tittel=tittel, hovedgrTxt='Hele landet', smltxt='',
                            N=list(Hoved=NHoved, Rest=Nrest), retn=retn, subtxt='', utvalgTxt=utvalgTxt, grtxt=grtxt, grtxt2='',
                            medSml=0, antDes=1, fargepalett='BlaaOff', outfile=outfile, inkl_N=inkl_N)
 

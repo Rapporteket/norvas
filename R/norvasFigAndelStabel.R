@@ -110,7 +110,7 @@ norvasFigFordelingGr  <- function(RegData=0, valgtVar='ErMann', datoFra='2014-01
 
   tittel <- PlotParams$tittel; stabel <- PlotParams$stabel;
   subtxt <- PlotParams$subtxt; cexgr <- PlotParams$cexgr;
-  FigTypUt <- figtype(outfile=outfile, fargepalett=norvasUtvalg$fargepalett, pointsizePDF=12)
+  FigTypUt <- rapFigurer::figtype(outfile=outfile, fargepalett=norvasUtvalg$fargepalett, pointsizePDF=12)
 
   farger <- FigTypUt$farger
   NutvTxt <- length(utvalgTxt)

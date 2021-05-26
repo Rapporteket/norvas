@@ -10,4 +10,4 @@ Encoding: UTF-8
 Depends: R (>= 3.4.3), rapbase, tidyverse
 Imports: lubridate, kableExtra, DT, shinyjs
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
