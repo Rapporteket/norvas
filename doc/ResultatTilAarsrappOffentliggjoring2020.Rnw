@@ -1966,8 +1966,10 @@ kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 4210
 Indikatorer$orgnr <- kobl_unitid_shusnavn_norvas$OrgNrShus[match(Indikatorer$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 Indikatorer <- Indikatorer[, c(7,2,3,4,5)]
 names(Indikatorer)[2:4] <- c("year", "var", "denominator")
+Indikatorer$context <- "caregiver"
 
 # write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20102020.csv', na = '', fileEncoding = 'UTF-8', row.names = F) # Skal med
+write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20210607.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
 
 @
 
