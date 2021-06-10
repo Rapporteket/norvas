@@ -197,6 +197,11 @@ Medisiner <- merge(Medisiner, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")],
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId), Inklusjon$UnitId), c("UnitId", "Sykehusnavn")]
 # write.csv2(kobl_unitid_shusnavn_norvas, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/kobl_unitid_shusnavn_norvas.csv', row.names = F) # Skal med
+# kobl_unitid_shusnavn_norvas <-
+# data.frame(resh=c(103725, 104579, 601159, 102977, 110353, 104209, 106841, 105776, 102708, 104092, 4210431, 110629, 105274, 700701, 4210614, 108054, 701344),
+#            shus=Inklusjon[match(c(103725, 104579, 601159, 102977, 110353, 104209, 106841, 105776, 102708, 104092, 4210431, 110629, 105274, 700701, 4210614, 108054, 701344), Inklusjon$UnitId), c("Sykehusnavn")],
+#            orgnr=c(974631326, 974749025, 974795787, 974557746, 874632562, 974737779, 974724774, 974754118, 974747138, 974733013, 874716782, 974116588, 974744570, 974795361, 974795515, 974633698, 974703300),
+#            shus_org=qmongrdata::SykehusNavnStruktur$SykehusNavn[match(c(974631326, 974749025, 974795787, 974557746, 874632562, 974737779, 974724774, 974754118, 974747138, 974733013, 874716782, 974116588, 974744570, 974795361, 974795515, 974633698, 974703300), qmongrdata::SykehusNavnStruktur$OrgNrShus)])
 
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
@@ -912,7 +917,7 @@ for (id in tmp$PasientGUID) {                                       # For alle p
 }
 
 
-Oppfolging$FolgtOpp <- 1 # Legg til en indikatorvariabel som sier om pasinten har vært føgt opp
+Oppfolging$FolgtOpp <- 1 # Legg til en indikatorvariabel som sier om pasinten har vært følgt opp
 Oppfolging_v4 <- merge(aux, Oppfolging[, c("UnitId", "PasientGUID", "SkjemaGUID", "Oppfolgingsaar", "FolgtOpp")], by = c("PasientGUID","Oppfolgingsaar") , all.x = T) ## Koble inn Oppfølginginfo for årene det finnes.
 Oppfolging_v4$UnitId <- Oppfolging_v4$UnitId.y  ## Bruk UnitId fra oppfølgingsenhet der den finnes,
 Oppfolging_v4$UnitId[is.na(Oppfolging_v4$UnitId.y)] <- Oppfolging_v4$UnitId.x[is.na(Oppfolging_v4$UnitId.y)]  # ellers bruk UnitId fra inklusjon
