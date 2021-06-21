@@ -1961,12 +1961,21 @@ diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Navn) %>%
 Indikatorer$Oppfolgingsaar[is.na(Indikatorer$Oppfolgingsaar)] <- Indikatorer$Aar[is.na(Indikatorer$Oppfolgingsaar)]
 kobl_unitid_shusnavn_norvas$Sykehusnavn <- as.character(kobl_unitid_shusnavn_norvas$Sykehusnavn)
 
-kobl_unitid_shusnavn_norvas <- data.frame(kobl_unitid_shusnavn_norvas, qmongrdata::SykehusNavnStruktur[stringdist::amatch(kobl_unitid_shusnavn_norvas$Sykehusnavn, qmongrdata::SykehusNavnStruktur$SykehusNavn ), c("SykehusnavnLang", "OrgNrShus")])
+kobl_unitid_shusnavn_norvas <- data.frame(kobl_unitid_shusnavn_norvas, qmongrdata::SykehusNavnStruktur[stringdist::amatch(kobl_unitid_shusnavn_norvas$Sykehusnavn, qmongrdata::SykehusNavnStruktur$SykehusNavn ), c("OrgNrHF", "HF", "OrgNrShus", "SykehusNavn")])
 
 kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 974749025
 kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 974795787
 kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 974795361
-kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 983974929
+kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 974795515
+kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 873255102
+kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 883974832
+kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 983974899
+kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 983974910
+kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 983974929
+kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 981275721
+
+kobl_unitid_shusnavn_norvas$HF <- qmongrdata::SykehusNavnStruktur$HF[match(kobl_unitid_shusnavn_norvas$OrgNrHF, qmongrdata::SykehusNavnStruktur$OrgNrHF)]
+kobl_unitid_shusnavn_norvas$SykehusNavn <- qmongrdata::SykehusNavnStruktur$SykehusNavn[match(kobl_unitid_shusnavn_norvas$OrgNrShus, qmongrdata::SykehusNavnStruktur$OrgNrShus)]
 
 Indikatorer$orgnr <- kobl_unitid_shusnavn_norvas$OrgNrShus[match(Indikatorer$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 Indikatorer <- Indikatorer[, c(7,2,3,4,5)]
@@ -1974,7 +1983,81 @@ names(Indikatorer)[2:4] <- c("year", "var", "denominator")
 Indikatorer$context <- "caregiver"
 
 # write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20102020.csv', na = '', fileEncoding = 'UTF-8', row.names = F) # Skal med
-write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20210607.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
+write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20210617.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
+
+
+dg_D690_andre <- read.table("I:/norvas/DGA_resultat_hf_D690.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_D891_andre <- read.table("I:/norvas/DGA_resultat_hf_D891.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_I776_storkar <- read.table("I:/norvas/DGA_resultat_hf_I776.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M300_andre <- read.table("I:/norvas/DGA_resultat_hf_M300.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M301_anca <- read.table("I:/norvas/DGA_resultat_hf_M301.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M313_anca <- read.table("I:/norvas/DGA_resultat_hf_M313.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M314_storkar <- read.table("I:/norvas/DGA_resultat_hf_M314.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M315_storkar <- read.table("I:/norvas/DGA_resultat_hf_M315_M316.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M317_anca <- read.table("I:/norvas/DGA_resultat_hf_M317.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M319_andre <- read.table("I:/norvas/DGA_resultat_hf_M319.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M352_andre <- read.table("I:/norvas/DGA_resultat_hf_M352.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_landet <- read.table("I:/norvas/DGA_resultat_landet_hf.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_landet_innrap <- read.table("I:/norvas/DGA_resultat_landet_hf_innrapp.csv", sep = ";", fileEncoding = "Latin1", header = T)
+
+dg_andre <- merge(dg_D690_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
+                  dg_D891_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
+                  by = "hf_standard", all = T, suffixes = c(".1", ".2")) %>%
+  merge(dg_M300_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")], by = "hf_standard", all = T, suffixes = c("", ".3")) %>%
+  merge(dg_M319_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")], by = "hf_standard", all = T, suffixes = c("", ".4")) %>%
+  merge(dg_M352_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")], by = "hf_standard", all = T, suffixes = c("", ".5"))
+dg_andre[is.na(dg_andre)] <- 0
+dg_andre$norvas <- rowSums(dg_andre[, c("Begge.1", "Kun_norvas.1", "Begge.2", "Kun_norvas.2", "Begge", "Kun_norvas", "Begge.4", "Kun_norvas.4",
+                                        "Begge.5", "Kun_norvas.5")])
+dg_andre$totalt <- rowSums(dg_andre[, c("Total.1", "Total.2", "Total", "Total.4", "Total.5")])
+dg_andre$DG <- dg_andre$norvas/dg_andre$totalt*100
+
+dg_storkar <- merge(dg_I776_storkar[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
+                  dg_M314_storkar[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
+                  by = "hf_standard", all = T, suffixes = c(".1", ".2")) %>%
+  merge(dg_M315_storkar[,c("hf_standard", "Begge", "Kun_norvas", "Total")], by = "hf_standard", all = T, suffixes = c("", ".3"))
+dg_storkar[is.na(dg_storkar)] <- 0
+dg_storkar$norvas <- rowSums(dg_storkar[, c("Begge.1", "Kun_norvas.1", "Begge.2", "Kun_norvas.2", "Begge", "Kun_norvas")])
+dg_storkar$totalt <- rowSums(dg_storkar[, c("Total.1", "Total.2", "Total")])
+dg_storkar$DG <- dg_storkar$norvas/dg_storkar$totalt*100
+
+dg_anca <- merge(dg_M301_anca[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
+                  dg_M313_anca[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
+                  by = "hf_standard", all = T, suffixes = c(".1", ".2")) %>%
+  merge(dg_M317_anca[,c("hf_standard", "Begge", "Kun_norvas", "Total")], by = "hf_standard", all = T, suffixes = c("", ".3"))
+dg_anca[is.na(dg_anca)] <- 0
+dg_anca$norvas <- rowSums(dg_anca[, c("Begge.1", "Kun_norvas.1", "Begge.2", "Kun_norvas.2", "Begge", "Kun_norvas")])
+dg_anca$totalt <- rowSums(dg_anca[, c("Total.1", "Total.2", "Total")])
+dg_anca$DG <- dg_anca$norvas/dg_anca$totalt*100
+
+dg_landet_innrap$norvas <- rowSums(dg_landet_innrap[, c("Begge", "Kun_norvas")])
+dg_landet_innrap$totalt <- dg_landet_innrap$Total
+
+dg_anca$ind_id <- "norvas_dg_anca"
+dg_storkar$ind_id <- "norvas_dg_storkar"
+dg_andre$ind_id <- "norvas_dg_andre"
+dg_landet_innrap$ind_id <- "norvas_dg_alle"
+
+dg_samlet <- bind_rows(dg_anca[, c("hf_standard", "norvas", "totalt", "ind_id")],
+                       dg_storkar[, c("hf_standard", "norvas", "totalt", "ind_id")],
+                       dg_andre[, c("hf_standard", "norvas", "totalt", "ind_id")],
+                       dg_landet_innrap[, c("hf_standard", "norvas", "totalt", "ind_id")])
+
+dg_samlet$orgnr <- qmongrdata::SykehusNavnStruktur[stringdist::amatch(dg_samlet$hf_standard, qmongrdata::SykehusNavnStruktur$HF), c("OrgNrShus")]
+dg_samlet$orgnr[dg_samlet$hf_standard == "Betanien, Skien"] <- 873255102
+dg_samlet$orgnr[dg_samlet$hf_standard == "Haugesund sanitetsforenings revmatismesykehus"] <- 974724774
+dg_samlet$orgnr[dg_samlet$hf_standard == "Martina Hansens hospital"] <- 974116588
+dg_samlet$orgnr[dg_samlet$hf_standard == "Revmatismesykehuset, Lillehammer"] <- 874632562
+dg_samlet$orgnr[dg_samlet$hf_standard == "Universitetssykehuset Nord-Norge HF"] <- 974795787
+
+dg_samlet <- dg_samlet[!is.na(dg_samlet$orgnr), ]
+
+names(dg_samlet)[match(c("norvas", "totalt"), names(dg_samlet))] <- c("var", "denominator")
+dg_samlet$year <- 2020
+dg_samlet$context <- "caregiver"
+dg_samlet <- dg_samlet[, c("orgnr", "year", "var", "denominator", "ind_id", "context")]
+
+write.csv2(dg_samlet, 'I:/norvas/norvas_dg_samlet.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
 
 @
 
