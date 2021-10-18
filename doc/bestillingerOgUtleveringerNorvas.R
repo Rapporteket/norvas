@@ -8,6 +8,20 @@ library(lubridate)
 library(rapFigurer)
 rm(list = ls())
 
+## Legemidler under "Annet" 14.10.2021  ##################
+Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+medliste1 <- Medisiner[which(Medisiner$Medikamentgruppe==""), c("LegemiddelType2020", "LegemiddelType2019",
+                                                                "Legemiddel", "Medikamentgruppe", "LegemiddelNr")]
+Medisiner <- norvasPreprosess(Medisiner)
+Medisiner$Medikamentgruppe[Medisiner$Medikamentgruppe == ""] <- "Andre"
+medliste2 <- Medisiner[which(Medisiner$Medikamentgruppe=="Andre"), c("LegemiddelType2020", "LegemiddelType2019",
+                                                                    "Legemiddel", "Medikamentgruppe", "LegemiddelNr",
+                                                                    "LegemiddelGenerisk", "LegemiddelTypeLabel")]
+# table(medliste2[, "Legemiddel"])
+write.csv2(medliste2, "I:/norvas/Medliste_norvas.csv", fileEncoding = "Latin1", row.names = F)
+
+
 ## Pasienter på cyclofosfamid og Rituximab samtidig 27.04.2021  #######################
 Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2021-03-08_0852.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')

@@ -98,6 +98,9 @@ Labskjema <- norvasPreprosess(Labskjema)
 ### Foreløpig fiks, fjernes når data er ordnet
 Medisiner$Medikamentgruppe[Medisiner$Medikamentgruppe == ""] <- "Andre"
 
+### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
+Medisiner <- Medisiner[Medisiner$Medikamentgruppe != "Andre", ]
+
 varnavn <- kodebok_norvas[which(!is.na(kodebok_norvas$Variabelnavn)), c("Variabelnavn", "skjema")]
 indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'BvasSkjema'):
   (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='Sykdomsvurdering' & varnavn$skjema == 'BvasSkjema')+1] & kodebok_norvas$skjema == 'BvasSkjema')-1)
@@ -230,7 +233,7 @@ enhetsUtvalg <- 0
 aldervar='DiagnoseAlder'
 diag_gruppe=99
 inkl_N=T
-utformat <- 'wmf'
+utformat <- 'pdf'
 
 outfile <- paste0('diagnoser.', utformat)
 norvasFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil = datoTil, minald=minald, maxald=maxald,
