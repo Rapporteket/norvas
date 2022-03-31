@@ -8,6 +8,37 @@ library(lubridate)
 library(rapFigurer)
 rm(list = ls())
 
+## Utlevering PhD-prosjekt Hans Kristian Skaug 31.03.2022  ##################
+
+
+Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
+Oppfolging <- read.table('I:/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+BVAS <- read.table('I:/norvas/DataDump_MRS-PROD_BvasSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+KERR <- read.table('I:/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2022-03-17_1014.csv', header=TRUE, sep=";",
+                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Alvorlig_infeksjon <- read.table('I:/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2022-03-17_1014.csv',
+                                 header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Utredning <- read.table('I:/norvas/DataDump_MRS-PROD_Utredning_2022-03-17_1014.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+
+
+
+
+
+
 ## Legemidler under "Annet" 14.10.2021  ##################
 Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
