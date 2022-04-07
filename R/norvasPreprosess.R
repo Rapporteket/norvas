@@ -81,8 +81,11 @@ norvasPreprosess <- function(RegData) {
     RegData$tid_symp_diagnose <- difftime(RegData$Diagnose_Klinisk_Dato, RegData$SymptomStartDato, units = 'days')
     RegData <- RegData[!is.na(RegData$DiagnoseNr), ]
     RegData$Diag_gr_nr <- mapDiagKode$gr_nr[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
-    RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:3, labels = c('Storkarsvaskulitt (LVV)',
-                                                                           'ANCA assosiert vaskulitt (AAV)', 'Andre'))
+    # RegData <- RegData[RegData$Diag_gr_nr != 3, ] # Fjerner gruppen annet
+    # RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:3, labels = c('Storkarsvaskulitt (LVV)',
+    #                                                                        'ANCA assosiert vaskulitt (AAV)', 'Andre'))
+    RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:2, labels = c('Storkarsvaskulitt (LVV)',
+                                                                           'ANCA assosiert vaskulitt (AAV)'))
     RegData$Navn <- RegData$Diagnose
   }
 

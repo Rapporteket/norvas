@@ -1,3 +1,34 @@
+library(norvas)
+library(xtable)
+library(lubridate)
+# library(rapFigurer)
+rm(list = ls())
+options(dplyr.summarise.inform = FALSE)
+
+rap_aar <- 2021
+
+Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+Inklusjon <- norvasPreprosess(Inklusjon)
+Diagnoser <- norvasPreprosess(Diagnoser)
+
+
+allevar <- merge(Inklusjon, Diagnoser, by.x = "SkjemaGUID", by.y = "HovedskjemaGUID")
+
+
+
+
+
+
+
+
+
+
+
+
 # setwd("C:/GIT/norvas/doc/")
 # rm(list = ls())
 #
