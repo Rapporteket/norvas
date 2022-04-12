@@ -9,9 +9,10 @@
 \usepackage{amssymb}
 \usepackage[a4paper]{geometry}
 \usepackage{array}
+\usepackage{lscape}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
-\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
 
 \title{Figurer og tabeller til årsrapport for Norvas 2021}
@@ -503,11 +504,32 @@ if ( outfile != '') {dev.off()}
 \caption{Antall inklusjoner per HF og per diagnosegruppe. T.o.m. \Sexpr{rap_aar}}
 \end{figure}
 
+\begin{landscape}
+% \addtolength{\voffset}{4.0cm}
+
+<<'Tab: Inkl.pr.diagnose', results='asis', echo=FALSE, warning=F>>=
+registreringer <- Inklusjon[!is.na(Inklusjon$Diag_gr) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
+  group_by(Sykehusnavn, Navn) %>%
+  summarise(N = n()) %>%
+  spread(key = "Navn", value = "N", fill = 0)
+
+registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = T, na.last = F), ] %>%
+  janitor::adorn_totals(where = c("row", "col"))
+
+print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)), digits = 0,
+                     caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)), include.rownames = F)
+@
+
+\end{landscape}
+
+
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}oppfolginger.pdf}
 \caption{Antall oppfølginger per HF.}
 \end{figure}
+
+
 
 <<'Tab: Andel pas. som har brukt med. grupper.', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 
