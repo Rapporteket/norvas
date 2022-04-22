@@ -1403,7 +1403,7 @@ N_5mg <- pas_paaprednisolon$N[pas_paaprednisolon$Sykehusnavn=='Totalt']
 
 
 ##############################################################################
-
+### Fjernes, KERR gjelder fremover
 nysyke <- BVAS[which(abs(difftime(BVAS$BVAS_Dato, BVAS$InklusjonDato, units = 'days')) <= 30), ]
 nysyke <- nysyke[which(nysyke$Sykdomsvurdering == 1 & nysyke$Diag_gr_nr==1), ]
 

@@ -16,8 +16,11 @@ Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-04-05_0
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 mangler_diag <- Inklusjon[Inklusjon$PasientGUID %in% setdiff(Inklusjon$PasientGUID, Diagnoser$PasientGUID),
-                          c("PasientGUID", "InklusjonDato")]
-write.csv2(mangler_diag, "I:/norvas/mangler_diagnose.csv", row.names = F, fileEncoding = "Latin1")
+                          c("PasientGUID", "InklusjonDato", "UnitId")]
+
+
+write.csv2(mangler_diag[mangler_diag$UnitId == 601159, c("PasientGUID", "InklusjonDato")],
+           "I:/norvas/mangler_diagnose.csv", row.names = F, fileEncoding = "Latin1")
 
 ## Utlevering PhD-prosjekt Hans Kristian Skaug 31.03.2022  ##################
 
