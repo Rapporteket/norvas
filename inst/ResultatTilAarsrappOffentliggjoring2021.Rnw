@@ -490,6 +490,34 @@ legend('bottomright', legend = paste0(names(registreringer)[-1], ", N=", colSums
 #        pch = 15, border = NA, bty='n')
 title(main = c("Antall inklusjoner pr. HF", "og pr. diagnosegruppe"))
 if ( outfile != '') {dev.off()}
+
+
+
+registreringer <- Inklusjon[!is.na(Inklusjon$Navn) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
+  group_by(Sykehusnavn, Navn) %>%
+  summarise(N = n()) %>%
+  spread(key = "Navn", value = "N", fill = 0)
+registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = F, na.last = F), ]
+
+retn <- 'H'
+cexgr <- 1
+plotMatrise <- t(as.matrix(registreringer[,-1]))
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'reg_pr_diagnose.', utformat)
+# x11()
+# outfile <- ""
+figinfo <- rapFigurer::figtype(outfile = outfile, fargepalett = "OffAlleFarger")
+grtxt <- registreringer$Sykehusnavn
+vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
+par('fig'=c(vmarg, 1, 0, 1))
+pos <- barplot(plotMatrise, beside = F, horiz = T, col = figinfo$farger[1:dim(plotMatrise)[1]], border=NA, xlab="Antall pasienter")
+mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
+legend('bottomright', legend = nra::wrap.it(paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])), 34), col = figinfo$farger[1:dim(plotMatrise)[1]],
+       pch = 15, border = NA, bty='n')
+title(main = c("Antall inklusjoner pr. HF", "og pr. diagnose"))
+if ( outfile != '') {dev.off()}
+
+
 @
 
 \begin{figure}[ht]
@@ -502,6 +530,12 @@ if ( outfile != '') {dev.off()}
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diaggr.pdf}
 \caption{Antall inklusjoner per HF og per diagnosegruppe. T.o.m. \Sexpr{rap_aar}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diagnose.pdf}
+\caption{Antall inklusjoner per HF og per diagnose. T.o.m. \Sexpr{rap_aar}}
 \end{figure}
 
 \begin{landscape}
@@ -518,6 +552,18 @@ registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing 
 
 print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)), digits = 0,
                      caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)), include.rownames = F)
+
+
+registreringer <- Inklusjon[!is.na(Inklusjon$Navn) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
+  group_by(Sykehusnavn, Navn) %>%
+  summarise(N = n()) %>%
+  spread(key = "Navn", value = "N", fill = 0)
+registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = F, na.last = F), ] %>%
+  janitor::adorn_totals(where = c("row", "col"))
+
+print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)), digits = 0,
+                     caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)), include.rownames = F)
+
 @
 
 \end{landscape}
@@ -1052,6 +1098,43 @@ norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
                 tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
                 maal = 95, minstekrav = 50)
 @
+
+
+<<'Tab: VDI ved oppfølging', results='asis', echo=FALSE, warning=FALSE>>=
+
+tmp2 <- merge(Oppfolging, VDI[, c("Cataract", "PasientGUID", "VDI_Dato")], by.x = c('PasientGUID','OppfolgingsDato'),
+              by.y = c('PasientGUID','VDI_Dato'), all.x = T)
+tmp2 <- tmp2[tmp2$Diag_gr_nr %in% c(2), ]
+# tmp2 %>% group_by(Oppfolgingsaar) %>% summarise(andeloppf = sum(!is.na(bvas_samlet))/length(bvas_samlet)*100,
+# N = n())
+Tabell_vdi_oppf <- tmp2[tmp2$Oppfolgingsaar==rap_aar, ] %>% group_by(Sykehusnavn) %>% summarise(andeloppf = sum(!is.na(Cataract))/length(Cataract)*100, N = n())
+
+total <- tibble(Sykehusnavn= 'Totalt',
+                andeloppf = sum(Tabell_vdi_oppf$andeloppf*Tabell_vdi_oppf$N)/sum(Tabell_vdi_oppf$N),
+                N = sum(Tabell_vdi_oppf$N))
+Tabell_vdi_oppf <- bind_rows(Tabell_vdi_oppf, total)
+
+names(Tabell_vdi_oppf)[2] <- 'Andel oppfølging'
+
+print(xtable::xtable(Tabell_vdi_oppf, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel med utfylt VDI-skjema ved oppfølging i ', rap_aar, ', ANCA assosierte vaskulitter')), include.rownames = F)
+
+############# Resultatportalen  ##########################################################
+
+Ind3_AndelVDI_NorVas <- tmp2[, c("UnitId", "Oppfolgingsaar", "Cataract")]
+Ind3_AndelVDI_NorVas$Teller <- as.numeric(!is.na(Ind3_AndelVDI_NorVas$Cataract))
+Ind3_AndelVDI_NorVas$Nevner <- 1
+figurdata <- Ind3_AndelVDI_NorVas
+figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
+@
+
+<<'fig. utfylt vdi', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
+# x11()
+outfile <- paste0(figfolder, "vdi_ved_oppf_anca.", utformat)
+norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
+                tittel = c("Andel oppfølginger med utfylt VDI", "for ANCA-assosierte vaskulitter"),
+                outfile = outfile, maal = 95, minstekrav = 50)
+@
+
 
 <<'tab. utført kerr', results='asis', echo=FALSE, warning=FALSE>>=
 Ind3_AndelBVAS_NorVas <- Ind3_AndelBVAS_NorVas[ , -3]

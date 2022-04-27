@@ -2,29 +2,30 @@ library(norvas)
 library(xtable)
 library(lubridate)
 rm(list = ls())
+options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2020
+rap_aar <- 2021
 
-Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2021-05-18_1055.csv', header=TRUE, sep=";",
+Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-05_0931.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
-Oppfolging <- read.table('I:/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2021-05-18_1059.csv', header=TRUE, sep=";",
+# names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
+Oppfolging <- read.table('I:/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2022-04-05_0931.csv', header=TRUE, sep=";",
                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
+Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
+Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-BVAS <- read.table('I:/norvas/DataDump_MRS-PROD_BvasSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
+BVAS <- read.table('I:/norvas/DataDump_MRS-PROD_BvasSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-KERR <- read.table('I:/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2021-05-18_1101.csv', header=TRUE, sep=";",
+KERR <- read.table('I:/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
+VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Alvorlig_infeksjon <- read.table('I:/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2021-05-18_1100.csv',
+Alvorlig_infeksjon <- read.table('I:/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2022-04-05_0932.csv',
                                  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Utredning <- read.table('I:/norvas/DataDump_MRS-PROD_Utredning_2021-05-18_1100.csv', header=TRUE, sep=";",
+Utredning <- read.table('I:/norvas/DataDump_MRS-PROD_Utredning_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2021-05-18_1100.csv', header=TRUE, sep=";",
+Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Inklusjon <- norvasPreprosess(Inklusjon)
@@ -38,8 +39,14 @@ Alvorlig_infeksjon <- norvasPreprosess(Alvorlig_infeksjon)
 Utredning <- norvasPreprosess(Utredning)
 Labskjema <- norvasPreprosess(Labskjema)
 
+# Diagnoser$Navn[Diagnoser$Navn %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
+# Diagnoser <- Diagnoser[-which(Diagnoser$Navn == 'Polymyalgia Rheumatica'), ]
+
 ### Foreløpig fiks, fjernes når data er ordnet
 Medisiner$Medikamentgruppe[Medisiner$Medikamentgruppe == ""] <- "Andre"
+
+### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
+Medisiner <- Medisiner[Medisiner$Medikamentgruppe != "Andre", ]
 
 varnavn <- kodebok_norvas[which(!is.na(kodebok_norvas$Variabelnavn)), c("Variabelnavn", "skjema")]
 indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'BvasSkjema'):
@@ -82,13 +89,15 @@ Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUI
 Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
 Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
-Inklusjon$Fodselsdato <- personnr2fodselsdato(Inklusjon$PasientId)
-Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "Fodselsdato", "InklusjonDato")],
+# Inklusjon$Fodselsdato <- personnr2fodselsdato(Inklusjon$PasientId)
+Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
                    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
 
 Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
                                             "Diag_gr", "Navn")],
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
+Inklusjon <- Inklusjon[Inklusjon$Diag_gr_nr != 3, ]
+
 BVAS <- merge(BVAS, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
 BVAS <- merge(BVAS, Inklusjon[, c('SkjemaGUID', "InklusjonDato")], by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
 Oppfolging <- merge(Oppfolging, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
@@ -96,8 +105,8 @@ KERR <- merge(KERR, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "D
 KERR <- merge(KERR, Inklusjon[, c('SkjemaGUID', "InklusjonDato")], by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
 VDI <- merge(VDI, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
 Medisiner <- merge(Medisiner, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
-Alvorlig_infeksjon <- merge(Alvorlig_infeksjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr", "Fodselsdato")], by = 'HovedskjemaGUID', all.x = T)
-Labskjema <- merge(Labskjema, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr", "Fodselsdato")], by = 'HovedskjemaGUID', all.x = T)
+Alvorlig_infeksjon <- merge(Alvorlig_infeksjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
+Labskjema <- merge(Labskjema, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
 
 Inklusjon$Diagnose_ny <- NA
 Inklusjon$Diagnose_ny[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 90] <- 1
@@ -106,11 +115,14 @@ Inklusjon <- Inklusjon[!is.na(Inklusjon$InklusjonDato), ]
 
 Inklusjon$Inklusjonsaar <- as.numeric(format(Inklusjon$InklusjonDato, format = '%Y'))
 Oppfolging$Oppfolgingsaar <- as.numeric(format(Oppfolging$OppfolgingsDato, format = '%Y'))
-Inklusjon$Inklusjonsalder <- age(Inklusjon$Fodselsdato, Inklusjon$InklusjonDato)
+# Inklusjon$Inklusjonsalder <- age(Inklusjon$Fodselsdato, Inklusjon$InklusjonDato)
+Inklusjon$Inklusjonsalder <- Inklusjon$PatientAge
 BVAS$BVAS_aar <- as.numeric(format(BVAS$BVAS_Dato, format = '%Y'))
 KERR$KERR_aar <- as.numeric(format(KERR$KerrsKriterier_Dato, format = '%Y'))
-Diagnoser$DiagnoseAlder <- age(Diagnoser$Fodselsdato, Diagnoser$Diagnose_Klinisk_Dato)
-Alvorlig_infeksjon$inf_alder <- age(Alvorlig_infeksjon$Fodselsdato, Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato)
+# Diagnoser$DiagnoseAlder <- age(Diagnoser$Fodselsdato, Diagnoser$Diagnose_Klinisk_Dato)
+Diagnoser$DiagnoseAlder <- Diagnoser$PatientAge
+# Alvorlig_infeksjon$inf_alder <- age(Alvorlig_infeksjon$Fodselsdato, Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato)
+Alvorlig_infeksjon$inf_alder <- Alvorlig_infeksjon$PatientAge
 
 Oppfolging <- Oppfolging[Oppfolging$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
 Diagnoser <- Diagnoser[Diagnoser$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
@@ -122,9 +134,12 @@ Alvorlig_infeksjon <- Alvorlig_infeksjon[Alvorlig_infeksjon$PasientGUID %in% uni
 Utredning <- Utredning[Utredning$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
 Labskjema <- Labskjema[Labskjema$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
 
+#### FJERN MEDISINER UNDER ANNET, DVS. FOLSYRE OG ANNETIMPORTERT
+# Medisiner <- Medisiner[-which(Medisiner$Medikamentgruppe=='Annet'), ]
 
 #### HVIS SAMME PASIENT HAR OPPSTART MED SAMME LEGEMIDDEL PÅ SAMME DAG, VELG DEN MED TIDLIGST SLUTTDATO
-
+# Medisiner$LegemiddelType <- Medisiner$LegemiddelType2020
+# Medisiner$LegemiddelType[Medisiner$LegemiddelType==""] <- Medisiner$LegemiddelType2019[Medisiner$LegemiddelType==""]
 tmp <- Medisiner %>%
   group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
   summarise('ant_samme_startdato' = n(),
@@ -137,7 +152,6 @@ Medisiner <- merge(Medisiner, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")],
 
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId), Inklusjon$UnitId), c("UnitId", "Sykehusnavn")]
-
 
 ## Kompletthet av variabler
 
@@ -250,40 +264,5 @@ Kompletthet$Kompletthet <- Kompletthet$Antall_utfylt/Kompletthet$N*100
 
 
 
-write.csv2(Kompletthet, "C:/GIT/norvas/doc/Kompletthet.csv", row.names = F, fileEncoding = "Latin1")
+write.csv2(Kompletthet, "C:/GIT/norvas/doc/Kompletthet2021.csv", row.names = F, fileEncoding = "Latin1")
 
-
-
-
-
-# Sykdomsaktivitet målt ved BVAS
-
-# bvas2019 <- BVAS[BVAS$BVAS_aar == 2019, c("PasientGUID", "BVAS_Dato", "BVAS_aar", "bvas_samlet", "BvasPersistentTotal", "BvasnewOrWorseTotal",
-#                                           "BvasKommentar")]
-#
-# oppf2019 <- Oppfolging[Oppfolging$Oppfolgingsaar == 2019, c("PasientGUID", )]
-# p_guid_nevner_gr2_3 <- unique(union(Inklusjon$PasientGUID[which(Inklusjon$Inklusjonsaar==2019 & Inklusjon$Diag_gr_nr %in% c(2,3))],
-#                            Oppfolging$PasientGUID[which(Oppfolging$Oppfolgingsaar==2019 & Oppfolging$Diag_gr_nr %in% c(2,3))]))
-# p_guid_bvas <- unique(BVAS$PasientGUID[which(BVAS$BVAS_aar == 2019 & BVAS$Diag_gr_nr %in% c(2,3))])
-# # length(intersect(p_guid_bvas, p_guid_nevner_gr2_3))
-#
-# bvas_kompletthet <- length(p_guid_bvas)/length(p_guid_nevner_gr2_3)*100
-# bvas_kompletthet_v2 <- length(intersect(p_guid_bvas, p_guid_nevner_gr2_3))/length(p_guid_nevner_gr2_3)*100
-# ## Sannsynlig at bvas som fylles ut og skal knyttes til historisk debutskjema havner på dagens dato.
-#
-# table(BVAS$Sykdomsvurdering[BVAS$BVAS_aar == 2019 & BVAS$Diag_gr_nr %in% c(2)], useNA = 'ifany')
-# ## Alle utfylte BVas HAR MED SYKDOMSVURDERING
-#
-# p_guid_nevner_gr1 <- unique(union(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar==2019 & Inklusjon$Diag_gr_nr %in% c(1)],
-#                               Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==2019 & Oppfolging$Diag_gr_nr %in% c(1)]))
-# p_guid_kerr <- unique(KERR$PasientGUID[format(KERR$KerrsKriterier_Dato, format="%Y") == "2019" & KERR$Diag_gr_nr %in% c(1)])
-# length(intersect(p_guid_kerr, p_guid_nevner_gr1))
-#
-# kerr_kompletthet <- length(p_guid_kerr)/length(p_guid_nevner_gr1)*100
-#
-#
-# p_guid_nevner <- unique(union(Inklusjon$PasientGUID[which(Inklusjon$Inklusjonsaar==2019)],
-#                                     Oppfolging$PasientGUID[which(Oppfolging$Oppfolgingsaar==2019)]))
-# p_guid_vdi <- unique(VDI$PasientGUID[which(format(VDI$VDI_Dato, format="%Y") == "2019")])
-#
-# vdi_kompletthet <- length(p_guid_vdi)/length(p_guid_nevner)*100
