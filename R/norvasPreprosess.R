@@ -112,15 +112,6 @@ norvasPreprosess <- function(RegData) {
       (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2020' & varnavn$skjema == 'MedisineringSkjema')+1])-1)
     kobl_generisknavn_kode <- data.frame(kode=as.numeric(kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
                                          label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
-    # RegData$LegemiddelKode <- RegData$LegemiddelType
-    # RegData$LegemiddelKode[RegData$LegemiddelKode==7] <- 40
-    # RegData$LegemiddelKode[RegData$LegemiddelKode %in% c(10,11)] <- 5
-    # RegData$LegemiddelKode[RegData$LegemiddelKode==29] <- 2
-    # RegData$LegemiddelKode[RegData$LegemiddelKode==37] <- 36
-    # RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelKode, kobl_gruppe_kode$kode)]
-    # RegData$LegemiddelGenerisk <-  kobl_generisknavn_kode$label[match(RegData$LegemiddelKode, kobl_generisknavn_kode$kode)]
-    # RegData$LegemiddelTypeLabel <- factor(RegData$LegemiddelKode, levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
-    #                                       labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
     gml_medisinnr <- which(RegData$LegemiddelType2019 != "")
     RegData$LegemiddelNr[gml_medisinnr] <- as.numeric(norvas::mapping_med$ny_nr[match(RegData$LegemiddelNr[gml_medisinnr],
                                                                                       norvas::mapping_med$gml_nr)])

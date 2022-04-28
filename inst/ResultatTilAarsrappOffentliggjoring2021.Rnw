@@ -188,7 +188,7 @@ Labskjema <- Labskjema[Labskjema$PasientGUID %in% unique(Inklusjon$PasientGUID),
 
 #### HVIS SAMME PASIENT HAR OPPSTART MED SAMME LEGEMIDDEL PÅ SAMME DAG, VELG DEN MED TIDLIGST SLUTTDATO
 # Medisiner$LegemiddelType <- Medisiner$LegemiddelType2020
-# Medisiner$LegemiddelType[Medisiner$LegemiddelType==""] <- Medisiner$LegemiddelType2019[Medisiner$LegemiddelType==""]
+# Medisiner$LegemiddelType[Medisiner$LegemiddelType==""] <- Medisiner$LegemiddelType_rapaar[Medisiner$LegemiddelType==""]
 tmp <- Medisiner %>%
   group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
   summarise('ant_samme_startdato' = n(),
@@ -295,33 +295,26 @@ norvasFigAndeler(RegData=BVAS, valgtVar=valgtVar, datoFra=datoFra, datoTil=paste
 datoFra <- paste0(rap_aar, "-01-01")
 datoTil=paste0(rap_aar, "-12-31")
 
-outfile <- paste0(figfolder, 'sykdomsvurdering2019.', utformat)
+outfile <- paste0(figfolder, 'sykdomsvurdering_rapaar.', utformat)
 norvasFigAndeler(RegData=BVAS[BVAS$BVAS_Dato >= datoFra & BVAS$BVAS_Dato <= datoTil, ], valgtVar=valgtVar,
                  datoFra=datoFra, datoTil=datoTil,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
                  enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=99,
                  valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar, inkl_N = T)
 
-outfile <- paste0(figfolder, 'sykdomsvurdering2019_gr1.', utformat)
+outfile <- paste0(figfolder, 'sykdomsvurdering_rapaar_gr1.', utformat)
 norvasFigAndeler(RegData=BVAS[BVAS$BVAS_Dato >= datoFra & BVAS$BVAS_Dato <= datoTil, ], valgtVar=valgtVar,
                  datoFra=datoFra, datoTil=datoTil,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
                  enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=1,
                  valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar, inkl_N = T)
 
-outfile <- paste0(figfolder, 'sykdomsvurdering2019_gr2.', utformat)
+outfile <- paste0(figfolder, 'sykdomsvurdering_rapaar_gr2.', utformat)
 norvasFigAndeler(RegData=BVAS[BVAS$BVAS_Dato >= datoFra & BVAS$BVAS_Dato <= datoTil, ], valgtVar=valgtVar,
                  datoFra=datoFra, datoTil=datoTil,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
                  enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=2,
                  valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar, inkl_N = T)
-
-# outfile <- paste0(figfolder, 'sykdomsvurdering2019_gr3.', utformat)
-# norvasFigAndeler(RegData=BVAS[BVAS$BVAS_Dato >= datoFra & BVAS$BVAS_Dato <= datoTil, ], valgtVar=valgtVar,
-#                  datoFra=datoFra, datoTil=datoTil,
-#                         minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
-#                  enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=3,
-#                         valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar, inkl_N = T)
 
 outfile <- paste0(figfolder, 'sykdomsvurdering_rap_aar_gr1.', utformat)
 norvasFigAndeler(RegData=KERR[KERR$KerrsKriterier_Dato >= datoFra & KERR$KerrsKriterier_Dato <= datoTil, ], valgtVar="Sykdomsvurdering_kerr",
@@ -337,7 +330,7 @@ norvasFigAndeler(RegData=KERR, valgtVar="Sykdomsvurdering_kerr",
 
 ## Ønske om å se over flere år
 
-## Se på mulighet for å sammenligne sykehus Stabel i Wenches årsrapport. Kun for HF med mer enn 50 registreringer i 2019.
+## Se på mulighet for å sammenligne sykehus Stabel i Wenches årsrapport. Kun for HF med mer enn 50 registreringer i _rapaar.
 
 @
 
@@ -388,13 +381,13 @@ norvasFigAndeler(RegData=KERR, valgtVar="Sykdomsvurdering_kerr",
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering2019.pdf}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering_rapaar.pdf}
 \caption{Sykdomsvurdering \Sexpr{rap_aar}}
 \end{figure}
 
 % \begin{figure}[ht]
 % \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering2019_gr1.pdf}
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering_rapaar_gr1.pdf}
 % \caption{Sykdomsvurdering \Sexpr{rap_aar}, gruppe 1}
 % \end{figure}
 
@@ -406,21 +399,21 @@ norvasFigAndeler(RegData=KERR, valgtVar="Sykdomsvurdering_kerr",
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering2019_gr2.pdf}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering_rapaar_gr2.pdf}
 \caption{Sykdomsvurdering \Sexpr{rap_aar}, gruppe 2}
 \end{figure}
 
 % \begin{figure}[ht]
 % \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering2019_gr3.pdf}
+% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}sykdomsvurdering_rapaar_gr3.pdf}
 % \caption{Sykdomsvurdering \Sexpr{rap_aar}, gruppe 3}
 % \end{figure}
 
 
 <<'Tab: registreringer', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 # x11()
-registreringer <- Inklusjon %>% group_by(Sykehusnavn) %>% summarise('Foer2019' = sum(Inklusjonsaar<rap_aar),
-                                                                    'aar2019' = sum(Inklusjonsaar==rap_aar))
+registreringer <- Inklusjon %>% group_by(Sykehusnavn) %>% summarise('Foer_rapaar' = sum(Inklusjonsaar<rap_aar),
+                                                                    'aar_rapaar' = sum(Inklusjonsaar==rap_aar))
 registreringer <- registreringer[order(rowSums(registreringer[,2:3]), decreasing = F, na.last = F), ]
 
 retn <- 'H'
@@ -435,14 +428,14 @@ vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise[c(2,1), ], beside = F, horiz = T, col = figinfo$farger[c(3,1)], border=NA, xlab="Antall pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', sum(registreringer$Foer2019, na.rm = T)),
-                                 paste0(rap_aar, ', N=', sum(registreringer$aar2019, na.rm = T))), col = figinfo$farger[c(3,1)],
+legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', sum(registreringer$Foer_rapaar, na.rm = T)),
+                                 paste0(rap_aar, ', N=', sum(registreringer$aar_rapaar, na.rm = T))), col = figinfo$farger[c(3,1)],
        pch = 15, border = NA, bty='n')
 title(main = 'Antall inklusjoner pr. HF')
 if ( outfile != '') {dev.off()}
 
-oppfolginger <- Oppfolging %>% group_by(Sykehusnavn) %>% summarise('Foer2019' = sum(Oppfolgingsaar<rap_aar),
-                                                                   'aar2019' = sum(Oppfolgingsaar==rap_aar))
+oppfolginger <- Oppfolging %>% group_by(Sykehusnavn) %>% summarise('Foer_rapaar' = sum(Oppfolgingsaar<rap_aar),
+                                                                   'aar_rapaar' = sum(Oppfolgingsaar==rap_aar))
 oppfolginger <- oppfolginger[order(rowSums(oppfolginger[,2:3]), decreasing = F, na.last = F), ]
 
 plotMatrise <- t(as.matrix(oppfolginger[,c(2,3)]))[c(2,1), ]
@@ -455,8 +448,8 @@ vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise[c(2,1), ], beside = F, horiz = T, col = figinfo$farger[c(3,1)], border=NA, xlab="Antall pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', sum(oppfolginger$Foer2019, na.rm = T)),
-                                 paste0(rap_aar, ', N=', sum(oppfolginger$aar2019, na.rm = T))),
+legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', sum(oppfolginger$Foer_rapaar, na.rm = T)),
+                                 paste0(rap_aar, ', N=', sum(oppfolginger$aar_rapaar, na.rm = T))),
        col = figinfo$farger[c(3,1)], pch = 15, border = NA, bty='n')
 title(main = 'Antall oppfølginger pr. HF')
 
@@ -485,8 +478,8 @@ pos <- barplot(plotMatrise, beside = F, horiz = T, col = figinfo$farger[c(3,2,1)
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
 legend('bottomright', legend = paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])), col = figinfo$farger[c(3,2,1)],
        pch = 15, border = NA, bty='n')
-# legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', sum(registreringer$Foer2019, na.rm = T)),
-#                                  paste0(rap_aar, ', N=', sum(registreringer$aar2019, na.rm = T))), col = figinfo$farger[c(3,1)],
+# legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', sum(registreringer$Foer_rapaar, na.rm = T)),
+#                                  paste0(rap_aar, ', N=', sum(registreringer$aar_rapaar, na.rm = T))), col = figinfo$farger[c(3,1)],
 #        pch = 15, border = NA, bty='n')
 title(main = c("Antall inklusjoner pr. HF", "og pr. diagnosegruppe"))
 if ( outfile != '') {dev.off()}
@@ -580,17 +573,20 @@ print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(regi
 <<'Tab: Andel pas. som har brukt med. grupper.', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 
 # ######## gr. 1 ################
-indMedisinert2019 <- which(((Medisiner$Med_StartDato <= datoTil & is.na(Medisiner$Med_SluttDato)) | (Medisiner$Med_StartDato <= datoTil & Medisiner$Med_SluttDato >= datoFra)) & Medisiner$Diag_gr_nr == 1)
+indMedisinert_rapaar <- which(((Medisiner$Med_StartDato <= datoTil & is.na(Medisiner$Med_SluttDato)) | (Medisiner$Med_StartDato <= datoTil & Medisiner$Med_SluttDato >= datoFra)) & Medisiner$Diag_gr_nr == 1)
 
-pid_Medisinert2019 <- unique(Medisiner$PasientGUID[indMedisinert2019])
-pid_oppfolging2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar & Oppfolging$Diag_gr_nr==1])
-pid_inkludert2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar & Inklusjon$Diag_gr_nr == 1])
+pid_Medisinert_rapaar <- unique(Medisiner$PasientGUID[indMedisinert_rapaar])
+pid_oppfolging_rapaar <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar & Oppfolging$Diag_gr_nr==1])
+pid_inkludert_rapaar <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar & Inklusjon$Diag_gr_nr == 1])
 
-pid_alle_pas2019 <- unique(c(pid_Medisinert2019, pid_oppfolging2019, pid_inkludert2019))
+pid_alle_pas_rapaar <- unique(c(pid_Medisinert_rapaar, pid_oppfolging_rapaar, pid_inkludert_rapaar))
 
-ant_pas_pr_med <- Medisiner[indMedisinert2019, ] %>% group_by(Sykehusnavn, Medikamentgruppe) %>%
-  summarise(Antall = length(unique(PasientGUID))) %>% ungroup() %>% spread(key=Medikamentgruppe, value = Antall)
-N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas2019, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
+ant_pas_pr_med <- Medisiner[indMedisinert_rapaar, ] %>%
+  group_by(Sykehusnavn, Medikamentgruppe) %>%
+  summarise(Antall = length(unique(PasientGUID))) %>%
+  ungroup() %>%
+   spread(key=Medikamentgruppe, value = Antall)
+N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas_rapaar, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
 
 # Resultat
 ant_pas_pr_med_gr1 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
@@ -605,39 +601,88 @@ grtxt <- ant_pas_pr_med_gr1$Sykehusnavn
 figinfo <- rapFigurer::figtype(outfile = outfile)
 vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.85)))
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr1$Kortikosteroider/ant_pas_pr_med_gr1$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr1$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr1$Kortikosteroider/ant_pas_pr_med_gr1$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr1$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = 'Kortikosteroider, storkarsvaskulitter')
 if ( outfile != '') {dev.off()}
 
 outfile <- paste0(figfolder, 'DMARD_gr1.', utformat)
 figinfo <- rapFigurer::figtype(outfile = outfile)
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr1$DMARD/ant_pas_pr_med_gr1$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr1$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr1$DMARD/ant_pas_pr_med_gr1$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr1$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = 'DMARD, storkarsvaskulitter')
 if ( outfile != '') {dev.off()}
 
 outfile <- paste0(figfolder, 'Biologiske_gr1.', utformat)
 figinfo <- rapFigurer::figtype(outfile = outfile)
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr1$`Biologiske legemidler`/ant_pas_pr_med_gr1$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr1$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr1$`Biologiske legemidler`/ant_pas_pr_med_gr1$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr1$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = c('Biologiske legemidler,', 'storkarsvaskulitter'))
 if ( outfile != '') {dev.off()}
 
+####### NY: Andel pas. som har brukt undergrupper av DMARD Gr 1 ##################
+Medisiner$LegemiddelGenerisk[Medisiner$LegemiddelGenerisk %in% c("Mycofenolat mofetil", "Mycofenolsyre")] <-
+  "Mycofenolat"
+
+ant_pas_pr_med <- Medisiner[indMedisinert_rapaar, ] %>%
+  group_by(Sykehusnavn, LegemiddelGenerisk) %>%
+  summarise(Antall = length(unique(PasientGUID))) %>%
+  ungroup() %>%
+  spread(key=LegemiddelGenerisk, value = Antall, fill=0)
+
+ant_pas_pr_med <- ant_pas_pr_med[, c("Sykehusnavn",
+                                     intersect(c("Methotrexate", "Leflunomid", "Azathioprin", "Mycofenolat"),
+                                               Medisiner[indMedisinert_rapaar, "LegemiddelGenerisk"]))]
+N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas_rapaar, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
+ant_pas_pr_med_gr1 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
+ant_pas_pr_med_gr1 <- ant_pas_pr_med_gr1[ant_pas_pr_med_gr1$N >= 5, ]
+
+plotMatrise <- ant_pas_pr_med_gr1[ , -c(1, dim(ant_pas_pr_med_gr1)[2])]/ant_pas_pr_med_gr1$N*100
+row.names(plotMatrise) <-ant_pas_pr_med_gr1$Sykehusnavn
+rkflg <- order(rowSums(plotMatrise))
+plotMatrise <- plotMatrise[rkflg, ]
+grtxt <- row.names(plotMatrise)
+grtxt <- paste0(grtxt, ' (N=', ant_pas_pr_med_gr1$N[rkflg], ')')
+plotMatrise <- t(as.matrix(plotMatrise))
+
+retn <- 'H'
+cexgr <- 1
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'andel_undergr_dmard_gr1.', utformat)
+figinfo <- rapFigurer::figtype(outfile = outfile)
+vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
+par('fig'=c(vmarg, 1, 0, 1))
+pos <- barplot(plotMatrise, beside = F, horiz = T, col = rev(figinfo$farger[1:dim(plotMatrise)[1]]), border=NA, xlab="Andel pasienter")
+mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
+legend('bottomright', legend = nra::wrap.it(paste0(names(ant_pas_pr_med_gr1)[-c(1, dim(ant_pas_pr_med_gr1)[2])], ", N=",
+                                                   colSums(ant_pas_pr_med_gr1[, -c(1, dim(ant_pas_pr_med_gr1)[2])])), 34),
+       col = rev(figinfo$farger[1:dim(plotMatrise)[1]]),
+       pch = 15, border = NA, bty='n')
+title(main = c('Undergrupper av DMARD,', 'storkarsvaskulitter'))
+if ( outfile != '') {dev.off()}
+
+
+
 # ######## gr. 2 ANCA ################
-indMedisinert2019 <- which(((Medisiner$Med_StartDato <= datoTil & is.na(Medisiner$Med_SluttDato)) | (Medisiner$Med_StartDato <= datoTil & Medisiner$Med_SluttDato >= datoFra)) & Medisiner$Diag_gr_nr == 2)
+indMedisinert_rapaar <- which(((Medisiner$Med_StartDato <= datoTil & is.na(Medisiner$Med_SluttDato)) | (Medisiner$Med_StartDato <= datoTil & Medisiner$Med_SluttDato >= datoFra)) & Medisiner$Diag_gr_nr == 2)
 
-pid_Medisinert2019 <- unique(Medisiner$PasientGUID[indMedisinert2019])
-pid_oppfolging2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar & Oppfolging$Diag_gr_nr == 2])
-pid_inkludert2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar & Inklusjon$Diag_gr_nr == 2])
+pid_Medisinert_rapaar <- unique(Medisiner$PasientGUID[indMedisinert_rapaar])
+pid_oppfolging_rapaar <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar & Oppfolging$Diag_gr_nr == 2])
+pid_inkludert_rapaar <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar & Inklusjon$Diag_gr_nr == 2])
 
-pid_alle_pas2019 <- unique(c(pid_Medisinert2019, pid_oppfolging2019, pid_inkludert2019))
+pid_alle_pas_rapaar <- unique(c(pid_Medisinert_rapaar, pid_oppfolging_rapaar, pid_inkludert_rapaar))
 
-ant_pas_pr_med <- Medisiner[indMedisinert2019, ] %>% group_by(Sykehusnavn, Medikamentgruppe) %>%
+ant_pas_pr_med <- Medisiner[indMedisinert_rapaar, ] %>% group_by(Sykehusnavn, Medikamentgruppe) %>%
   summarise(Antall = length(unique(PasientGUID))) %>% ungroup() %>% spread(key=Medikamentgruppe, value = Antall)
-N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas2019, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
+N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas_rapaar, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
 
 # Resultat
 ant_pas_pr_med_gr2 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
@@ -650,42 +695,93 @@ grtxt <- ant_pas_pr_med_gr2$Sykehusnavn
 figinfo <- rapFigurer::figtype(outfile = outfile)
 vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr2$Kortikosteroider/ant_pas_pr_med_gr2$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr2$Kortikosteroider/ant_pas_pr_med_gr2$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr2$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = 'Kortikosteroider, ANCA assosiert vaskulitt')
 if ( outfile != '') {dev.off()}
 
 outfile <- paste0(figfolder, 'DMARD_gr2.', utformat)
 figinfo <- rapFigurer::figtype(outfile = outfile)
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr2$DMARD/ant_pas_pr_med_gr2$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr2$DMARD/ant_pas_pr_med_gr2$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr2$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = 'DMARD, ANCA assosiert vaskulitt')
 if ( outfile != '') {dev.off()}
 
 outfile <- paste0(figfolder, 'Cyclofosfamid_gr2.', utformat)
 figinfo <- rapFigurer::figtype(outfile = outfile)
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr2$Cyclofosfamid/ant_pas_pr_med_gr2$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr2$Cyclofosfamid/ant_pas_pr_med_gr2$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr2$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = 'Cyclofosfamid, ANCA assosiert vaskulitt')
 if ( outfile != '') {dev.off()}
 
 outfile <- paste0(figfolder, 'Rituximab_gr2.', utformat)
 figinfo <- rapFigurer::figtype(outfile = outfile)
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr2$Rituximab/ant_pas_pr_med_gr2$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr2$Rituximab/ant_pas_pr_med_gr2$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr2$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = 'Rituximab, ANCA assosiert vaskulitt')
 if ( outfile != '') {dev.off()}
 
 outfile <- paste0(figfolder, 'Biologiske_gr2.', utformat)
 figinfo <- rapFigurer::figtype(outfile = outfile)
 par('fig'=c(vmarg, 1, 0, 1))
-pos <- barplot(ant_pas_pr_med_gr2$`Biologiske legemidler`/ant_pas_pr_med_gr2$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
+plotvektor <- ant_pas_pr_med_gr2$`Biologiske legemidler`/ant_pas_pr_med_gr2$N*100
+rkflg <- order(plotvektor, na.last = F)
+pos <- barplot(plotvektor[rkflg], horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
+mtext(at=pos+0.00, text=paste0(grtxt[rkflg], ' (N=', ant_pas_pr_med_gr2$N[rkflg], ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = c('Biologiske legemidler,', 'ANCA assosiert vaskulitt'))
 if ( outfile != '') {dev.off()}
+
+####### NY: Andel pas. som har brukt undergrupper av DMARD Gr 1 ##################
+
+ant_pas_pr_med <- Medisiner[indMedisinert_rapaar, ] %>%
+  group_by(Sykehusnavn, LegemiddelGenerisk) %>%
+  summarise(Antall = length(unique(PasientGUID))) %>%
+  ungroup() %>%
+  spread(key=LegemiddelGenerisk, value = Antall, fill=0)
+
+ant_pas_pr_med <- ant_pas_pr_med[, c("Sykehusnavn",
+                                     intersect(c("Methotrexate", "Leflunomid", "Azathioprin", "Mycofenolat"),
+                                               Medisiner[indMedisinert_rapaar, "LegemiddelGenerisk"]))]
+N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas_rapaar, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
+ant_pas_pr_med_gr2 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
+ant_pas_pr_med_gr2 <- ant_pas_pr_med_gr2[ant_pas_pr_med_gr2$N >= 5, ]
+
+plotMatrise <- ant_pas_pr_med_gr2[ , -c(1, dim(ant_pas_pr_med_gr2)[2])]/ant_pas_pr_med_gr2$N*100
+row.names(plotMatrise) <-ant_pas_pr_med_gr2$Sykehusnavn
+rkflg <- order(rowSums(plotMatrise))
+plotMatrise <- plotMatrise[rkflg, ]
+grtxt <- row.names(plotMatrise)
+grtxt <- paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N[rkflg], ')')
+plotMatrise <- t(as.matrix(plotMatrise))
+
+retn <- 'H'
+cexgr <- 1
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'andel_undergr_dmard_gr2.', utformat)
+figinfo <- rapFigurer::figtype(outfile = outfile)
+vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
+par('fig'=c(vmarg, 1, 0, 1))
+pos <- barplot(plotMatrise, beside = F, horiz = T, col = rev(figinfo$farger[1:dim(plotMatrise)[1]]), border=NA, xlab="Andel pasienter")
+mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
+legend('bottomright', legend = nra::wrap.it(paste0(names(ant_pas_pr_med_gr2)[-c(1, dim(ant_pas_pr_med_gr2)[2])], ", N=",
+                                                   colSums(ant_pas_pr_med_gr2[, -c(1, dim(ant_pas_pr_med_gr2)[2])])), 34),
+       col = rev(figinfo$farger[1:dim(plotMatrise)[1]]),
+       pch = 15, border = NA, bty='n')
+title(main = c('Undergrupper av DMARD,', 'ANCA assosiert vaskulitt'))
+if ( outfile != '') {dev.off()}
+
+
 
 ## For gruppe 2, nasjonalt: Forbruk t.o.m. 2018 og forbruk i 2018 for Rituximab og Cyclofosfamid
 
@@ -693,28 +789,28 @@ if ( outfile != '') {dev.off()}
 
 # Antall pasienter som er eller har vært på gjeldende medisin
 
-ant_pas_pr_med_foer2019 <- Medisiner[Medisiner$Med_StartDato < datoFra, ] %>% group_by(LegemiddelGenerisk) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
-# N_foer2019 <- length(unique(Medisiner[Medisiner$Med_StartDato < '2019-01-01', "PasientGUID"]))
-indMedisinert_foer2019 <- which(Medisiner$Med_StartDato < datoFra)
-pid_Medisinert_foer2019 <- unique(Medisiner$PasientGUID[indMedisinert_foer2019])
-pid_oppfolging_foer2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar<rap_aar])
-pid_inkludert_foer2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<rap_aar])
-N_foer2019 <- length(unique(c(pid_Medisinert_foer2019, pid_oppfolging_foer2019, pid_inkludert_foer2019)))
+ant_pas_pr_med_foer_rapaar <- Medisiner[Medisiner$Med_StartDato < datoFra, ] %>% group_by(LegemiddelGenerisk) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
+# N_foer_rapaar <- length(unique(Medisiner[Medisiner$Med_StartDato < '_rapaar-01-01', "PasientGUID"]))
+indMedisinert_foer_rapaar <- which(Medisiner$Med_StartDato < datoFra)
+pid_Medisinert_foer_rapaar <- unique(Medisiner$PasientGUID[indMedisinert_foer_rapaar])
+pid_oppfolging_foer_rapaar <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar<rap_aar])
+pid_inkludert_foer_rapaar <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<rap_aar])
+N_foer_rapaar <- length(unique(c(pid_Medisinert_foer_rapaar, pid_oppfolging_foer_rapaar, pid_inkludert_foer_rapaar)))
 
-ant_pas_pr_med_2019 <- Medisiner[(Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra, ] %>% group_by(LegemiddelGenerisk) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
+ant_pas_pr_med_rapaar <- Medisiner[(Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra, ] %>% group_by(LegemiddelGenerisk) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
 
-indMedisinert2019 <- which((Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra)
-pid_Medisinert2019 <- unique(Medisiner$PasientGUID[indMedisinert2019])
-pid_oppfolging2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar])
-pid_inkludert2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar])
-N_2019 <- length(unique(c(pid_Medisinert2019, pid_oppfolging2019, pid_inkludert2019)))
+indMedisinert_rapaar <- which((Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra)
+pid_Medisinert_rapaar <- unique(Medisiner$PasientGUID[indMedisinert_rapaar])
+pid_oppfolging_rapaar <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar])
+pid_inkludert_rapaar <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar])
+N_rapaar <- length(unique(c(pid_Medisinert_rapaar, pid_oppfolging_rapaar, pid_inkludert_rapaar)))
 
-ant_pas_pr_med <- merge(ant_pas_pr_med_foer2019, ant_pas_pr_med_2019, by = 'LegemiddelGenerisk', all = T)
+ant_pas_pr_med <- merge(ant_pas_pr_med_foer_rapaar, ant_pas_pr_med_rapaar, by = 'LegemiddelGenerisk', all = T)
 
-ant_pas_pr_med$andel_foer2019 <- ant_pas_pr_med$Antall.x/N_foer2019*100
-ant_pas_pr_med$andel_2019 <- ant_pas_pr_med$Antall.y/N_2019*100
+ant_pas_pr_med$andel_foer_rapaar <- ant_pas_pr_med$Antall.x/N_foer_rapaar*100
+ant_pas_pr_med$andel_rapaar <- ant_pas_pr_med$Antall.y/N_rapaar*100
 
-ant_pas_pr_med <- ant_pas_pr_med[order(ant_pas_pr_med$andel_2019, decreasing = F), ]
+ant_pas_pr_med <- ant_pas_pr_med[order(ant_pas_pr_med$andel_rapaar, decreasing = F), ]
 
 #######################################################
 # Gjenskapnig av figur 7 fra årsrapport.
@@ -722,7 +818,7 @@ ant_pas_pr_med <- ant_pas_pr_med[order(ant_pas_pr_med$andel_2019, decreasing = F
 # x11()
 retn <- 'H'
 cexgr <- 0.8
-plotMatrise <- t(as.matrix(ant_pas_pr_med[,c("andel_foer2019", "andel_2019")]))[c(2,1), ]
+plotMatrise <- t(as.matrix(ant_pas_pr_med[,c("andel_foer_rapaar", "andel_rapaar")]))[c(2,1), ]
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
 outfile <- paste0(figfolder, 'pasPaaMedisin.', utformat)
 # outfile <- ''
@@ -732,7 +828,7 @@ vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = T, horiz = T, col = figinfo$farger[c(1,3)], border=NA, xlab="Andel pasienter (%)")
 mtext(at=colMeans(pos)+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', N_foer2019), paste0(rap_aar, ', N=', N_2019)),
+legend('bottomright', legend = c(paste0('T.o.m. ', rap_aar-1, ', N=', N_foer_rapaar), paste0(rap_aar, ', N=', N_rapaar)),
        col = figinfo$farger[c(3,1)], pch = 15, border = NA, bty='n')
 title(main = 'Andel pasienter som har brukt/bruker legemidler')
 if ( outfile != '') {dev.off()}
@@ -742,41 +838,41 @@ if ( outfile != '') {dev.off()}
 ######## NYTT !!!!!!!!!!
 # Antall pasienter som er eller har vært på gjeldende medisin
 
-ant_pas_pr_med_foer2019 <- Medisiner[which(Medisiner$Med_StartDato < datoFra), ] %>% group_by(Medikamentgruppe) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
-# N_foer2019 <- length(unique(Medisiner[Medisiner$Med_StartDato < '2019-01-01', "PasientGUID"]))
-indMedisinert_foer2019 <- which(Medisiner$Med_StartDato < datoFra)
-pid_Medisinert_foer2019 <- unique(Medisiner$PasientGUID[indMedisinert_foer2019])
-pid_oppfolging_foer2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar<rap_aar])
-pid_inkludert_foer2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<rap_aar])
-N_foer2019 <- length(unique(c(pid_Medisinert_foer2019, pid_oppfolging_foer2019, pid_inkludert_foer2019)))
+ant_pas_pr_med_foer_rapaar <- Medisiner[which(Medisiner$Med_StartDato < datoFra), ] %>% group_by(Medikamentgruppe) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
+# N_foer_rapaar <- length(unique(Medisiner[Medisiner$Med_StartDato < '_rapaar-01-01', "PasientGUID"]))
+indMedisinert_foer_rapaar <- which(Medisiner$Med_StartDato < datoFra)
+pid_Medisinert_foer_rapaar <- unique(Medisiner$PasientGUID[indMedisinert_foer_rapaar])
+pid_oppfolging_foer_rapaar <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar<rap_aar])
+pid_inkludert_foer_rapaar <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<rap_aar])
+N_foer_rapaar <- length(unique(c(pid_Medisinert_foer_rapaar, pid_oppfolging_foer_rapaar, pid_inkludert_foer_rapaar)))
 
-ant_pas_pr_med_2019 <- Medisiner[which((Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra), ] %>% group_by(Medikamentgruppe) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
+ant_pas_pr_med_rapaar <- Medisiner[which((Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra), ] %>% group_by(Medikamentgruppe) %>% summarise(Antall = length(unique(PasientGUID))) %>% ungroup()
 
-indMedisinert2019 <- which((Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra)
-pid_Medisinert2019 <- unique(Medisiner$PasientGUID[indMedisinert2019])
-pid_oppfolging2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar])
-pid_inkludert2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar])
-N_2019 <- length(unique(c(pid_Medisinert2019, pid_oppfolging2019, pid_inkludert2019)))
+indMedisinert_rapaar <- which((Medisiner$Med_SluttDato >= datoFra | is.na(Medisiner$Med_SluttDato)) & Medisiner$Med_StartDato < datoFra)
+pid_Medisinert_rapaar <- unique(Medisiner$PasientGUID[indMedisinert_rapaar])
+pid_oppfolging_rapaar <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar])
+pid_inkludert_rapaar <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar])
+N_rapaar <- length(unique(c(pid_Medisinert_rapaar, pid_oppfolging_rapaar, pid_inkludert_rapaar)))
 
-ant_pas_pr_med <- merge(ant_pas_pr_med_foer2019, ant_pas_pr_med_2019, by = 'Medikamentgruppe', all = T)
+ant_pas_pr_med <- merge(ant_pas_pr_med_foer_rapaar, ant_pas_pr_med_rapaar, by = 'Medikamentgruppe', all = T)
 
-ant_pas_pr_med$andel_foer2019 <- ant_pas_pr_med$Antall.x/N_foer2019*100
-ant_pas_pr_med$andel_2019 <- ant_pas_pr_med$Antall.y/N_2019*100
+ant_pas_pr_med$andel_foer_rapaar <- ant_pas_pr_med$Antall.x/N_foer_rapaar*100
+ant_pas_pr_med$andel_rapaar <- ant_pas_pr_med$Antall.y/N_rapaar*100
 
-ant_pas_pr_med <- ant_pas_pr_med[order(ant_pas_pr_med$andel_2019, decreasing = F), ]
+ant_pas_pr_med <- ant_pas_pr_med[order(ant_pas_pr_med$andel_rapaar, decreasing = F), ]
 
-### Til register 27.09.2019  #####################################
+### Til register 27.09._rapaar  #####################################
 til_register <- ant_pas_pr_med
-til_register$N_foer2019 <- N_foer2019
-til_register$N_2019 <- N_2019
-names(til_register)[2:3] <- c('Antall_foer2019', 'Antall_2019')
+til_register$N_foer_rapaar <- N_foer_rapaar
+til_register$N_rapaar <- N_rapaar
+names(til_register)[2:3] <- c('Antall_foer_rapaar', 'Antall_rapaar')
 #write.csv2(til_register, 'pas_paa_med_gr.csv', row.names = F)
 ##################################################################
 
 # x11()
 retn <- 'H'
 cexgr <- 0.8
-plotMatrise <- t(as.matrix(ant_pas_pr_med[,c("andel_foer2019", "andel_2019")]))[c(2,1), ]
+plotMatrise <- t(as.matrix(ant_pas_pr_med[,c("andel_foer_rapaar", "andel_rapaar")]))[c(2,1), ]
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
 outfile <- paste0(figfolder, 'pasPaaMedisinGr.', utformat)
 # outfile <- ''
@@ -786,7 +882,7 @@ vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = T, horiz = T, col = figinfo$farger[c(1,3)], border=NA, xlab="Andel pasienter (%)")
 mtext(at=colMeans(pos)+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = c(paste0('T.o.m.', rap_aar-1, ', N=', N_foer2019), paste0(rap_aar, ', N=', N_2019)),
+legend('bottomright', legend = c(paste0('T.o.m.', rap_aar-1, ', N=', N_foer_rapaar), paste0(rap_aar, ', N=', N_rapaar)),
        col = figinfo$farger[c(3,1)], pch = 15, border = NA, bty='n')
 title(main = 'Andel pasienter som har brukt/bruker legemidler')
 if ( outfile != '') {dev.off()}
@@ -822,6 +918,12 @@ if ( outfile != '') {dev.off()}
 
 \begin{figure}[ht]
 \centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}andel_undergr_dmard_gr1.pdf}
+\caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Biologiske_gr1.pdf}
 \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
 \end{figure}
@@ -835,6 +937,12 @@ if ( outfile != '') {dev.off()}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}DMARD_gr2.pdf}
+\caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}andel_undergr_dmard_gr2.pdf}
 \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
 \end{figure}
 
@@ -855,37 +963,6 @@ if ( outfile != '') {dev.off()}
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Biologiske_gr2.pdf}
 \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
 \end{figure}
-
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Kortikosteroider_gr3.pdf}
-% \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
-% \end{figure}
-%
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}DMARD_gr3.pdf}
-% \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
-% \end{figure}
-%
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Cyclofosfamid_gr3.pdf}
-% \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
-% \end{figure}
-%
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Rituximab_gr3.pdf}
-% \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
-% \end{figure}
-%
-% \begin{figure}[ht]
-% \centering
-% \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}Biologiske_gr3.pdf}
-% \caption{Utvalg som i Figur \ref{medisin_figur_alle} for \Sexpr{rap_aar}.}
-% \end{figure}
-
 
 
 <<'Tab: Oppf.pr.pas.', results='asis', echo=FALSE, warning=F>>=
@@ -991,9 +1068,9 @@ print(xtable::xtable(min2oppf, align= c('l','l','r','r'), digits=c(0, 0,1,0), ca
 
 nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30), ]
 
-ant_nysyke2019 <-  as.data.frame(table(nysyke$Diag_gr[nysyke$Inklusjonsaar==rap_aar]))
-names(ant_nysyke2019) <- c('Diagnosegruppe', 'Antall')
-print(xtable::xtable(ant_nysyke2019, align= c('l','l','r'), caption=paste0('Antall nysyke ', rap_aar)), include.rownames = F)
+ant_nysyke_rapaar <-  as.data.frame(table(nysyke$Diag_gr[nysyke$Inklusjonsaar==rap_aar]))
+names(ant_nysyke_rapaar) <- c('Diagnosegruppe', 'Antall')
+print(xtable::xtable(ant_nysyke_rapaar, align= c('l','l','r'), caption=paste0('Antall nysyke ', rap_aar)), include.rownames = F)
 
 @
 
@@ -1261,14 +1338,15 @@ BVAS_utvalg <- BVAS[which(BVAS$PasientGUID %in% nysyke$PasientGUID), ]
 remisjon <- BVAS_utvalg[which(BVAS_utvalg$Sykdomsvurdering == 5 & BVAS_utvalg$BVAS_Dato <= datoTil), ]
 remisjon <- remisjon[match(unique(remisjon$PasientGUID), remisjon$PasientGUID), ]
 
-gr <- c(0,30, 90, 180, 360, 100000)
-remisjon$tid_diag_bvas_gr <- cut(as.numeric(remisjon$tid_diag_bvas), breaks = gr, include.lowest = T)
+# gr <- c(0,30, 90, 180, 360, 100000)
+# remisjon$tid_diag_bvas_gr <- cut(as.numeric(remisjon$tid_diag_bvas), breaks = gr, include.lowest = T)
 
 remisjon$remisjon_indikator <- 0
 remisjon$remisjon_indikator[remisjon$tid_diag_bvas <= 210] <- 1
 
 ## Andel i remisjon ved 6mnd
-andel_remisjon_6mnd <- remisjon %>% group_by(Sykehusnavn) %>% summarise('Andel remisjon' = sum(remisjon_indikator)/n()*100, N=n())
+andel_remisjon_6mnd <- remisjon %>% group_by(Sykehusnavn) %>%
+  summarise('Andel remisjon' = sum(remisjon_indikator)/n()*100, N=n())
 total <- tibble(Sykehusnavn= 'Totalt',
                 'Andel remisjon' = sum(andel_remisjon_6mnd$`Andel remisjon`*andel_remisjon_6mnd$N, na.rm = T)/sum(andel_remisjon_6mnd$N, na.rm = T),
                 N = sum(andel_remisjon_6mnd$N, na.rm = T))
@@ -1560,11 +1638,11 @@ Indikatorer <- bind_rows(Indikatorer, ind_Andelstorvas_Prednisolon_NorVas_v2_ker
 % #
 % # ## Vurder å legge til total
 % #
-% # print(xtable::xtable(bvas_tb, align= c('l','l',rep('r', ncol(bvas_tb)-1)), caption='Gjennomsnittlig BVAS score ANCA assosiert vaskulitter 2019'), include.rownames = F)
+% # print(xtable::xtable(bvas_tb, align= c('l','l',rep('r', ncol(bvas_tb)-1)), caption='Gjennomsnittlig BVAS score ANCA assosiert vaskulitter _rapaar'), include.rownames = F)
 % #
 % #
-% # aux <- BVAS[BVAS$Sykdomsvurdering %in% c(1, 2, 3) & BVAS$BVAS_Dato >= "2019-01-01" &
-% #               BVAS$BVAS_Dato <= "2019-12-31" & !is.na(BVAS$bvas_samlet), ]
+% # aux <- BVAS[BVAS$Sykdomsvurdering %in% c(1, 2, 3) & BVAS$BVAS_Dato >= "_rapaar-01-01" &
+% #               BVAS$BVAS_Dato <= "_rapaar-12-31" & !is.na(BVAS$bvas_samlet), ]
 % #
 % # aux2 <- BVAS[which(BVAS$PasientGUID %in% aux$PasientGUID & !(BVAS$SkjemaGUID %in% aux$SkjemaGUID) & !is.na(BVAS$bvas_samlet)),]
 % #
@@ -1592,11 +1670,11 @@ Indikatorer <- bind_rows(Indikatorer, ind_Andelstorvas_Prednisolon_NorVas_v2_ker
 
 <<'Tab: infeksjoner', results='asis', echo=FALSE, warning=F>>=
 
-Alvorlig_infeksjon2019 <-
+Alvorlig_infeksjon_rapaar <-
   Alvorlig_infeksjon[Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato >= datoFra &
                        Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato <= datoTil, ]
 
-aux <- Alvorlig_infeksjon2019 %>% group_by(PasientGUID, Sykehusnavn) %>% summarise(ant.pr.pas = sum(AntallInfeksjoner), N=n())
+aux <- Alvorlig_infeksjon_rapaar %>% group_by(PasientGUID, Sykehusnavn) %>% summarise(ant.pr.pas = sum(AntallInfeksjoner), N=n())
 
 tmp <- aux %>% group_by(Sykehusnavn) %>% summarise(gj.sn.ant.inf = mean(ant.pr.pas), Ant_pas=n(), Ant_reg = sum(N))
 tot <- tibble(Sykehusnavn='Totalt', gj.sn.ant.inf = mean(aux$ant.pr.pas), Ant_pas = length(aux$PasientGUID), Ant_reg = sum(aux$N))
@@ -1612,14 +1690,14 @@ print(xtable::xtable(tmp, align= c('l','l',rep('r', ncol(tmp)-1)), digits=c(0,0,
 ########### Legg til eksisterende figur
 # x11()
 outfile <- paste0(figfolder, 'alvorlig_infeksjon.', utformat)
-norvasFigAndeler(RegData=Alvorlig_infeksjon2019, valgtVar='AntallInfeksjoner_kummulativ',
+norvasFigAndeler(RegData=Alvorlig_infeksjon_rapaar, valgtVar='AntallInfeksjoner_kummulativ',
                  datoFra=datoFra, datoTil=datoTil,
                  minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
                  enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=99,
                  valgtShus=valgtShus,hentData=hentData, datovar='SelvrapportertAlvorligInfeksjon_Registrert_Dato', aldervar='inf_alder')
 
 
-type_infeksjoner <- colSums(Alvorlig_infeksjon2019[, c('OvreLuftveierInfeksjon', 'NedreLuftveierInfeksjon', 'UrinveierInfeksjon',
+type_infeksjoner <- colSums(Alvorlig_infeksjon_rapaar[, c('OvreLuftveierInfeksjon', 'NedreLuftveierInfeksjon', 'UrinveierInfeksjon',
                                                        'BeinLeddInfeksjon', 'Sepsis', 'Hudinfeksjon',
                                                        'AnnenAlvorligInfeksjon')])
 grtxt <- rev(c('Øvre luftveier','Nedre luftveier','Urinveier','Bein og ledd','Sepsis','Hud','Annen')[c(order(type_infeksjoner[-length(type_infeksjoner)], decreasing = T), 7)])
