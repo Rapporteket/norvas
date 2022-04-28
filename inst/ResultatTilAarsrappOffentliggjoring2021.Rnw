@@ -686,70 +686,6 @@ pos <- barplot(ant_pas_pr_med_gr2$`Biologiske legemidler`/ant_pas_pr_med_gr2$N*1
 mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr2$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
 title(main = c('Biologiske legemidler,', 'ANCA assosiert vaskulitt'))
 if ( outfile != '') {dev.off()}
-## ######## gr. 3 Andre vaskulitter ################
-#
-# indMedisinert2019 <- which(((Medisiner$Med_StartDato <= datoTil & is.na(Medisiner$Med_SluttDato)) | (Medisiner$Med_StartDato <= datoTil & Medisiner$Med_SluttDato >= datoFra)) & Medisiner$Diag_gr_nr == 3)
-#
-# pid_Medisinert2019 <- unique(Medisiner$PasientGUID[indMedisinert2019])
-# pid_oppfolging2019 <- unique(Oppfolging$PasientGUID[Oppfolging$Oppfolgingsaar==rap_aar & Oppfolging$Diag_gr_nr == 3])
-# pid_inkludert2019 <- unique(Inklusjon$PasientGUID[Inklusjon$Inklusjonsaar<=rap_aar & Inklusjon$Diag_gr_nr == 3])
-#
-# pid_alle_pas2019 <- unique(c(pid_Medisinert2019, pid_oppfolging2019, pid_inkludert2019))
-#
-# ant_pas_pr_med <- Medisiner[indMedisinert2019, ] %>% group_by(Sykehusnavn, Medikamentgruppe) %>%
-#   summarise(Antall = length(unique(PasientGUID))) %>% ungroup() %>% spread(key=Medikamentgruppe, value = Antall)
-# N <- Inklusjon[Inklusjon$PasientGUID %in% pid_alle_pas2019, ] %>% group_by(Sykehusnavn) %>% summarise(N=n())
-#
-# # Resultat
-# ant_pas_pr_med_gr3 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
-# ant_pas_pr_med_gr3 <- ant_pas_pr_med_gr3[ant_pas_pr_med_gr3$N >= 5, ]
-#
-# retn <- 'H'
-# cexgr <- 0.8
-# outfile <- paste0(figfolder, 'Kortikosteroider_gr3.', utformat)
-#
-# grtxt <- ant_pas_pr_med_gr3$Sykehusnavn
-# figinfo <- rapFigurer::figtype(outfile = outfile)
-# vmarg <- switch(retn, V=0.05, H=min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75)))
-# par('fig'=c(vmarg, 1, 0, 1))
-# pos <- barplot(ant_pas_pr_med_gr3$Kortikosteroider/ant_pas_pr_med_gr3$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-# mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr3$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-# title(main = 'Kortikosteroider, andre vaskulitter')
-# if ( outfile != '') {dev.off()}
-#
-# outfile <- paste0(figfolder, 'DMARD_gr3.', utformat)
-# figinfo <- rapFigurer::figtype(outfile = outfile)
-# par('fig'=c(vmarg, 1, 0, 1))
-# pos <- barplot(ant_pas_pr_med_gr3$DMARD/ant_pas_pr_med_gr3$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-# mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr3$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-# title(main = 'DMARD, andre vaskulitter')
-# if ( outfile != '') {dev.off()}
-#
-# outfile <- paste0(figfolder, 'Cyclofosfamid_gr3.', utformat)
-# figinfo <- rapFigurer::figtype(outfile = outfile)
-# par('fig'=c(vmarg, 1, 0, 1))
-# pos <- barplot(ant_pas_pr_med_gr3$Cyclofosfamid/ant_pas_pr_med_gr3$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-# mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr3$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-# title(main = 'Cyclofosfamid, andre vaskulitter')
-# if ( outfile != '') {dev.off()}
-#
-# outfile <- paste0(figfolder, 'Rituximab_gr3.', utformat)
-# figinfo <- rapFigurer::figtype(outfile = outfile)
-# par('fig'=c(vmarg, 1, 0, 1))
-# pos <- barplot(ant_pas_pr_med_gr3$Rituximab/ant_pas_pr_med_gr3$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-# mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr3$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-# title(main = 'Rituximab, andre vaskulitter')
-# if ( outfile != '') {dev.off()}
-#
-# outfile <- paste0(figfolder, 'Biologiske_gr3.', utformat)
-# figinfo <- rapFigurer::figtype(outfile = outfile)
-# par('fig'=c(vmarg, 1, 0, 1))
-# pos <- barplot(ant_pas_pr_med_gr3$`Biologiske legemidler`/ant_pas_pr_med_gr3$N*100, horiz = T, col = figinfo$farger[1], border=NA, xlab="Andel pasienter (%)")
-# mtext(at=pos+0.00, text=paste0(grtxt, ' (N=', ant_pas_pr_med_gr3$N, ')'), side=2, las=1, cex=cexgr, adj=1, line=0.25)
-# title(main = c('Biologiske legemidler,', 'andre vaskulitter'))
-# if ( outfile != '') {dev.off()}
-
-
 
 ## For gruppe 2, nasjonalt: Forbruk t.o.m. 2018 og forbruk i 2018 for Rituximab og Cyclofosfamid
 
@@ -1068,7 +1004,7 @@ print(xtable::xtable(ant_nysyke2019, align= c('l','l','r'), caption=paste0('Anta
 ########  BVAS ##############
 tmp2 <- merge(Oppfolging, BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")], by.x = c('PasientGUID','OppfolgingsDato'),
               by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
-tmp2 <- tmp2[tmp2$Diag_gr_nr %in% c(2,3), ]
+tmp2 <- tmp2[tmp2$Diag_gr_nr %in% c(2), ]
 # tmp2 %>% group_by(Oppfolgingsaar) %>% summarise(andeloppf = sum(!is.na(bvas_samlet))/length(bvas_samlet)*100,
 # N = n())
 Tabell_bvas_oppf <- tmp2[tmp2$Oppfolgingsaar==rap_aar, ] %>% group_by(Sykehusnavn) %>% summarise(andeloppf = sum(!is.na(SykdomsvurderingLabel))/length(SykdomsvurderingLabel)*100, N = n())
@@ -1093,7 +1029,7 @@ figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata
 
 <<'fig. utfylt bvas', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 # x11()
-outfile <- paste0(figfolder, "bvas_ved_oppf_anca_og_andre.", utformat)
+outfile <- paste0(figfolder, "bvas_ved_oppf_anca.", utformat)
 norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
                 tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
                 maal = 95, minstekrav = 50)
@@ -1200,7 +1136,13 @@ Indikatorer <- bind_rows(Indikatorer, ind4_AndelKerr_NorVas)
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}bvas_ved_oppf_anca_og_andre.pdf}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}bvas_ved_oppf_anca.pdf}
+\caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca.pdf}
 \caption{}
 \end{figure}
 
