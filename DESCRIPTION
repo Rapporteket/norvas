@@ -7,13 +7,15 @@ Maintainer: Kevin Thon <kevin.thon@skde.no>
 Description: Denne pakken samler alt av kode og rapporter for Norvas
 License: GPL2
 Encoding: UTF-8
-Depends: R (>= 3.4.3), rapbase, tidyverse
+Depends: R (>= 3.6.0)
 Imports: 
-lubridate, 
-kableExtra, 
-DT, 
-shinyjs,
-janitor,
-tidyverse
+  lubridate, 
+  kableExtra, 
+  DT, 
+  shinyjs,
+  janitor,
+  tidyverse
+Remotes:
+  Rapporteket/rapbase@*release
 LazyData: true
 RoxygenNote: 7.1.1

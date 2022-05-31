@@ -12,7 +12,7 @@
 
 norvasIndikator <- function(indikatordata, tittel='', terskel=5, minstekrav = NA, maal = NA, skriftStr=1.3, pktStr=1.4,
                                  legPlass='top', minstekravTxt='Min.', maalTxt='Mål', graaUt=NA, decreasing=F, outfile = '',
-                                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy')
+                                 lavDG=NA, width=800, height=700, inkl_konf=F, maalretn='hoy', xmax=NA)
 {
   # indikatordata=figurdata; tittel='testtittel'; terskel=5; minstekrav = NA; maal = 95; skriftStr=1.3; pktStr=1.4;
   # legPlass='top'; minstekravTxt='Min.'; maalTxt='Mål'; graaUt=NA; decreasing=F; outfile = '';
@@ -78,8 +78,9 @@ norvasIndikator <- function(indikatordata, tittel='', terskel=5, minstekrav = NA
   # x11()
   par('mar'=c(5.1, 10.1, 4.1, 5.1))
 
-  xmax <- min(100, 1.15*max(andeler[,-1], na.rm = T))
-
+  if (is.na(xmax)){
+    xmax <- min(100, 1.15*max(andeler[,-1], na.rm = T))
+  }
 
   ypos <- barplot( t(andeler[,dim(andeler)[2]]), beside=T, las=1,
                    xlim=c(0,xmax),
