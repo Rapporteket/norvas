@@ -22,7 +22,8 @@ norvasIndikator(
   width = 800,
   height = 700,
   inkl_konf = F,
-  maalretn = "hoy"
+  maalretn = "hoy",
+  xmax = NA
 )
 }
 \arguments{

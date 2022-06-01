@@ -11,17 +11,17 @@
 
 norvasPreprosess <- function(RegData) {
 
-  RegData <- as_tibble(RegData)
+  RegData <- dplyr::as_tibble(RegData)
   datovars <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Dato/tid')]
   datovars <- intersect(datovars, names(RegData))
   flyttall <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Tall')]
   flyttall <- intersect(flyttall, names(RegData))
   boolsk <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Avkrysning')]
   boolsk <- intersect(boolsk, names(RegData))
-  # RegData <- RegData %>% mutate_at(datovars, funs(as.Date(., format="%d.%m.%Y"))) # Fiks datoformat
-  RegData <- RegData %>% mutate_at(datovars, function(x){as.Date(x, format="%d.%m.%Y")})
-  RegData <- RegData %>% mutate_at(flyttall, function(x){as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
-  RegData <- RegData %>% mutate_at(boolsk, function(x){as.logical(x)}) # Gjør booske variabler til logicals
+  # RegData <- RegData %>% dplyr::mutate_at(datovars, funs(as.Date(., format="%d.%m.%Y"))) # Fiks datoformat
+  RegData <- RegData %>% dplyr::mutate_at(datovars, function(x){as.Date(x, format="%d.%m.%Y")})
+  RegData <- RegData %>% dplyr::mutate_at(flyttall, function(x){as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
+  RegData <- RegData %>% dplyr::mutate_at(boolsk, function(x){as.logical(x)}) # Gjør booske variabler til logicals
 
   mapEnhet <- data.frame(UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
                                     103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,

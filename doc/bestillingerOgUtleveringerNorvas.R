@@ -8,6 +8,90 @@ library(lubridate)
 library(rapFigurer)
 rm(list = ls())
 
+## Hans Kristian Skaug 31. mai 2022 #############################
+
+variabler <- read.table('I:/norvas/Variabler_til_uttrekk_Liste.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'Latin1')
+
+var_1 <- variabler[variabler$Skjemanavn == "1. Inklusjonskjema skjematypeve", "Variabelnavn"]
+var_2 <- variabler[variabler$Skjemanavn == "2. OppfølgingSkjema skjematypev", "Variabelnavn"]
+var_3 <- variabler[variabler$Skjemanavn == "3. MedisineringSkjema skjematyp", "Variabelnavn"]
+var_5 <- variabler[variabler$Skjemanavn == "5. KomorbidTilstandSkjema skjem", "Variabelnavn"]
+var_6 <- variabler[variabler$Skjemanavn == "6. VdiSkjema skjematypeversjon ", "Variabelnavn"]
+var_9 <- variabler[variabler$Skjemanavn == "9. DiagnoseSkjema skjematypever", "Variabelnavn"]
+var_9[var_9=="Icd_IcdDataDump"] <- "Icd"
+var_10 <- variabler[variabler$Skjemanavn == "10. BlodprøvesvarSkjema skjemat", "Variabelnavn"]
+var_13 <- variabler[variabler$Skjemanavn == "13. KerrsKriterierSkjema skjema", "Variabelnavn"]
+var_16 <- variabler[variabler$Skjemanavn == "16. Svar fra pasienten skjematy", "Variabelnavn"]
+var_17 <- variabler[variabler$Skjemanavn == "17. Diagnosekriterierskjema skj", "Variabelnavn"]
+
+Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-05_0931.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Inklusjon_pnr <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-04_1056.csv', header=TRUE, sep=";",
+                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM', colClasses = "character")
+Oppfolging <- read.table('I:/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2022-04-05_0931.csv', header=TRUE, sep=";",
+                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+KERR <- read.table('I:/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+                  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Komorbid <- read.table('I:/norvas/DataDump_MRS-PROD_KomorbidTilstandSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Pasientsvar <- read.table('I:/norvas/DataDump_MRS-PROD_Svar+fra+pasienten_2022-04-05_0933.csv', header=TRUE, sep=";",
+                      stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+DiagnoseKriterier <- read.table('I:/norvas/DataDump_MRS-PROD_Diagnosekriterierskjema_2022-04-05_0933.csv', header=TRUE, sep=";",
+                               stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+Diagnoser <- norvasPreprosess(Diagnoser)
+Diagnoser <- Diagnoser[Diagnoser$DiagnoseNr %in% c(4,15) &
+                         Diagnoser$HovedskjemaGUID %in% Inklusjon_pnr$SkjemaGUID, var_9]
+Inklusjon <- Inklusjon[Inklusjon$SkjemaGUID %in% Diagnoser$HovedskjemaGUID, var_1]
+Oppfolging <- Oppfolging[Oppfolging$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_2]
+Medisiner <- Medisiner[Medisiner$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_3]
+Komorbid <- Komorbid[Komorbid$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_5]
+VDI <- VDI[VDI$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_6]
+Labskjema <- Labskjema[Labskjema$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_10]
+KERR <- KERR[KERR$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_13]
+Pasientsvar <- Pasientsvar[Pasientsvar$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_16]
+DiagnoseKriterier <- DiagnoseKriterier[DiagnoseKriterier$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_17]
+
+Inklusjon_pnr <- Inklusjon_pnr[Inklusjon_pnr$SkjemaGUID %in% Inklusjon$SkjemaGUID,
+                               c("PasientId", "Fødselsnummer")]
+names(Inklusjon_pnr)[match(c("PasientId", "Fødselsnummer"), names(Inklusjon_pnr))] <-
+  c("Fnr", "PasientGUID")
+
+write.csv2(Inklusjon, "I:/norvas/utlevering_skaug_juni_2022/Inklusjonskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Oppfolging, "I:/norvas/utlevering_skaug_juni_2022/Oppfolgingskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Diagnoser, "I:/norvas/utlevering_skaug_juni_2022/Diagnoseskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Medisiner, "I:/norvas/utlevering_skaug_juni_2022/Medisineringskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Komorbid, "I:/norvas/utlevering_skaug_juni_2022/Komorbidskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(VDI, "I:/norvas/utlevering_skaug_juni_2022/VDIskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Labskjema, "I:/norvas/utlevering_skaug_juni_2022/Blodprovesvarskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(KERR, "I:/norvas/utlevering_skaug_juni_2022/KERRskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Pasientsvar, "I:/norvas/utlevering_skaug_juni_2022/Pasientsvarskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(DiagnoseKriterier, "I:/norvas/utlevering_skaug_juni_2022/DiagnoseKriterierskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Inklusjon_pnr, "I:/norvas/utlevering_skaug_juni_2022/nokkelfil.csv",
+           row.names = F, fileEncoding = "Latin1")
+
+
+
+
 
 ## Liste over pasienter som mangler diagnose 11.04.2022 #################
 Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-05_0931.csv', header=TRUE, sep=";",
