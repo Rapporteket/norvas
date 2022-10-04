@@ -56,7 +56,7 @@ generellFigFordeling <- function(AggVerdier, tittel='mangler tittel', hovedgrTxt
     #          USE.NAMES = FALSE)
     # }
 
-    grtxt <- muskel::wrap.it(grtxt, 28)
+    grtxt <- norvas::wrap.it(grtxt, 28)
 
     #Høyde må avhenge av antall grupper
     hoyde <- ifelse(length(AggVerdier$Hoved)>20, 3*800, 3*600)

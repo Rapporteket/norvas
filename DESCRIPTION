@@ -1,7 +1,7 @@
 Package: norvas
 Type: Package
 Title: Norvas
-Version: 0.2.0
+Version: 0.7.0
 Author: Kevin Thon
 Maintainer: Kevin Thon <kevin.thon@skde.no>
 Description: Denne pakken samler alt av kode og rapporter for Norvas
@@ -10,12 +10,14 @@ Encoding: UTF-8
 Depends: R (>= 3.6.0)
 Imports: 
   lubridate, 
-  kableExtra, 
+  kableExtra,
+  stringdist,
   DT, 
   shinyjs,
   janitor,
   tidyverse
 Remotes:
-  Rapporteket/rapbase@*release
+  Rapporteket/rapbase@*release,
+  Rapporteket/rapFigurer
 LazyData: true
 RoxygenNote: 7.1.2

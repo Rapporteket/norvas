@@ -57,26 +57,26 @@ options(dplyr.summarise.inform = FALSE)
 
 rap_aar <- 2021
 
-Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-05_0931.csv', header=TRUE, sep=";",
+Inklusjon <- read.table('~/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-05_0931.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 # names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
-Oppfolging <- read.table('I:/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2022-04-05_0931.csv', header=TRUE, sep=";",
+Oppfolging <- read.table('~/data/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2022-04-05_0931.csv', header=TRUE, sep=";",
                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+Diagnoser <- read.table('~/data/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+Medisiner <- read.table('~/data/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-BVAS <- read.table('I:/norvas/DataDump_MRS-PROD_BvasSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+BVAS <- read.table('~/data/norvas/DataDump_MRS-PROD_BvasSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-KERR <- read.table('I:/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+KERR <- read.table('~/data/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+VDI <- read.table('~/data/norvas/DataDump_MRS-PROD_VdiSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Alvorlig_infeksjon <- read.table('I:/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2022-04-05_0932.csv',
+Alvorlig_infeksjon <- read.table('~/data/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2022-04-05_0932.csv',
                                  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Utredning <- read.table('I:/norvas/DataDump_MRS-PROD_Utredning_2022-04-05_0932.csv', header=TRUE, sep=";",
+Utredning <- read.table('~/data/norvas/DataDump_MRS-PROD_Utredning_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
+Labskjema <- read.table('~/data/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Inklusjon <- norvasPreprosess(Inklusjon)
@@ -223,7 +223,7 @@ kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId), Inklusj
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
 
-figfolder <- "C:/GIT/norvas/inst/Figurer/"
+figfolder <- "~/GIT/norvas/inst/Figurer/"
 if (!dir.exists(figfolder)) {
   dir.create(figfolder)
 }
@@ -520,7 +520,7 @@ vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = F, horiz = T, col = figinfo$farger[1:dim(plotMatrise)[1]], border=NA, xlab="Antall pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = nra::wrap.it(paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])), 34), col = figinfo$farger[1:dim(plotMatrise)[1]],
+legend('bottomright', legend = norvas::wrap.it(paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])), 34), col = figinfo$farger[1:dim(plotMatrise)[1]],
        pch = 15, border = NA, bty='n')
 title(main = c("Antall inklusjoner pr. HF", "og pr. diagnose"))
 if ( outfile != '') {dev.off()}
@@ -677,7 +677,7 @@ vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = F, horiz = T, col = rev(figinfo$farger[1:dim(plotMatrise)[1]]), border=NA, xlab="Andel pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = nra::wrap.it(paste0(names(ant_pas_pr_med_gr1)[-c(1, dim(ant_pas_pr_med_gr1)[2])], ", N=",
+legend('bottomright', legend = norvas::wrap.it(paste0(names(ant_pas_pr_med_gr1)[-c(1, dim(ant_pas_pr_med_gr1)[2])], ", N=",
                                                    colSums(ant_pas_pr_med_gr1[, -c(1, dim(ant_pas_pr_med_gr1)[2])])), 34),
        col = rev(figinfo$farger[1:dim(plotMatrise)[1]]),
        pch = 15, border = NA, bty='n')
@@ -789,7 +789,7 @@ vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
 par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = F, horiz = T, col = rev(figinfo$farger[1:dim(plotMatrise)[1]]), border=NA, xlab="Andel pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
-legend('bottomright', legend = nra::wrap.it(paste0(names(ant_pas_pr_med_gr2)[-c(1, dim(ant_pas_pr_med_gr2)[2])], ", N=",
+legend('bottomright', legend = norvas::wrap.it(paste0(names(ant_pas_pr_med_gr2)[-c(1, dim(ant_pas_pr_med_gr2)[2])], ", N=",
                                                    colSums(ant_pas_pr_med_gr2[, -c(1, dim(ant_pas_pr_med_gr2)[2])])), 34),
        col = rev(figinfo$farger[1:dim(plotMatrise)[1]]),
        pch = 15, border = NA, bty='n')
@@ -1695,7 +1695,7 @@ tmp <- aux %>% group_by(Sykehusnavn) %>% summarise(gj.sn.ant.inf = mean(ant.pr.p
 tot <- tibble(Sykehusnavn='Totalt', gj.sn.ant.inf = mean(aux$ant.pr.pas), Ant_pas = length(aux$PasientGUID), Ant_reg = sum(aux$N))
 tmp <- bind_rows(tmp, tot)
 
-print(xtable::xtable(tmp, align= c('l','l',rep('r', ncol(tmp)-1)), digits=c(0,0,1,0,0), caption=paste0('Gjennomsnittlig antall infeksjoner per pasient i ', rap_aar, '. Inkluderer alle pasienter med registreringer i ', rap_aar, ' på skjemaet Alvorligeinfeksjoner. Denne underestimerer muligens tallet siden også pasienter inkludert sent på året er med i utvalget. I tillegg gis registreringer i kategorien \\txtit{4 eller flere} verdien 4.')), include.rownames = F)
+print(xtable::xtable(tmp, align= c('l','l',rep('r', ncol(tmp)-1)), digits=c(0,0,1,0,0), caption=paste0('Gjennomsnittlig antall infeksjoner per pasient i ', rap_aar, '. Inkluderer alle pasienter med registreringer i ', rap_aar, ' på skjemaet Alvorligeinfeksjoner. Denne underestimerer muligens tallet siden også pasienter inkludert sent på året er med i utvalget. I tillegg gis registreringer i kategorien \\textit{4 eller flere} verdien 4.')), include.rownames = F)
 
 @
 
@@ -2142,23 +2142,23 @@ Indikatorer <- Indikatorer[, c(7,2,3,4,5)]
 names(Indikatorer)[2:4] <- c("year", "var", "denominator")
 Indikatorer$context <- "caregiver"
 
-# write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20102020.csv', na = '', fileEncoding = 'UTF-8', row.names = F) # Skal med
-write.csv2(Indikatorer, 'I:/norvas/norvas_ind_20210617.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
+# write.csv2(Indikatorer, '~/data/norvas/norvas_ind_20102020.csv', na = '', fileEncoding = 'UTF-8', row.names = F) # Skal med
+# write.csv2(Indikatorer, '~/data/norvas/norvas_ind_20210617.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
 
 
-dg_D690_andre <- read.table("I:/norvas/DGA_resultat_hf_D690.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_D891_andre <- read.table("I:/norvas/DGA_resultat_hf_D891.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_I776_storkar <- read.table("I:/norvas/DGA_resultat_hf_I776.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M300_andre <- read.table("I:/norvas/DGA_resultat_hf_M300.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M301_anca <- read.table("I:/norvas/DGA_resultat_hf_M301.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M313_anca <- read.table("I:/norvas/DGA_resultat_hf_M313.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M314_storkar <- read.table("I:/norvas/DGA_resultat_hf_M314.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M315_storkar <- read.table("I:/norvas/DGA_resultat_hf_M315_M316.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M317_anca <- read.table("I:/norvas/DGA_resultat_hf_M317.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M319_andre <- read.table("I:/norvas/DGA_resultat_hf_M319.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_M352_andre <- read.table("I:/norvas/DGA_resultat_hf_M352.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_landet <- read.table("I:/norvas/DGA_resultat_landet_hf.csv", sep = ";", fileEncoding = "Latin1", header = T)
-dg_landet_innrap <- read.table("I:/norvas/DGA_resultat_landet_hf_innrapp.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_D690_andre <- read.table("~/data/norvas/DGA_resultat_hf_D690.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_D891_andre <- read.table("~/data/norvas/DGA_resultat_hf_D891.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_I776_storkar <- read.table("~/data/norvas/DGA_resultat_hf_I776.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M300_andre <- read.table("~/data/norvas/DGA_resultat_hf_M300.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M301_anca <- read.table("~/data/norvas/DGA_resultat_hf_M301.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M313_anca <- read.table("~/data/norvas/DGA_resultat_hf_M313.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M314_storkar <- read.table("~/data/norvas/DGA_resultat_hf_M314.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M315_storkar <- read.table("~/data/norvas/DGA_resultat_hf_M315_M316.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M317_anca <- read.table("~/data/norvas/DGA_resultat_hf_M317.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M319_andre <- read.table("~/data/norvas/DGA_resultat_hf_M319.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_M352_andre <- read.table("~/data/norvas/DGA_resultat_hf_M352.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_landet <- read.table("~/data/norvas/DGA_resultat_landet_hf.csv", sep = ";", fileEncoding = "Latin1", header = T)
+dg_landet_innrap <- read.table("~/data/norvas/DGA_resultat_landet_hf_innrapp.csv", sep = ";", fileEncoding = "Latin1", header = T)
 
 dg_andre <- merge(dg_D690_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
                   dg_D891_andre[,c("hf_standard", "Begge", "Kun_norvas", "Total")],
@@ -2217,7 +2217,7 @@ dg_samlet$year <- rap_aar
 dg_samlet$context <- "caregiver"
 dg_samlet <- dg_samlet[, c("orgnr", "year", "var", "denominator", "ind_id", "context")]
 
-write.csv2(dg_samlet, 'I:/norvas/norvas_dg_samlet.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
+# write.csv2(dg_samlet, '~/data/norvas/norvas_dg_samlet.csv', na = '', fileEncoding = 'UTF-8', row.names = F)
 
 @
 
@@ -2358,7 +2358,7 @@ print(xtable::xtable(andel_utfort_igG, align= c('l','l',rep('r', ncol(andel_utfo
 % #
 % # tmp <- Oppfolging[Oppfolging$Depricated, c("PasientGUID", "SkjemaGUID")]
 % #
-% # write.csv2(tmp, 'I:/norvas/depricated.csv', row.names = F)
+% # write.csv2(tmp, '~/data/norvas/depricated.csv', row.names = F)
 %
 %
 % # tmp <- Oppfolging[Oppfolging$PasientGUID %in% Oppfolging$PasientGUID[Oppfolging$Depricated], c("PasientGUID", "SkjemaGUID")]
