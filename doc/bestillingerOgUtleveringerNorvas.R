@@ -5,40 +5,63 @@
 library(norvas)
 library(xtable)
 library(lubridate)
-library(rapFigurer)
+# library(rapFigurer)
 library(dplyr)
 rm(list = ls())
 
 ##### Finn ut av medisineringsrot 17.11.2022 ##################################################
-Inklusjon <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_Inklusjonskjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+Inklusjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-10-20_1507.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Oppfolging <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_OppfølgingSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+Oppfolging <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_OppfolgingSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Diagnoser <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_DiagnoseSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+Diagnoser <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Medisiner <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_MedisineringSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+Medisiner <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 id3135 <- Inklusjon[which(Inklusjon$InternId==3135), "PasientGUID"]
 med_id3135 <- Medisiner[which(Medisiner$PasientGUID %in% id3135), ]
 
+write.csv2(med_id3135, "C:/GIT/data/norvas/med_id3135.csv", row.names = F,
+           fileEncoding = "Latin1")
+
+# med_999 <- Medisiner[which(Medisiner$LegemiddelNr == 999), ]
+
 pasguid_pr_internid <- Inklusjon %>%
   dplyr::group_by(InternId) %>%
-  dplyr::summarise(ant_guid = length(unique(PasientGUID))) %>%
-  dplyr::filter(ant_guid > 1)
+  dplyr::summarise(GUID = paste(unique(PasientGUID), collapse = ", "),
+                   ant_guid = length(unique(PasientGUID))) %>%
+  dplyr::filter(ant_guid > 1 & !is.na(InternId))
+write.csv2(pasguid_pr_internid, "C:/GIT/data/norvas/pasguid_pr_internid.csv",
+           row.names = F, fileEncoding = "Latin1")
 
 
 internid_pr_pasguid<- Inklusjon %>%
   dplyr::group_by(PasientGUID) %>%
-  dplyr::summarise(ant_id = length(unique(InternId))) %>%
-  dplyr::filter(ant_id > 1)
+  dplyr::summarise(InternIder = paste(unique(InternId), collapse = ", "),
+                   id1 = unique(InternId)[1],
+                   id2 = unique(InternId)[2],
+                   ant_id = length(unique(InternId))) %>%
+  dplyr::filter(ant_id > 1 & !is.na(PasientGUID) & !is.na(id1) & !is.na(id2)) %>%
+  select(c("PasientGUID", "InternIder", "ant_id"))
+write.csv2(internid_pr_pasguid, "C:/GIT/data/norvas/internid_pr_pasguid.csv",
+           row.names = F, fileEncoding = "Latin1")
+
+duplikater <- Inklusjon %>%
+  dplyr::group_by(PasientGUID) %>%
+  dplyr::summarise(antall = n()) %>%
+  dplyr::filter(antall > 1)
+write.csv2(duplikater, "C:/GIT/data/norvas/duplikater.csv",
+           row.names = F, fileEncoding = "Latin1")
+
+
 
 # Tall til Synøve 20.10.2022 - antall inkluderte 2021-2022 minus de ekskluderte #####
 # Data lest inn som i resultattilaarsrapp...
 
 # Inklusjon <- Inklusjon[which(Inklusjon$InklusjonDato >= "2021-01-01" & Inklusjon$InklusjonDato <= "2022-10-15"), ]
 Inklusjon <- merge(Inklusjon, Oppfolging[!is.na(Oppfolging$EksklusjonsDato), c("PasientGUID", "EksklusjonsDato", "EksklusjonsArsak")],
-                    by = "PasientGUID", all.x = TRUE)
+                   by = "PasientGUID", all.x = TRUE)
 Inklusjon$EksklusjonsAar <- as.numeric(format(Inklusjon$EksklusjonsDato, "%Y"))
 
 Inklusjon %>% group_by(Sykehusnavn, Diag_gr) %>%
@@ -99,11 +122,11 @@ VDI <- read.table('I:/norvas/DataDump_MRS-PROD_VdiSkjema_2022-04-05_0932.csv', h
 Labskjema <- read.table('I:/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Komorbid <- read.table('I:/norvas/DataDump_MRS-PROD_KomorbidTilstandSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                       stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Pasientsvar <- read.table('I:/norvas/DataDump_MRS-PROD_Svar+fra+pasienten_2022-04-05_0933.csv', header=TRUE, sep=";",
-                      stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 DiagnoseKriterier <- read.table('I:/norvas/DataDump_MRS-PROD_Diagnosekriterierskjema_2022-04-05_0933.csv', header=TRUE, sep=";",
-                               stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                                stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Diagnoser <- norvasPreprosess(Diagnoser)
 Diagnoser <- Diagnoser[Diagnoser$DiagnoseNr %in% c(4,15) &
@@ -202,8 +225,8 @@ medliste1 <- Medisiner[which(Medisiner$Medikamentgruppe==""), c("LegemiddelType2
 Medisiner <- norvasPreprosess(Medisiner)
 Medisiner$Medikamentgruppe[Medisiner$Medikamentgruppe == ""] <- "Andre"
 medliste2 <- Medisiner[which(Medisiner$Medikamentgruppe=="Andre"), c("LegemiddelType2020", "LegemiddelType2019",
-                                                                    "Legemiddel", "Medikamentgruppe", "LegemiddelNr",
-                                                                    "LegemiddelGenerisk", "LegemiddelTypeLabel")]
+                                                                     "Legemiddel", "Medikamentgruppe", "LegemiddelNr",
+                                                                     "LegemiddelGenerisk", "LegemiddelTypeLabel")]
 # table(medliste2[, "Legemiddel"])
 write.csv2(medliste2, "I:/norvas/Medliste_norvas.csv", fileEncoding = "Latin1", row.names = F)
 
