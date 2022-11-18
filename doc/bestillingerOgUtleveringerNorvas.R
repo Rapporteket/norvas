@@ -6,7 +6,32 @@ library(norvas)
 library(xtable)
 library(lubridate)
 library(rapFigurer)
+library(dplyr)
 rm(list = ls())
+
+##### Finn ut av medisineringsrot 17.11.2022 ##################################################
+Inklusjon <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_Inklusjonskjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Oppfolging <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_OppfølgingSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_DiagnoseSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Medisiner <- read.table('~/data/norvas/proddata2022-10-20/DataDump_MRS-PROD_MedisineringSkjema_2022-10-20_1507.csv', header=TRUE, sep=";",
+                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+id3135 <- Inklusjon[which(Inklusjon$InternId==3135), "PasientGUID"]
+med_id3135 <- Medisiner[which(Medisiner$PasientGUID %in% id3135), ]
+
+pasguid_pr_internid <- Inklusjon %>%
+  dplyr::group_by(InternId) %>%
+  dplyr::summarise(ant_guid = length(unique(PasientGUID))) %>%
+  dplyr::filter(ant_guid > 1)
+
+
+internid_pr_pasguid<- Inklusjon %>%
+  dplyr::group_by(PasientGUID) %>%
+  dplyr::summarise(ant_id = length(unique(InternId))) %>%
+  dplyr::filter(ant_id > 1)
 
 # Tall til Synøve 20.10.2022 - antall inkluderte 2021-2022 minus de ekskluderte #####
 # Data lest inn som i resultattilaarsrapp...
