@@ -5,9 +5,35 @@
 library(norvas)
 library(xtable)
 library(lubridate)
-# library(rapFigurer)
 library(dplyr)
-# rm(list = ls())
+
+# Tall til Synøve 02.01.2023 - antall inkluderte 2021-2022 #####
+# Data lest inn som i resultattilaarsrapp...
+
+# Inklusjon <- Inklusjon[which(Inklusjon$InklusjonDato >= "2021-01-01" & Inklusjon$InklusjonDato <= "2022-10-15"), ]
+Inklusjon <- merge(Inklusjon,
+                   Oppfolging[!is.na(Oppfolging$EksklusjonsDato),
+                              c("PasientGUID", "EksklusjonsDato",
+                                "EksklusjonsArsak")],
+                   by = "PasientGUID", all.x = TRUE)
+Inklusjon$EksklusjonsAar <- as.numeric(format(Inklusjon$EksklusjonsDato, "%Y"))
+
+Inklusjon %>% group_by(Sykehusnavn) %>%
+  summarise(tom2020=sum(Inklusjonsaar<=2020),
+            ant2021=sum(Inklusjonsaar==2021),
+            ant2022=sum(Inklusjonsaar==2022)) %>%
+  janitor::adorn_totals(c('row', 'col')) %>%
+  write_csv2("C:/GIT/data/norvas/ant_inkl_alle.csv", na = "")
+
+Inklusjon %>% group_by(Sykehusnavn) %>%
+  summarise(tom2020=sum(Inklusjonsaar<=2020 & (is.na(EksklusjonsAar) | EksklusjonsAar > 2020)),
+            ant2021=sum(Inklusjonsaar==2021 & (is.na(EksklusjonsAar) | EksklusjonsAar > 2021)),
+            ant2022=sum(Inklusjonsaar==2022),
+            antNaa = sum(is.na(EksklusjonsAar))) %>%
+  janitor::adorn_totals() %>%
+  write_csv2("C:/GIT/data/norvas/ant_inkl_uten_ekskluderte.csv", na = "")
+
+
 
 # Tall til Synøve 07.12.2022 - antall inkluderte 2021-2022 minus de ekskluderte #####
 # Data lest inn som i resultattilaarsrapp...
