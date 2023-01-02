@@ -130,7 +130,8 @@ norvasPreprosess <- function(RegData) {
                                           labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
     RegData$bvas_samlet <- RegData$BvasPersistentTotal
     # RegData$bvas_samlet[RegData$bvas_samlet==0] <- RegData$BvasnewOrWorseTotal[RegData$bvas_samlet==0]
-    RegData$bvas_samlet[is.na(RegData$bvas_samlet)] <- RegData$BvasnewOrWorseTotal[is.na(RegData$bvas_samlet)]
+    # RegData$bvas_samlet[is.na(RegData$bvas_samlet)] <- RegData$BvasnewOrWorseTotal[is.na(RegData$bvas_samlet)]
+    RegData$bvas_samlet[is.na(RegData$bvas_samlet)] <- RegData$BvasRenalNewOrWorseScore[is.na(RegData$bvas_samlet)]
 
     tmp <- table(RegData[, c("PasientGUID", "BVAS_Dato")])
     tmp <- as.data.frame(tmp)

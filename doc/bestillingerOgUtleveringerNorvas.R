@@ -7,7 +7,36 @@ library(xtable)
 library(lubridate)
 # library(rapFigurer)
 library(dplyr)
-rm(list = ls())
+# rm(list = ls())
+
+# Tall til Synøve 07.12.2022 - antall inkluderte 2021-2022 minus de ekskluderte #####
+# Data lest inn som i resultattilaarsrapp...
+
+# Inklusjon <- Inklusjon[which(Inklusjon$InklusjonDato >= "2021-01-01" & Inklusjon$InklusjonDato <= "2022-10-15"), ]
+Inklusjon <- merge(Inklusjon,
+                   Oppfolging[!is.na(Oppfolging$EksklusjonsDato),
+                              c("PasientGUID", "EksklusjonsDato",
+                                "EksklusjonsArsak")],
+                   by = "PasientGUID", all.x = TRUE)
+Inklusjon$EksklusjonsAar <- as.numeric(format(Inklusjon$EksklusjonsDato, "%Y"))
+
+Inklusjon %>% group_by(Sykehusnavn, Diag_gr) %>%
+  summarise(antall=n()) %>%
+  spread(Diag_gr, antall) %>%
+  write_csv2("~/GIT/norvas/doc/ant_inkl.csv", na = "")
+
+Inklusjon %>% group_by(Sykehusnavn, Inklusjonsaar) %>%
+  summarise(antall=n()) %>%
+  spread(Inklusjonsaar, antall)
+
+Inklusjon %>% group_by(Sykehusnavn) %>%
+  summarise(tom2020=sum(Inklusjonsaar<=2020),
+            ant2021=sum(Inklusjonsaar==2021),
+            ant2022=sum(Inklusjonsaar==2022)) %>%
+  janitor::adorn_totals(c('row', 'col')) %>%
+  write_csv2("C:/GIT/data/norvas/ant_inkl_alle.csv", na = "")
+
+
 
 ##### Finn ut av medisineringsrot 17.11.2022 ##################################################
 Inklusjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-10-20_1507.csv', header=TRUE, sep=";",

@@ -55,51 +55,7 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2021
-
-# Inklusjon <- read.table('~/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-04-05_0931.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# # names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
-# Oppfolging <- read.table('~/data/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2022-04-05_0931.csv', header=TRUE, sep=";",
-#                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Diagnoser <- read.table('~/data/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Medisiner <- read.table('~/data/norvas/DataDump_MRS-PROD_MedisineringSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# BVAS <- read.table('~/data/norvas/DataDump_MRS-PROD_BvasSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# KERR <- read.table('~/data/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# VDI <- read.table('~/data/norvas/DataDump_MRS-PROD_VdiSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Alvorlig_infeksjon <- read.table('~/data/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2022-04-05_0932.csv',
-#                                  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Utredning <- read.table('~/data/norvas/DataDump_MRS-PROD_Utredning_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Labskjema <- read.table('~/data/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2022-04-05_0932.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-
-# Inklusjon <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_Inklusjonskjema_2022-10-17_0929.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# # names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
-# Oppfolging <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_OppfølgingSkjema_2022-10-17_0929.csv', header=TRUE, sep=";",
-#                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Diagnoser <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_DiagnoseSkjema_2022-10-17_0930.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Medisiner <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_MedisineringSkjema_2022-10-17_0929.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# BVAS <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_BvasSkjema_2022-10-17_0930.csv', header=TRUE, sep=";",
-#                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# KERR <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_KerrsKriterierSkjema_2022-10-17_0930.csv', header=TRUE, sep=";",
-#                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# VDI <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_VdiSkjema_2022-10-17_0929.csv', header=TRUE, sep=";",
-#                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Alvorlig_infeksjon <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_SelvrapportertAlvorligInfeksjonSkjema_2022-10-17_0930.csv',
-#                                  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Utredning <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_Utredning_2022-10-17_0930.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# Labskjema <- read.table('~/data/norvas/qadata/DataDump_MRS-QA_BlodprøvesvarSkjema_2022-10-17_0930.csv', header=TRUE, sep=";",
-#                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+rap_aar <- 2022
 
 Inklusjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-01-02_0917.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
