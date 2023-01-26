@@ -256,9 +256,12 @@ inkl_N=T
 utformat <- 'pdf'
 
 outfile <- paste0(figfolder, 'diagnoser.', utformat)
-norvasFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra = datoFra, datoTil = datoTil, minald=minald, maxald=maxald,
-                 erMann=erMann, outfile= outfile, reshID=reshID, enhetsUtvalg = enhetsUtvalg, preprosess=preprosess,
-                 valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar,
+norvasFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra = datoFra,
+                 datoTil = datoTil, minald=minald, maxald=maxald,
+                 erMann=erMann, outfile= outfile, reshID=reshID,
+                 enhetsUtvalg = enhetsUtvalg, preprosess=preprosess,
+                 valgtShus=valgtShus,hentData=hentData,
+                 datovar=datovar, aldervar=aldervar,
                  diag_gruppe=diag_gruppe, inkl_N=inkl_N)
 
 
