@@ -60,7 +60,7 @@ rap_aar <- 2022
 Inklusjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-01-02_0917.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 # names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
-Oppfolging <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2023-01-02_0917.csv', header=TRUE, sep=";",
+Oppfolging <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_OppfolgingSkjema_2023-01-02_0917.csv', header=TRUE, sep=";",
                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Diagnoser <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
@@ -76,7 +76,7 @@ Alvorlig_infeksjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Selvrappo
                                  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Utredning <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Utredning_2023-01-02_0918.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Labskjema <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
+Labskjema <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_BlodprovesvarSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Inklusjon <- norvasPreprosess(Inklusjon)
@@ -1084,11 +1084,15 @@ print(xtable::xtable(min2oppf, align= c('l','l','r','r'), digits=c(0, 0,1,0), ca
 
 <<'Tab: Antall nysyke', results='asis', echo=FALSE, warning=F>>=
 
-nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30), ]
+nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30*6), ]
 
 ant_nysyke_rapaar <-  as.data.frame(table(nysyke$Diag_gr[nysyke$Inklusjonsaar==rap_aar]))
 names(ant_nysyke_rapaar) <- c('Diagnosegruppe', 'Antall')
 print(xtable::xtable(ant_nysyke_rapaar, align= c('l','l','r'), caption=paste0('Antall nysyke ', rap_aar)), include.rownames = F)
+
+## Lag tabell over
+Inklusjon$InkludertNyEtablertDiagnose
+table(Inklusjon[Inklusjon$Inklusjonsaar==2022, c("Diag_gr", "InkludertNyEtablertDiagnose")])
 
 @
 
@@ -1249,15 +1253,28 @@ Indikatorer <- bind_rows(Indikatorer, ind4_AndelKerr_NorVas)
 
 <<'Tab: ANCA test ved debut', results='asis', echo=FALSE, warning=F>>=
 # Nysyke definert som de med diagnosedato innen 30 dager av inklusjonsdato
-nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30), ]
-aux <- merge(nysyke, Labskjema, by = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)   # Henter info fra labskjema
-aux <- aux[which(aux$Diag_gr_nr == 2), ]                                                  # Ser kun på ANCA
+nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30*1), ]
+# aux <- merge(nysyke, Labskjema, by = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)   # Henter info fra labskjema
+aux <- merge(nysyke, Labskjema, by.x = c('SkjemaGUID', "InklusjonDato"),
+             by.y = c('HovedskjemaGUID', "Blodprover_Dato")) %>%
+  merge(BVAS, by.x = c('SkjemaGUID', "InklusjonDato"), by.y = c('HovedskjemaGUID', "BVAS_Dato"),
+        suffixes = c("", "_bvas")) %>%
+  filter(Sykdomsvurdering == 1)
 
-aux2 <- aux[which(abs(difftime(aux$Diagnose_Klinisk_Dato, aux$Blodprover_Dato, units = 'days')) <= 30), ] # Avgrenser til tilfeller med
+aux2 <- aux[which(aux$Diag_gr_nr.x == 2), ]  # Ser kun på ANCA
+
+# aux2 <- aux[which(abs(difftime(aux$Diagnose_Klinisk_Dato.x, aux$Blodprover_Dato, units = 'days')) <= 30*6), ] # Avgrenser til tilfeller med
 # blodprøvedato innen 30 dager
 # av diagnosedato
 tmp2 <- aux2 %>% group_by(Sykehusnavn.x, SkjemaGUID) %>%
-  summarise(anca = ((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv))) # Ett resultat per sykehus og skjemaguid,
+  summarise(anca = ((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv) |
+                      (1 %in% MPO_AncaPositiv) | (0 %in% MPO_AncaPositiv))) # Ett resultat per sykehus og skjemaguid,
+
+tull <- aux2 %>% group_by(Sykehusnavn.x) %>%
+  summarise(ant_anca = sum(as.numeric(((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv) |
+                      (1 %in% MPO_AncaPositiv) | (0 %in% MPO_AncaPositiv)))),
+            N = n())
+
 
 #resultat
 res1 <- tapply(tmp2$anca, tmp2$Sykehusnavn.x, sum, na.rm=T)/table(nysyke$Sykehusnavn[which(nysyke$Diag_gr_nr == 2)])*100

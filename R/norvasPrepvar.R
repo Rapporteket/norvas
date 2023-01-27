@@ -30,7 +30,7 @@ norvasPrepvar <- function(RegData, valgtVar) {
   }
 
   if (valgtVar=='Andel_ANCA') {
-    tittel <- 'Andel ANCA assosiert vaskulitt'
+    tittel <- 'Andel ANCA-assosiert vaskulitt'
     grtxt <- c('Nei', 'Ja')
     RegData$Variabel <- 0
     RegData$Variabel[RegData$Diag_gr_nr==2] <- 1

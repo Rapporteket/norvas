@@ -37,12 +37,12 @@ norvasPreprosess <- function(RegData) {
   RegData$ErMann[RegData$PatientGender==2] <- 0
 
   mapDiagKode <- data.frame(navn=c("Takayasu Arteritt"
-                                   ,"Granulomatøs Polyangitt (Wegener’s)"
-                                   ,"Eosinofilisk Granulomatøs Polyangitt (Churg-Strauss)"
+                                   ,"Granulomatøs Polyangitt"
+                                   ,"Eosinofilisk Granulomatøs Polyangitt"
                                    ,"Kjempecelle Arteritt"
                                    ,"Polymyalgia Rheumatica"
                                    ,"Behcets sykdom"
-                                   ,"Mikroskopisk Polyangiitis"
+                                   ,"Mikroskopisk Polyangitt"
                                    ,"Aortitt INA"
                                    ,"Kawasakis syndrom"
                                    ,"Kryoglobulin Vaskulitt"
