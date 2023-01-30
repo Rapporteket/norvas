@@ -57,26 +57,25 @@ options(dplyr.summarise.inform = FALSE)
 
 rap_aar <- 2022
 
-Inklusjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-01-02_0917.csv', header=TRUE, sep=";",
+Inklusjon <- read.table('~/data/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-01-02_0917.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-# names(Inklusjon)[names(Inklusjon) == "Fødselsnummer"] <- "PasientGUID"
-Oppfolging <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_OppfolgingSkjema_2023-01-02_0917.csv', header=TRUE, sep=";",
+Oppfolging <- read.table('~/data/norvas/DataDump_MRS-PROD_OppfolgingSkjema_2023-01-02_0917.csv', header=TRUE, sep=";",
                          stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Diagnoser <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
+Diagnoser <- read.table('~/data/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Medisiner <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_MedisineringSkjema_2023-01-02_0917.csv', header=TRUE, sep=";",
+Medisiner <- read.table('~/data/norvas/DataDump_MRS-PROD_MedisineringSkjema_2023-01-02_0917.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-BVAS <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_BvasSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
+BVAS <- read.table('~/data/norvas/DataDump_MRS-PROD_BvasSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-KERR <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
+KERR <- read.table('~/data/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-VDI <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_VdiSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
+VDI <- read.table('~/data/norvas/DataDump_MRS-PROD_VdiSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Alvorlig_infeksjon <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-01-02_0918.csv',
+Alvorlig_infeksjon <- read.table('~/data/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-01-02_0918.csv',
                                  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Utredning <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_Utredning_2023-01-02_0918.csv', header=TRUE, sep=";",
+Utredning <- read.table('~/data/norvas/DataDump_MRS-PROD_Utredning_2023-01-02_0918.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Labskjema <- read.table('C:/GIT/data/norvas/DataDump_MRS-PROD_BlodprovesvarSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
+Labskjema <- read.table('~/data/norvas/DataDump_MRS-PROD_BlodprovesvarSkjema_2023-01-02_0918.csv', header=TRUE, sep=";",
                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Inklusjon <- norvasPreprosess(Inklusjon)
@@ -175,16 +174,6 @@ Diagnoser$DiagnoseAlder <- Diagnoser$PatientAge
 # Alvorlig_infeksjon$inf_alder <- age(Alvorlig_infeksjon$Fodselsdato, Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato)
 Alvorlig_infeksjon$inf_alder <- Alvorlig_infeksjon$PatientAge
 
-# Oppfolging <- Oppfolging[Oppfolging$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# Diagnoser <- Diagnoser[Diagnoser$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# Medisiner <- Medisiner[Medisiner$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# BVAS <- BVAS[BVAS$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# KERR <- KERR[KERR$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# VDI <- VDI[VDI$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# Alvorlig_infeksjon <- Alvorlig_infeksjon[Alvorlig_infeksjon$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# Utredning <- Utredning[Utredning$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-# Labskjema <- Labskjema[Labskjema$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
-
 Oppfolging <- Oppfolging[Oppfolging$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, ]
 Diagnoser <- Diagnoser[Diagnoser$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, ]
 Medisiner <- Medisiner[Medisiner$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, ]
@@ -223,7 +212,7 @@ kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId), Inklusj
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
 
-figfolder <- "~/GIT/norvas/inst/Figurer/"
+figfolder <- "~/data/fig_og_tab/"
 if (!dir.exists(figfolder)) {
   dir.create(figfolder)
 }
