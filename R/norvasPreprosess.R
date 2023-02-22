@@ -25,11 +25,11 @@ norvasPreprosess <- function(RegData) {
 
   mapEnhet <- data.frame(UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
                                     103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
-                                    701344),
+                                    701344, 103300),
                          Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
                                          'Nordlandsykehuset', 'Levanger', 'Rikshospitalet', 'Drammen', 'Kristiansand',
                                          'Betanien', 'Lillehammer', 'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
-                                         'Moss', 'Stavanger'))
+                                         'Moss', 'Stavanger', 'Drammen'))
   RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
   # names(RegData)[names(RegData)=='UnitId'] <- 'AvdRESH'  ## Denne må sjekkes for ev. konsekvenser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   RegData$ErMann <- RegData$PatientGender
@@ -38,8 +38,8 @@ norvasPreprosess <- function(RegData) {
 
   mapDiagKode <- data.frame(navn=c("Takayasu Arteritt"
                                    ,"Granulomatøs Polyangitt"
-                                   ,"Eosinofilisk Granulomatøs Polyangitt"
-                                   ,"Kjempecelle Arteritt"
+                                   ,"Eosinofil Granulomatøs Polyangitt"
+                                   ,"Kjempecellearteritt"
                                    ,"Polymyalgia Rheumatica"
                                    ,"Behcets sykdom"
                                    ,"Mikroskopisk Polyangitt"
