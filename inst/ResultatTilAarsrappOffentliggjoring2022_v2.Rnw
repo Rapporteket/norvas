@@ -15,7 +15,7 @@
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 
 
-\title{Figurer og tabeller til årsrapport for Norvas 2021}
+\title{Figurer og tabeller til årsrapport for Norvas 2022}
 \author{Norvas}
 
 \renewcommand\thempfootnote{\fnsymbol{mpfootnote}}
@@ -183,12 +183,19 @@ Alvorlig_infeksjon <- merge(Alvorlig_infeksjon, Diagnoser[, c('HovedskjemaGUID',
 Labskjema <- merge(Labskjema, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
                    by = 'HovedskjemaGUID', all.x = T)
 
-Inklusjon$Diagnose_ny <- NA
-Inklusjon$Diagnose_ny[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 90] <- 1
-Inklusjon$Diagnose_ny[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) > 90] <- 0
-Inklusjon <- Inklusjon[!is.na(Inklusjon$InklusjonDato), ]
-Inklusjon$Diagnose_ny[Inklusjon$InkludertNyEtablertDiagnose==2] <- 0
-Inklusjon$Diagnose_ny[Inklusjon$InkludertNyEtablertDiagnose==1] <- 1
+
+
+Inklusjon$Diagnose_ny_30 <- NA
+Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30] <- 1
+Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) > 30] <- 0
+Inklusjon$Diagnose_ny_30[Inklusjon$InkludertNyEtablertDiagnose==2] <- 0
+Inklusjon$Diagnose_ny_30[Inklusjon$InkludertNyEtablertDiagnose==1] <- 1
+Inklusjon$Diagnose_ny_180 <- NA
+Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 180] <- 1
+Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) > 180] <- 0
+Inklusjon$Diagnose_ny_180[Inklusjon$InkludertNyEtablertDiagnose==2] <- 0
+Inklusjon$Diagnose_ny_180[Inklusjon$InkludertNyEtablertDiagnose==1] <- 1
+
 
 Inklusjon$Inklusjonsaar <- as.numeric(format(Inklusjon$InklusjonDato, format = '%Y'))
 Oppfolging$Oppfolgingsaar <- as.numeric(format(Oppfolging$OppfolgingsDato, format = '%Y'))
@@ -1138,61 +1145,74 @@ Indikatorer <- bind_rows(Indikatorer, ind4_AndelKerr_NorVas)
 
 <<'Tab: ANCA test ved debut', results='asis', echo=FALSE, warning=F>>=
 # Nysyke definert som de med diagnosedato innen 30 dager av inklusjonsdato
-nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30*1), ]
+# nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30*1), ]
+nysyke <- Inklusjon[which(Inklusjon$InkludertNyEtablertDiagnose == 1), ] %>%
+  filter(Inklusjonsaar == 2022) %>%
+  filter(Diag_gr_nr == 2)
+
 aux <- merge(nysyke, Labskjema, by.x = c('SkjemaGUID', "InklusjonDato"),
              by.y = c('HovedskjemaGUID', "Blodprover_Dato")) %>%
   merge(BVAS, by.x = c('SkjemaGUID', "InklusjonDato"), by.y = c('HovedskjemaGUID', "BVAS_Dato"),
         suffixes = c("", "_bvas")) %>%
-  filter(Sykdomsvurdering == 1)
-
-aux2 <- aux[which(aux$Diag_gr_nr.x == 2), ]  # Ser kun på ANCA
-
-tmp2 <- aux2 %>% group_by(Sykehusnavn.x, SkjemaGUID) %>%
-  summarise(anca = ((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv) |
-                      (1 %in% MPO_AncaPositiv) | (0 %in% MPO_AncaPositiv))) # Ett resultat per sykehus og skjemaguid,
-
-################ Data til Resultatportalen ###################################
-
-tmp3 <- tmp2 %>% ungroup()
-names(tmp3) <- c("Sykehusnavn", "SkjemaGUID", "Teller")
-tmp3$Teller <- as.numeric(tmp3$Teller)
-
-tmp4 <- nysyke[which(nysyke$Diag_gr_nr == 2), c("Sykehusnavn", "SkjemaGUID")]
-tmp4 <- tmp4[!(tmp4$SkjemaGUID %in% tmp3$SkjemaGUID), ]
-tmp4$Teller <- 0
-tmp4 <- as_tibble(tmp4)
-
-Ind1_ANCAvdebut_NorVas <- bind_rows(tmp3, tmp4)
-Ind1_ANCAvdebut_NorVas$UnitId <- nysyke$UnitId[match(Ind1_ANCAvdebut_NorVas$Sykehusnavn, nysyke$Sykehusnavn)]
-Ind1_ANCAvdebut_NorVas$Nevner <- 1
-Ind1_ANCAvdebut_NorVas$Aar <- nysyke$Inklusjonsaar[match(Ind1_ANCAvdebut_NorVas$SkjemaGUID, nysyke$SkjemaGUID)]
-
-anca_debut_v2 <- Ind1_ANCAvdebut_NorVas[Ind1_ANCAvdebut_NorVas$Aar <=rap_aar, ] %>%
-  group_by(Sykehusnavn, Aar) %>%
-  summarise(Andel = sum(Teller)/sum(Nevner)*100,
-            N=n())
-
-anca_debut_v2$verdi <- paste0(round(anca_debut_v2$Andel,1), '% (', anca_debut_v2$N, ')')
-anca_debut_v2 <- anca_debut_v2[,c(1,2,5)] %>% spread(key = Aar, value = verdi, fill = '')
-anca_debut_v2 <- anca_debut_v2[, c("Sykehusnavn", as.character((rap_aar-4):rap_aar))]
-
-print(xtable::xtable(anca_debut_v2, align= c('l','l',rep('r', dim(anca_debut_v2)[2]-1)), caption='Andel ANCA test ved debut for gruppe 2, per år. Nevner i parentes.'), include.rownames = F)
-
-###############################################################################
-anca_debut_v3 <- Ind1_ANCAvdebut_NorVas[Ind1_ANCAvdebut_NorVas$Aar <=rap_aar, ] %>%
-  group_by(Sykehusnavn) %>%
-  summarise(Andel = sum(Teller)/sum(Nevner)*100,
-            N=n())
-
-anca_debut_v3 <- bind_rows(anca_debut_v3,
-                           tibble(Sykehusnavn = "Total", Andel = sum(anca_debut_v3$Andel*anca_debut_v3$N)/sum(anca_debut_v3$N),
-                                  N = sum(anca_debut_v3$N)))
-anca_debut_v3$Andel[anca_debut_v3$N < 5] <- NA
-anca_debut_v3$N[anca_debut_v3$N < 5] <- "<5"
-anca_debut_v3 <- anca_debut_v3[order(anca_debut_v3$Andel, decreasing = T, na.last = T), ]
+  filter(Sykdomsvurdering == 1) %>%
+  mutate(anca = ((PR3AncaPositiv %in% c(0,1))  | (MPO_AncaPositiv %in% c(0,1))))
 
 
-print(xtable::xtable(anca_debut_v3, align= c('l','l','r','r'), digits=c(0, 0,1,0), caption=paste0('Andel ANCA test ved debut for gruppe 2. T.o.m. ', rap_aar)), include.rownames = F)
+aux %>% group_by(Sykehusnavn) %>% summarise(antall = sum(anca),
+                                            N=n()) %>%
+  janitor::adorn_totals() %>%
+  mutate(andel = antall/N*100)
+
+
+#
+# aux2 <- aux[which(aux$Diag_gr_nr.x == 2), ]  # Ser kun på ANCA
+#
+# tmp2 <- aux2 %>% group_by(Sykehusnavn.x, SkjemaGUID) %>%
+#   summarise(anca = ((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv) |
+#                       (1 %in% MPO_AncaPositiv) | (0 %in% MPO_AncaPositiv))) # Ett resultat per sykehus og skjemaguid,
+#
+# ################ Data til Resultatportalen ###################################
+#
+# tmp3 <- tmp2 %>% ungroup()
+# names(tmp3) <- c("Sykehusnavn", "SkjemaGUID", "Teller")
+# tmp3$Teller <- as.numeric(tmp3$Teller)
+#
+# tmp4 <- nysyke[which(nysyke$Diag_gr_nr == 2), c("Sykehusnavn", "SkjemaGUID")]
+# tmp4 <- tmp4[!(tmp4$SkjemaGUID %in% tmp3$SkjemaGUID), ]
+# tmp4$Teller <- 0
+# tmp4 <- as_tibble(tmp4)
+#
+# Ind1_ANCAvdebut_NorVas <- bind_rows(tmp3, tmp4)
+# Ind1_ANCAvdebut_NorVas$UnitId <- nysyke$UnitId[match(Ind1_ANCAvdebut_NorVas$Sykehusnavn, nysyke$Sykehusnavn)]
+# Ind1_ANCAvdebut_NorVas$Nevner <- 1
+# Ind1_ANCAvdebut_NorVas$Aar <- nysyke$Inklusjonsaar[match(Ind1_ANCAvdebut_NorVas$SkjemaGUID, nysyke$SkjemaGUID)]
+#
+# anca_debut_v2 <- Ind1_ANCAvdebut_NorVas[Ind1_ANCAvdebut_NorVas$Aar <=rap_aar, ] %>%
+#   group_by(Sykehusnavn, Aar) %>%
+#   summarise(Andel = sum(Teller)/sum(Nevner)*100,
+#             N=n())
+#
+# anca_debut_v2$verdi <- paste0(round(anca_debut_v2$Andel,1), '% (', anca_debut_v2$N, ')')
+# anca_debut_v2 <- anca_debut_v2[,c(1,2,5)] %>% spread(key = Aar, value = verdi, fill = '')
+# anca_debut_v2 <- anca_debut_v2[, c("Sykehusnavn", as.character((rap_aar-4):rap_aar))]
+#
+# print(xtable::xtable(anca_debut_v2, align= c('l','l',rep('r', dim(anca_debut_v2)[2]-1)), caption='Andel ANCA test ved debut for gruppe 2, per år. Nevner i parentes.'), include.rownames = F)
+#
+# ###############################################################################
+# anca_debut_v3 <- Ind1_ANCAvdebut_NorVas[Ind1_ANCAvdebut_NorVas$Aar <=rap_aar, ] %>%
+#   group_by(Sykehusnavn) %>%
+#   summarise(Andel = sum(Teller)/sum(Nevner)*100,
+#             N=n())
+#
+# anca_debut_v3 <- bind_rows(anca_debut_v3,
+#                            tibble(Sykehusnavn = "Total", Andel = sum(anca_debut_v3$Andel*anca_debut_v3$N)/sum(anca_debut_v3$N),
+#                                   N = sum(anca_debut_v3$N)))
+# anca_debut_v3$Andel[anca_debut_v3$N < 5] <- NA
+# anca_debut_v3$N[anca_debut_v3$N < 5] <- "<5"
+# anca_debut_v3 <- anca_debut_v3[order(anca_debut_v3$Andel, decreasing = T, na.last = T), ]
+#
+#
+# print(xtable::xtable(anca_debut_v3, align= c('l','l','r','r'), digits=c(0, 0,1,0), caption=paste0('Andel ANCA test ved debut for gruppe 2. T.o.m. ', rap_aar)), include.rownames = F)
 
 @
 
@@ -1220,66 +1240,13 @@ Indikatorer <- bind_rows(Indikatorer, Ind1_ANCAvdebut_NorVas)
 
 <<'Tab: andel remisjon 6mnd, ANCA', results='asis', echo=FALSE, warning=F>>=
 BVAS$tid_diag_bvas <- difftime(BVAS$BVAS_Dato, BVAS$Diagnose_Klinisk_Dato, units = 'days')
-BVAS <- BVAS[order(BVAS$BVAS_Dato, decreasing = F), ]
-
-nysyke <- BVAS[which(abs(difftime(BVAS$BVAS_Dato, BVAS$InklusjonDato, units = 'days')) <= 30), ]
-nysyke <- nysyke[which(nysyke$Sykdomsvurdering == 1 & nysyke$Diag_gr_nr==2), ]
-nysyke <- nysyke[which(nysyke$BVAS_Dato <= datoTil), ]
-BVAS_utvalg <- BVAS[which(BVAS$PasientGUID %in% nysyke$PasientGUID), ]
-
-remisjon <- BVAS_utvalg[which(BVAS_utvalg$Sykdomsvurdering == 5 & BVAS_utvalg$BVAS_Dato <= datoTil), ]
-tmp <- remisjon %>% group_by(PasientGUID) %>%
-  summarise(N = n(),
-            tid_diag_bvas = paste(sort(tid_diag_bvas), collapse = ", "),
-            InklusjonDato = InklusjonDato[1])
-
-remisjon <- remisjon[match(unique(remisjon$PasientGUID), remisjon$PasientGUID), ]
-
-remisjon$remisjon_indikator <- 0
-remisjon$remisjon_indikator[remisjon$tid_diag_bvas <= 210] <- 1
-
-## Andel i remisjon ved 6mnd
-andel_remisjon_6mnd <- remisjon %>% group_by(Sykehusnavn) %>%
-  summarise('Andel remisjon' = sum(remisjon_indikator)/n()*100, N=n())
-total <- tibble(Sykehusnavn= 'Totalt',
-                'Andel remisjon' = sum(andel_remisjon_6mnd$`Andel remisjon`*andel_remisjon_6mnd$N, na.rm = T)/sum(andel_remisjon_6mnd$N, na.rm = T),
-                N = sum(andel_remisjon_6mnd$N, na.rm = T))
-andel_remisjon_6mnd <- bind_rows(andel_remisjon_6mnd, total)
-
-
-print(xtable::xtable(andel_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel i remisjon innen 6 måneder fra diagnosedato ut fra BVAS for ANCA-assosiert vaskulitter t.o.m. ', rap_aar, '. Gjelder nysyke som definert ved at bvasdato ved debut og inklusjonsdato er innenfor plussminus 30 dager.')), include.rownames = F)
-
-################ Data til Resultatportalen ###################################
-
-ind5_AndelAnCA_remisjon_NorVas <- remisjon[, c("UnitId", "BVAS_aar", "remisjon_indikator")]
-ind5_AndelAnCA_remisjon_NorVas$Nevner <- 1
-names(ind5_AndelAnCA_remisjon_NorVas)[2:3] <- c("Aar", "Teller")
-
-ind5_AndelAnCA_remisjon_NorVas$ind_id <- "norvas_anca_remisjon"
-Indikatorer <- bind_rows(Indikatorer, ind5_AndelAnCA_remisjon_NorVas)
-
-###############################################################################
-@
-
-<<'Fig. anca remisjon', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-figurdata <- ind5_AndelAnCA_remisjon_NorVas
-figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
-# x11()
-outfile <- paste0(figfolder, "remisjon_6mnd_anca.", utformat)
-norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
-                tittel = c("Andel i remisjon innen 6 måneder ut fra", "BVAS for ANCA-assosierte vaskulitter"),
-                maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
-@
-
-<<'BVAS stat, ved inklusjon', results='asis', echo=FALSE, warning=F>>=
-BVAS$tid_diag_bvas <- difftime(BVAS$BVAS_Dato, BVAS$Diagnose_Klinisk_Dato, units = 'days')
-InklusjonBVAS <- merge(Inklusjon[,c("Diagnose_ny","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
+InklusjonBVAS <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
                        BVAS, by.x = c("InklusjonDato", "SkjemaGUID"),
                        by.y = c("BVAS_Dato", "HovedskjemaGUID"))
 
 nysyke <- InklusjonBVAS %>%
   filter(Sykdomsvurdering == 1 &
-           Diagnose_ny == 1 &
+           Diagnose_ny_30 == 1 &
            Diag_gr_nr==2 &
            InklusjonDato <= datoTil)
 
@@ -1307,30 +1274,18 @@ ind5_AndelAnCA_remisjon_NorVas_v2$Nevner <- 1
 names(ind5_AndelAnCA_remisjon_NorVas_v2)[2:3] <- c("Aar", "Teller")
 
 ind5_AndelAnCA_remisjon_NorVas_v2$ind_id <- "norvas_anca_remisjon"
+Indikatorer <- bind_rows(Indikatorer, ind5_AndelAnCA_remisjon_NorVas_v2)
 
-# %>%
-#   group_by(Sykehus) %>%
-#   summarise(Antall_remisjon = sum(remisjon),
-#             N=n()) %>%
-#   janitor::adorn_totals() %>%
-#   mutate(Andel_remisjon = Antall_remisjon/N*100)
+tabell_remisjon_6mnd <- ind5_AndelAnCA_remisjon_NorVas_v2 %>%
+  filter(Aar <= rap_aar) %>%
+  group_by(Sykehusnavn) %>%
+  summarise(Antall = sum(Teller),
+            N = n()) %>%
+  janitor::adorn_totals() %>%
+  mutate(Andel = Antall/N*100) %>%
+  select(Sykehusnavn, Andel, N)
 
-
-# Oppfolging %>% group_by(PasientGUID) %>%
-#   summarise()
-
-# aux2 <- aux %>%
-#   dplyr::filter(InklusjonDato != BVAS_Dato) %>%
-#   dplyr::filter(BVAS_Dato > Diagnose_Klinisk_Dato) %>%
-#
-#   aux[aux$InklusjonDato != aux$BVAS_Dato, ]
-
-# InklusjonVDI <- merge(Inklusjon, VDI, by.x = c("InklusjonDato", "SkjemaGUID"),
-#                        by.y = c("VDI_Dato", "HovedskjemaGUID"))
-
-# table(InklusjonBVAS$SykdomsvurderingLabel)
-# Inklusjon$SkjemaGUID
-# BVAS$BVAS_Dato
+print(xtable::xtable(tabell_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel i remisjon innen 6 måneder fra diagnosedato ut fra BVAS for ANCA-assosiert vaskulitter t.o.m. ', rap_aar, '. Gjelder nysyke som definert ved at InkludertNyEtablertDiagnose = 1. Dersom InkludertNyEtablertDiagnose ikke er utfylt telles pasienter med Diagnose_Klinisk_Dato og InklusjonDato innenfor plussminus 30 dager som nysyke. Utvalget er videre innsnevret til at kun pasienter med Sykdomsvurdering = 1 ved inklusjon telles med.')), include.rownames = F)
 @
 
 <<'Fig. anca remisjon v2', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
@@ -1349,6 +1304,57 @@ norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
 \caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr etter debut}
 \end{figure}
 
+
+<<'Tab: andel remisjon 6mnd, GVV, V2', results='asis', echo=FALSE, warning=F>>=
+KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato, KERR$Diagnose_Klinisk_Dato, units = 'days')
+
+InklusjonKERR <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
+                       KERR, by.x = c("InklusjonDato", "SkjemaGUID"),
+                       by.y = c("KerrsKriterier_Dato", "HovedskjemaGUID"))
+
+nysyke <- InklusjonKERR %>%
+  filter(Sykdomsvurdering == 1 &
+           Diagnose_ny_30 == 1 &
+           Diag_gr_nr==1 &
+           InklusjonDato <= datoTil)
+
+
+aux <- merge(nysyke[, c("SkjemaGUID", "InklusjonDato", "Inklusjonsaar", "Sykehusnavn", "UnitId", "PasientGUID")],
+             KERR[, c("HovedskjemaGUID", "KerrsKriterier_Dato", "tid_diag_kerr", "Sykdomsvurdering")],
+             by.x = c("SkjemaGUID"),
+             by.y = c("HovedskjemaGUID"),
+             all.x = TRUE)
+
+oppsum <- aux %>% group_by(PasientGUID) %>%
+  summarise(ant_remisjon = sum(InklusjonDato != KerrsKriterier_Dato &
+                                 tid_diag_kerr > 0 &
+                                 tid_diag_kerr <= 210 &
+                                 Sykdomsvurdering == 2),
+            N = n(),
+            Sykehusnavn = first(Sykehusnavn),
+            UnitId = first(UnitId),
+            Inklusjonsaar = first(Inklusjonsaar)) %>%
+  mutate(remisjon = as.numeric(ant_remisjon > 0))
+
+ind_AndelStorkar_remisjon_NorVas <- oppsum[, c("UnitId", "Inklusjonsaar", "remisjon", "Sykehusnavn")]
+ind_AndelStorkar_remisjon_NorVas$Nevner <- 1
+names(ind_AndelStorkar_remisjon_NorVas)[2:3] <- c("Aar", "Teller")
+
+ind_AndelStorkar_remisjon_NorVas$ind_id <- "norvas_storkar_remisjon"
+# Indikatorer <- bind_rows(Indikatorer, ind_AndelStorkar_remisjon_NorVas)
+
+tabell_remisjon_6mnd <- ind_AndelStorkar_remisjon_NorVas %>%
+  filter(Aar <= rap_aar) %>%
+  group_by(Sykehusnavn) %>%
+  summarise(Antall = sum(Teller),
+            N = n()) %>%
+  janitor::adorn_totals() %>%
+  mutate(Andel = Antall/N*100) %>%
+  select(Sykehusnavn, Andel, N)
+
+print(xtable::xtable(tabell_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel i remisjon innen 6 måneder fra diagnosedato ut fra BVAS for ANCA-assosiert vaskulitter t.o.m. ', rap_aar, '. Gjelder nysyke som definert ved at InkludertNyEtablertDiagnose = 1. Dersom InkludertNyEtablertDiagnose ikke er utfylt telles pasienter med Diagnose_Klinisk_Dato og InklusjonDato innenfor plussminus 30 dager som nysyke. Utvalget er videre innsnevret til at kun pasienter med Sykdomsvurdering = 1 ved inklusjon telles med.')), include.rownames = F)
+
+@
 
 <<'Tab: andel remisjon 6mnd, GVV', results='asis', echo=FALSE, warning=F>>=
 KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato, KERR$Diagnose_Klinisk_Dato, units = 'days')
@@ -1385,6 +1391,7 @@ ind_AndelStorkar_remisjon_NorVas <- remisjon[, c("Sykehusnavn", "UnitId", "KERR_
 ind_AndelStorkar_remisjon_NorVas$Nevner <- 1
 names(ind_AndelStorkar_remisjon_NorVas)[3:4] <- c("Aar", "Teller")
 @
+
 
 <<'Fig: storkar remisjon.', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 figurdata <- ind_AndelStorkar_remisjon_NorVas
