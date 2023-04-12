@@ -18,7 +18,6 @@ norvasPreprosess <- function(RegData) {
   flyttall <- intersect(flyttall, names(RegData))
   boolsk <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Avkrysning')]
   boolsk <- intersect(boolsk, names(RegData))
-  # RegData <- RegData %>% dplyr::mutate_at(datovars, funs(as.Date(., format="%d.%m.%Y"))) # Fiks datoformat
   RegData <- RegData %>% dplyr::mutate_at(datovars, function(x){as.Date(x, format="%d.%m.%Y")})
   RegData <- RegData %>% dplyr::mutate_at(flyttall, function(x){as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
   RegData <- RegData %>% dplyr::mutate_at(boolsk, function(x){as.logical(x)}) # Gjør booske variabler til logicals
@@ -31,9 +30,7 @@ norvasPreprosess <- function(RegData) {
                                          'Betanien', 'Lillehammer', 'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
                                          'Moss', 'Stavanger', 'Drammen'))
   RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
-  # names(RegData)[names(RegData)=='UnitId'] <- 'AvdRESH'  ## Denne må sjekkes for ev. konsekvenser !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   RegData$ErMann <- RegData$PatientGender
-  # RegData$ErMann[RegData$PatientGender==1] <- 1
   RegData$ErMann[RegData$PatientGender==2] <- 0
 
   mapDiagKode <- data.frame(navn=c("Takayasu Arteritt"
@@ -57,7 +54,9 @@ norvasPreprosess <- function(RegData) {
                                          'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre'),
                             gr_nr= c(1,2,2,1,3,3,2,1,3,3,3,3,3,3,3))
 
-  # if ('Diagnose' %in% names(RegData)) {names(RegData)[names(RegData)=='Diagnose'] <- 'Navn'}
+  if ("InklusjonDato" %in% names(RegData)) {
+    RegData <- RegData[!is.na(RegData$InklusjonDato), ]
+  }
   if ('Icd_IcdDataDump' %in% names(RegData)) {names(RegData)[names(RegData)=='Icd_IcdDataDump'] <- 'Icd'}
   if ('Diagnose' %in% names(RegData) & 'Icd' %in% names(RegData)) {
     # Kun store bokstaver
@@ -67,23 +66,11 @@ norvasPreprosess <- function(RegData) {
     # Fjern alle komma og punktum
     RegData$Icd <- gsub(',', '', RegData$Icd)
     RegData$Icd <- gsub('\\.', '', RegData$Icd)
-    # RegData$GTI_diagkode <- NA
-    # RegData$GTI_diagkode <- mapDiagKode$gtiKode[match(substr(RegData$Navn, 1, 10), substr(mapDiagKode$navn, 1, 10))]
-    # # RegData$Diag_gr <- NA
-    # # RegData$Diag_gr <- mapDiagKode$gruppering[match(substr(RegData$Navn, 1, 10), substr(mapDiagKode$navn, 1, 10))]
-    # RegData$Diag_gr_nr <- NA
-    # RegData$Diag_gr_nr <- mapDiagKode$gr_nr[match(substr(RegData$Navn, 1, 10), substr(mapDiagKode$navn, 1, 10))]
-    # RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:3, labels = c('Storkarsvaskulitt (LVV)',
-    #                                                                        'ANCA assosiert vaskulitt (AAV)', 'Andre'))
-    # RegData$Navn[which(RegData$GTI_diagkode==7)] <- as.character(mapDiagKode$navn[match(7, mapDiagKode$gtiKode)])
     RegData$DiagnoseNr[RegData$Diagnose == "Polyarteritis Nodosa"] <- 5
     RegData$Diagnose <- mapDiagKode$navn[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
     RegData$tid_symp_diagnose <- difftime(RegData$Diagnose_Klinisk_Dato, RegData$SymptomStartDato, units = 'days')
     RegData <- RegData[!is.na(RegData$DiagnoseNr), ]
     RegData$Diag_gr_nr <- mapDiagKode$gr_nr[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
-    # RegData <- RegData[RegData$Diag_gr_nr != 3, ] # Fjerner gruppen annet
-    # RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:3, labels = c('Storkarsvaskulitt (LVV)',
-    #                                                                        'ANCA assosiert vaskulitt (AAV)', 'Andre'))
     RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:2, labels = c('Storkarsvaskulitt (LVV)',
                                                                            'ANCA assosiert vaskulitt (AAV)'))
     RegData$Navn <- RegData$Diagnose
@@ -108,18 +95,23 @@ norvasPreprosess <- function(RegData) {
   if ('LegemiddelType2019' %in% names(RegData)){
     RegData <- RegData[RegData$LegemiddelNr != 17, ] ## Folsyre fjernes
     #
-    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType2020' & kodebok_norvas$skjema == 'MedisineringSkjema'):
-      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2020' & varnavn$skjema == 'MedisineringSkjema')+1])-1)
+    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType2022' & kodebok_norvas$skjema == 'MedisineringSkjema'):
+      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2022' & varnavn$skjema == 'MedisineringSkjema')+1])-1)
     kobl_generisknavn_kode <- data.frame(kode=as.numeric(kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
                                          label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
     gml_medisinnr <- which(RegData$LegemiddelType2019 != "")
     RegData$LegemiddelNr[gml_medisinnr] <- as.numeric(norvas::mapping_med$ny_nr[match(RegData$LegemiddelNr[gml_medisinnr],
                                                                                       norvas::mapping_med$gml_nr)])
+    ny_medisinnr <- which(RegData$LegemiddelType2022 != "")
+    RegData$LegemiddelType2022[RegData$LegemiddelType2022 %in% "MycofenolatMofetil"] <- "Mycofenolat mofetil"
+    RegData$LegemiddelNr[ny_medisinnr] <- kobl_generisknavn_kode$kode[match(RegData$LegemiddelType2022[ny_medisinnr],
+                                                                            kobl_generisknavn_kode$label)]
+
     RegData$LegemiddelGenerisk <- NA
     RegData$LegemiddelGenerisk<- kobl_generisknavn_kode$label[match(RegData$LegemiddelNr, kobl_generisknavn_kode$kode)]
     RegData$LegemiddelTypeLabel <- factor(RegData$LegemiddelNr, levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
                                           labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
-    Medisiner$Medikamentgruppe[Medisiner$Medikamentgruppe == ""] <- "Andre"
+    RegData$Medikamentgruppe[RegData$Medikamentgruppe == ""] <- "Andre"
     # RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
   }
 

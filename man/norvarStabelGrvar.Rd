@@ -9,9 +9,10 @@ norvarStabelGrvar(
   grtxt = "",
   outfile = "",
   legendTxt = NA,
-  tittel = "Antall inklusjoner pr. HF",
+  tittel = "",
   xlab = " Antall pasienter",
-  cexgr = 1
+  cexgr = 1,
+  fargepalett = "BlaaOff"
 )
 }
 \description{

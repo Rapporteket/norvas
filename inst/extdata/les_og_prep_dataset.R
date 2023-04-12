@@ -18,16 +18,16 @@ norvasskjemanavn <- c('Inklusjonskjema', 'OppfølgingSkjema', 'MedisineringSkjem
                       'SelvrapportertAlvorligInfek', 'KerrsKriterierSkjema', 'MedisineringHistoriskDoseSk',
                       'MedisineringInfusjonsLoggSk', 'Svar fra pasienten', 'Diagnosekriterierskjema')
 
-kodebok_norvas <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_18052021.xlsx'), package = 'norvas'), sheet = 1)
+kodebok_norvas <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_norvas_11042023v2.xlsx'), package = 'norvas'), sheet = 1)
 kodebok_norvas$skjema <- norvasskjemanavn[1]
 
 for (p in 2:length(norvasskjemanavn)) {
-  aux <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_18052021.xlsx'), package = 'norvas'), sheet = p)
+  aux <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_norvas_11042023v2.xlsx'), package = 'norvas'), sheet = p)
   aux$skjema <- norvasskjemanavn[p]
   kodebok_norvas <- dplyr::bind_rows(kodebok_norvas, aux)
 }
 kodebok_norvas <- tidyr::separate(data = kodebok_norvas, col = "Mulige verdier", into = c("kode", "label"), sep = " = ")
-kodebok_norvas <- kodebok_norvas[, c("Feltnavn", "Variabelnavn", "kode", "label", "Felttype", "Gyldighet", "skjema")]
+kodebok_norvas <- kodebok_norvas[, c("Visningsnavn", "Variabelnavn", "kode", "label", "Felttype", "Gyldighet", "skjema")]
 kodebok_norvas$kode <- as.numeric(kodebok_norvas$kode)
 
 usethis::use_data(kodebok_norvas, overwrite = TRUE, internal = FALSE)
