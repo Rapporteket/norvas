@@ -491,17 +491,6 @@ registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing 
 print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)), digits = 0,
                      caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)), include.rownames = F)
 
-
-registreringer <- Inklusjon[!is.na(Inklusjon$Navn) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
-  group_by(Sykehusnavn, Navn) %>%
-  summarise(N = n()) %>%
-  spread(key = "Navn", value = "N", fill = 0)
-registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = F, na.last = F), ] %>%
-  janitor::adorn_totals(where = c("row", "col"))
-
-print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)), digits = 0,
-                     caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)), include.rownames = F)
-
 @
 
 \end{landscape}
@@ -962,15 +951,22 @@ print(xtable::xtable(min2oppf, align= c('l','l','r','r'), digits=c(0, 0,1,0), ca
 
 <<'Tab: Antall nysyke', results='asis', echo=FALSE, warning=F>>=
 
-nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30*6), ]
+tabell <- Inklusjon %>% dplyr::filter(Diagnose_ny_180 == 1) %>%
+  dplyr::filter(Inklusjonsaar %in% (rap_aar-4):rap_aar) %>%
+  dplyr::group_by(Diag_gr, Inklusjonsaar) %>%
+  dplyr::summarise(Antall = n()) %>%
+  tidyr::pivot_wider(names_from = Inklusjonsaar, values_from = Antall) %>%
+  dplyr::rename(Diagnosegruppe = Diag_gr)
 
-ant_nysyke_rapaar <-  as.data.frame(table(nysyke$Diag_gr[nysyke$Inklusjonsaar==rap_aar]))
-names(ant_nysyke_rapaar) <- c('Diagnosegruppe', 'Antall')
-print(xtable::xtable(ant_nysyke_rapaar, align= c('l','l','r'), caption=paste0('Antall nysyke ', rap_aar)), include.rownames = F)
-
-## Lag tabell over
-# Inklusjon$InkludertNyEtablertDiagnose
-# table(Inklusjon[Inklusjon$Inklusjonsaar==2022, c("Diag_gr", "InkludertNyEtablertDiagnose")])
+print(xtable::xtable(
+  tabell, align= c('l','l',rep("r", dim(tabell)[2]-1)),
+  caption=paste0("Antall nysyke siste ", dim(tabell)[2]-1,
+                 " år t.o.m. ", rap_aar, ". Nysyke er definert som pasienter som
+                 har InkludertNyEtablertDiagnose = 1. Dersom InkludertNyEtablertDiagnose
+                 ikke er utfylt telles pasienter med Diagnose\\_Klinisk\\_Dato og
+                 InklusjonDato innenfor plussminus 180 dager som nysyke.")
+),
+include.rownames = F)
 
 @
 
@@ -979,25 +975,32 @@ print(xtable::xtable(ant_nysyke_rapaar, align= c('l','l','r'), caption=paste0('A
 <<'Tab: BVAS/Kerr ved oppfølging', results='asis', echo=FALSE, warning=FALSE>>=
 
 ########  BVAS ##############
-tmp2 <- merge(Oppfolging, BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")], by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
-tmp2 <- tmp2[tmp2$Diag_gr_nr %in% c(2), ]
-# tmp2 %>% group_by(Oppfolgingsaar) %>% summarise(andeloppf = sum(!is.na(bvas_samlet))/length(bvas_samlet)*100,
-# N = n())
-Tabell_bvas_oppf <- tmp2[tmp2$Oppfolgingsaar==rap_aar, ] %>% group_by(Sykehusnavn) %>% summarise(andeloppf = sum(!is.na(SykdomsvurderingLabel))/length(SykdomsvurderingLabel)*100, N = n())
+OppfolgingBVAS <- merge(Oppfolging,
+                        BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")],
+                        by.x = c('PasientGUID','OppfolgingsDato'),
+                        by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
+OppfolgingBVAS <- OppfolgingBVAS[OppfolgingBVAS$Diag_gr_nr %in% c(2), ]
 
-total <- tibble(Sykehusnavn= 'Totalt',
-                andeloppf = sum(Tabell_bvas_oppf$andeloppf*Tabell_bvas_oppf$N)/sum(Tabell_bvas_oppf$N),
-                N = sum(Tabell_bvas_oppf$N))
-Tabell_bvas_oppf <- bind_rows(Tabell_bvas_oppf, total)
+Tabell_bvas_oppf <- OppfolgingBVAS %>%
+  dplyr::filter(Oppfolgingsaar==rap_aar) %>%
+  dplyr::group_by(Sykehusnavn) %>%
+  dplyr::summarise(
+    Antall = sum(!is.na(SykdomsvurderingLabel)),
+    N = dplyr::n()) %>%
+  janitor::adorn_totals() %>%
+  dplyr::mutate(Andel = Antall/N*100) %>%
+  dplyr::select(Sykehusnavn, Andel, N) %>%
+  dplyr::rename("Andel oppfølging" = "Andel")
 
-names(Tabell_bvas_oppf)[2] <- 'Andel oppfølging'
-
-print(xtable::xtable(Tabell_bvas_oppf, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel med utført BVAS ved oppfølging i ', rap_aar, ', ANCA-assosierte vaskulitter')), include.rownames = F)
+print(xtable::xtable(
+  Tabell_bvas_oppf, align= c('l','l','r','r'),
+  digits=c(0,0,1,0), caption=paste0('Andel med utført BVAS ved oppfølging i ',
+                                    rap_aar, ', ANCA-assosierte vaskulitter')),
+  include.rownames = F)
 
 ############# Resultatportalen  ##########################################################
 
-Ind3_AndelBVAS_NorVas <- tmp2[, c("UnitId", "Oppfolgingsaar", "SykdomsvurderingLabel")]
+Ind3_AndelBVAS_NorVas <- OppfolgingBVAS[, c("UnitId", "Oppfolgingsaar", "SykdomsvurderingLabel")]
 Ind3_AndelBVAS_NorVas$Teller <- as.numeric(!is.na(Ind3_AndelBVAS_NorVas$SykdomsvurderingLabel))
 Ind3_AndelBVAS_NorVas$Nevner <- 1
 figurdata <- Ind3_AndelBVAS_NorVas
