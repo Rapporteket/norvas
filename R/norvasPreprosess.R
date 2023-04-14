@@ -76,18 +76,19 @@ norvasPreprosess <- function(RegData) {
     RegData$Navn <- RegData$Diagnose
   }
 
-  kode <- c(1, 2, 3, 5, 6, 8, 12, 14, 15, 16, 18, 19, 20, 22, 23, 24, 25, 26, 28, 30,
-            31, 32, 34, 35, 36, 38, 39, 40, 42, 43, 999)
-  Legemiddelgruppe <- c("Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
+  kode <- c(1, 2, 3, 4, 5, 6, 8, 12, 14, 15, 16, 18, 19, 20, 22, 23, 24, 25, 26, 28, 30,
+            31, 32, 33, 34, 35, 36, 38, 39, 40, 42, 43, 999)
+  Legemiddelgruppe <- c("Biologiske legemidler", "Biologiske legemidler",
+                        "Biologiske legemidler", "Biologiske legemidler",
+                        "Biologiske legemidler", "Biologiske legemidler",
+                        "Biologiske legemidler", "Biologiske legemidler",
+                        "Biologiske legemidler",
                         "DMARD", "DMARD", "DMARD", "Kortikosteroider", "DMARD",
                         "DMARD", "Kortikosteroider", "DMARD", "DMARD", "Cyclofosfamid",
-                        "Biologiske legemidler \n (Rituximab ekskludert)", "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "DMARD", "DMARD", "DMARD", "DMARD", "Immunglob.G", "Kortikosteroider",
-                        "Biologiske legemidler \n (Rituximab ekskludert)",
-                        "Rituximab", "Biologiske legemidler \n (Rituximab ekskludert)", "DMARD", "Annet")
+                        "Biologiske legemidler", "Biologiske legemidler",
+                        "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "Immunglob.G",
+                        "Kortikosteroider", "Biologiske legemidler",
+                        "Rituximab", "Biologiske legemidler", "DMARD", "Annet")
   kobl_gruppe_kode <- data.frame(kode, Legemiddelgruppe)
 
   varnavn <- kodebok_norvas[which(!is.na(kodebok_norvas$Variabelnavn)), c("Variabelnavn", "skjema")]
@@ -112,7 +113,16 @@ norvasPreprosess <- function(RegData) {
     RegData$LegemiddelTypeLabel <- factor(RegData$LegemiddelNr, levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
                                           labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
     RegData$Medikamentgruppe[RegData$Medikamentgruppe == ""] <- "Andre"
-    # RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
+    RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
+
+    tmp <- RegData %>%
+      group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
+      summarise('ant_samme_startdato' = n(),
+                Med_SluttDato_min = min(Med_SluttDato, na.rm = T),
+                SkjemaGUID_min = if (is.na(which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1])) {SkjemaGUID[1]}
+                else {SkjemaGUID[which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1]]})
+
+    RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
   }
 
   if ('BvasPersistentTotal' %in% names(RegData)){
@@ -121,8 +131,6 @@ norvasPreprosess <- function(RegData) {
     RegData$SykdomsvurderingLabel <- factor(RegData$Sykdomsvurdering, levels = kodebok_norvas$kode[c(indekser_kodebok[-1])],
                                           labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
     RegData$bvas_samlet <- RegData$BvasPersistentTotal
-    # RegData$bvas_samlet[RegData$bvas_samlet==0] <- RegData$BvasnewOrWorseTotal[RegData$bvas_samlet==0]
-    # RegData$bvas_samlet[is.na(RegData$bvas_samlet)] <- RegData$BvasnewOrWorseTotal[is.na(RegData$bvas_samlet)]
     RegData$bvas_samlet[is.na(RegData$bvas_samlet)] <- RegData$BvasRenalNewOrWorseScore[is.na(RegData$bvas_samlet)]
 
     tmp <- table(RegData[, c("PasientGUID", "BVAS_Dato")])
@@ -130,11 +138,16 @@ norvasPreprosess <- function(RegData) {
     tmp <- tmp[tmp$Freq>1, ]
     tmp2 <-  merge(RegData[, c("PasientGUID", "BVAS_Dato", "SkjemaGUID")],
                    tmp[, c("PasientGUID", "BVAS_Dato")], by = c('PasientGUID', 'BVAS_Dato'))
-    # tmp2 <- tmp2 %>% group_by(PasientGUID, BVAS_Dato) %>% summarise(SkjemaGUID = SkjemaGUID[1])
 
     RegData <- RegData[!(RegData$SkjemaGUID %in% tmp2$SkjemaGUID), ] ## Fjerner BVAS som har flere registreringer på
                                                                      ## samme pasient på samme dag.
+  }
 
+  if ('KerrsKriterier_Dato' %in% names(RegData)){
+    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'KerrsKriterierSkjema'):
+      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='Sykdomsvurdering' & varnavn$skjema == 'KerrsKriterierSkjema')+1] & kodebok_norvas$skjema == 'KerrsKriterierSkjema')-1)
+    RegData$SykdomsvurderingLabel <- factor(RegData$Sykdomsvurdering, levels = kodebok_norvas$kode[c(indekser_kodebok[-1])],
+                                         labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
   }
 
   if ('AntallInfeksjoner' %in% names(RegData)){

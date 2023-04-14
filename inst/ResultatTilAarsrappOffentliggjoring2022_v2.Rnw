@@ -103,35 +103,10 @@ Alvorlig_infeksjon <- norvasPreprosess(Alvorlig_infeksjon)
 Utredning <- norvasPreprosess(Utredning)
 Labskjema <- norvasPreprosess(Labskjema)
 
-# Diagnoser$Navn[Diagnoser$Navn %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
-# Diagnoser <- Diagnoser[-which(Diagnoser$Navn == 'Polymyalgia Rheumatica'), ]
-
-### Foreløpig fiks, fjernes når data er ordnet
-Medisiner$Medikamentgruppe[Medisiner$Medikamentgruppe == ""] <- "Andre"
-
 ### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
 Medisiner <- Medisiner[Medisiner$Medikamentgruppe != "Andre", ]
-
-varnavn <- kodebok_norvas[which(!is.na(kodebok_norvas$Variabelnavn)), c("Variabelnavn", "skjema")]
-indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'BvasSkjema'):
-  (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='Sykdomsvurdering' & varnavn$skjema == 'BvasSkjema')+1] & kodebok_norvas$skjema == 'BvasSkjema')-1)
-BVAS$SykdomsvurderingLabel <- factor(BVAS$Sykdomsvurdering, levels = kodebok_norvas$kode[c(indekser_kodebok[-1])],
-                                     labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
-tmp <- table(BVAS[, c("PasientGUID", "BVAS_Dato")])
-tmp <- as.data.frame(tmp)
-tmp <- tmp[tmp$Freq>1, ]
-tmp2 <-  merge(BVAS[, c("PasientGUID", "BVAS_Dato", "SkjemaGUID")],
-               tmp[, c("PasientGUID", "BVAS_Dato")], by = c('PasientGUID', 'BVAS_Dato'))
-BVAS <- BVAS[!(BVAS$SkjemaGUID %in% tmp2$SkjemaGUID), ] ## Fjerner BVAS som har flere registreringer på
-## samme pasient på samme dag.
-
-indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'KerrsKriterierSkjema'):
-  (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='Sykdomsvurdering' & varnavn$skjema == 'KerrsKriterierSkjema')+1] & kodebok_norvas$skjema == 'KerrsKriterierSkjema')-1)
-KERR$SykdomsvurderingLabel <- factor(KERR$Sykdomsvurdering, levels = kodebok_norvas$kode[c(indekser_kodebok[-1])],
-                                     labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
-
+Medisiner <- Medisiner[Medisiner$LegemiddelNr != 0, ]
 ###############################################################################
-
 
 sykehusnavn <- sort(unique(Inklusjon$Sykehusnavn))
 
@@ -153,10 +128,8 @@ Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUI
 Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
 Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
-# Inklusjon$Fodselsdato <- personnr2fodselsdato(Inklusjon$PasientId)
 Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
                    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
-
 Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
                                             "Diag_gr", "Navn")],
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
@@ -183,8 +156,6 @@ Alvorlig_infeksjon <- merge(Alvorlig_infeksjon, Diagnoser[, c('HovedskjemaGUID',
 Labskjema <- merge(Labskjema, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
                    by = 'HovedskjemaGUID', all.x = T)
 
-
-
 Inklusjon$Diagnose_ny_30 <- NA
 Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30] <- 1
 Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) > 30] <- 0
@@ -196,18 +167,14 @@ Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjo
 Inklusjon$Diagnose_ny_180[Inklusjon$InkludertNyEtablertDiagnose==2] <- 0
 Inklusjon$Diagnose_ny_180[Inklusjon$InkludertNyEtablertDiagnose==1] <- 1
 
-
 Inklusjon$Inklusjonsaar <- as.numeric(format(Inklusjon$InklusjonDato, format = '%Y'))
 Oppfolging$Oppfolgingsaar <- as.numeric(format(Oppfolging$OppfolgingsDato, format = '%Y'))
 Inklusjon <- Inklusjon[Inklusjon$Inklusjonsaar <= rap_aar, ]
 Oppfolging <- Oppfolging[Oppfolging$Oppfolgingsaar<= rap_aar, ]
-# Inklusjon$Inklusjonsalder <- age(Inklusjon$Fodselsdato, Inklusjon$InklusjonDato)
 Inklusjon$Inklusjonsalder <- Inklusjon$PatientAge
 BVAS$BVAS_aar <- as.numeric(format(BVAS$BVAS_Dato, format = '%Y'))
 KERR$KERR_aar <- as.numeric(format(KERR$KerrsKriterier_Dato, format = '%Y'))
-# Diagnoser$DiagnoseAlder <- age(Diagnoser$Fodselsdato, Diagnoser$Diagnose_Klinisk_Dato)
 Diagnoser$DiagnoseAlder <- Diagnoser$PatientAge
-# Alvorlig_infeksjon$inf_alder <- age(Alvorlig_infeksjon$Fodselsdato, Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato)
 Alvorlig_infeksjon$inf_alder <- Alvorlig_infeksjon$PatientAge
 
 Oppfolging <- Oppfolging[Oppfolging$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, ]
@@ -221,14 +188,14 @@ Utredning <- Utredning[Utredning$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, ]
 Labskjema <- Labskjema[Labskjema$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, ]
 
 #### HVIS SAMME PASIENT HAR OPPSTART MED SAMME LEGEMIDDEL PÅ SAMME DAG, VELG DEN MED TIDLIGST SLUTTDATO
-tmp <- Medisiner %>%
-  group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
-  summarise('ant_samme_startdato' = n(),
-            Med_SluttDato_min = min(Med_SluttDato, na.rm = T),
-            SkjemaGUID_min = if (is.na(which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1])) {SkjemaGUID[1]}
-            else {SkjemaGUID[which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1]]})
-
-Medisiner <- merge(Medisiner, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
+# tmp <- Medisiner %>%
+#   group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
+#   summarise('ant_samme_startdato' = n(),
+#             Med_SluttDato_min = min(Med_SluttDato, na.rm = T),
+#             SkjemaGUID_min = if (is.na(which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1])) {SkjemaGUID[1]}
+#             else {SkjemaGUID[which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1]]})
+#
+# Medisiner <- merge(Medisiner, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
 
 
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
@@ -380,10 +347,12 @@ norvasFigAndeler(RegData=KERR, valgtVar="Sykdomsvurdering_kerr",
 
 
 <<'Tab: registreringer', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-# x11()
-registreringer <- Inklusjon %>% group_by(Sykehusnavn) %>% summarise('Foer_rapaar' = sum(Inklusjonsaar<rap_aar),
-                                                                    'aar_rapaar' = sum(Inklusjonsaar==rap_aar))
-registreringer <- registreringer[order(rowSums(registreringer[,2:3]), decreasing = F, na.last = F), ]
+
+registreringer <- Inklusjon %>%
+  group_by(Sykehusnavn) %>%
+  summarise('Foer_rapaar' = sum(Inklusjonsaar<rap_aar),
+            'aar_rapaar' = sum(Inklusjonsaar==rap_aar)) %>%
+  arrange(rowSums(across(-1)))
 
 plotMatrise <- t(as.matrix(registreringer[,c(2,3)]))
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
@@ -399,9 +368,11 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
                   legendTxt = legendTxt)
 
 
-oppfolginger <- Oppfolging %>% group_by(Sykehusnavn) %>% summarise('Foer_rapaar' = sum(Oppfolgingsaar<rap_aar),
-                                                                   'aar_rapaar' = sum(Oppfolgingsaar==rap_aar))
-oppfolginger <- oppfolginger[order(rowSums(oppfolginger[,2:3]), decreasing = F, na.last = F), ]
+oppfolginger <- Oppfolging %>%
+  group_by(Sykehusnavn) %>%
+  summarise('Foer_rapaar' = sum(Oppfolgingsaar<rap_aar),
+            'aar_rapaar' = sum(Oppfolgingsaar==rap_aar)) %>%
+  arrange(rowSums(across(c(-1))))
 
 plotMatrise <- t(as.matrix(oppfolginger[,c(2,3)]))
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
@@ -418,11 +389,12 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 @
 
 <<'Tab: registreringer pr. diag. gr.', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-registreringer <- Inklusjon[!is.na(Inklusjon$Diag_gr) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr) & Inklusjonsaar <= rap_aar) %>%
   group_by(Sykehusnavn, Diag_gr) %>%
   summarise(N = n()) %>%
-  spread(key = "Diag_gr", value = "N", fill = 0)
-registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = F, na.last = F), ]
+  spread(key = "Diag_gr", value = "N", fill = 0) %>%
+  arrange(rowSums(across(c(-1))))
 
 plotMatrise <- t(as.matrix(registreringer[,-1]))
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
@@ -433,20 +405,23 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
                   outfile = outfile,
                   tittel = c("Antall inklusjoner pr. HF", "og pr. diagnosegruppe"),
                   xlab ="Antall pasienter",
-                  legendTxt = paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])))
+                  legendTxt = paste0(names(registreringer)[-1], ",
+                                     N=", colSums(registreringer[, -1])))
 
 
-registreringer <- Inklusjon[!is.na(Inklusjon$Navn) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
+registreringer <- Inklusjon %>%
+  filter(!is.na(Navn) & Inklusjonsaar <= rap_aar) %>%
   group_by(Sykehusnavn, Navn) %>%
   summarise(N = n()) %>%
-  spread(key = "Navn", value = "N", fill = 0)
-registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = F, na.last = F), ]
+  spread(key = "Navn", value = "N", fill = 0) %>%
+  arrange(rowSums(across(c(-1))))
 
 plotMatrise <- t(as.matrix(registreringer[,-1]))
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
 outfile <- paste0(figfolder, 'reg_pr_diagnose.', utformat)
 grtxt <- registreringer$Sykehusnavn
-legendTxt <- norvas::wrap.it(paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])), 34)
+legendTxt <- norvas::wrap.it(paste0(names(registreringer)[-1], ",
+                                    N=", colSums(registreringer[, -1])), 34)
 norvarStabelGrvar(plotMatrise=plotMatrise,
                   grtxt = grtxt,
                   outfile = outfile,
@@ -480,16 +455,19 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 % \addtolength{\voffset}{4.0cm}
 
 <<'Tab: Inkl.pr.diagnose', results='asis', echo=FALSE, warning=F>>=
-registreringer <- Inklusjon[!is.na(Inklusjon$Diag_gr) & Inklusjon$Inklusjonsaar <= rap_aar, ] %>%
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr) & Inklusjonsaar <= rap_aar) %>%
   group_by(Sykehusnavn, Navn) %>%
   summarise(N = n()) %>%
-  spread(key = "Navn", value = "N", fill = 0)
-
-registreringer <- registreringer[order(rowSums(registreringer[,-1]), decreasing = T, na.last = F), ] %>%
+  spread(key = "Navn", value = "N", fill = 0) %>%
+  arrange(rowSums(across(c(-1)))) %>%
   janitor::adorn_totals(where = c("row", "col"))
 
-print(xtable::xtable(registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)), digits = 0,
-                     caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)), include.rownames = F)
+print(xtable::xtable(
+  registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)),
+  digits = 0,
+  caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)),
+  include.rownames = F)
 
 @
 
@@ -1543,6 +1521,8 @@ norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
 Alvorlig_infeksjon_rapaar <-
   Alvorlig_infeksjon[Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato >= datoFra &
                        Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato <= datoTil, ]
+
+
 
 aux <- Alvorlig_infeksjon_rapaar %>% group_by(PasientGUID, Sykehusnavn) %>% summarise(ant.pr.pas = sum(AntallInfeksjoner), N=n())
 
