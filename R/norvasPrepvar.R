@@ -99,7 +99,7 @@ norvasPrepvar <- function(RegData, valgtVar) {
     retn <- 'V'
   }
 
-  if (valgtVar == 'Navn') {
+  if (valgtVar == 'Diagnose') {
     tittel <- 'Diagnosefordeling'
     RegData$Variabel <- RegData[, valgtVar]
     grtxt <- names(sort(table(RegData$Variabel), decreasing = T))

@@ -95,6 +95,7 @@ norvasPreprosess <- function(RegData) {
 
   if ('LegemiddelType2019' %in% names(RegData)){
     RegData <- RegData[RegData$LegemiddelNr != 17, ] ## Folsyre fjernes
+    RegData <- RegData[!is.na(RegData$Med_StartDato), ]
     #
     indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType2022' & kodebok_norvas$skjema == 'MedisineringSkjema'):
       (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2022' & varnavn$skjema == 'MedisineringSkjema')+1])-1)
@@ -123,7 +124,7 @@ norvasPreprosess <- function(RegData) {
                 else {SkjemaGUID[which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1]]})
 
     RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
-  }
+    }
 
   if ('BvasPersistentTotal' %in% names(RegData)){
     indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'BvasSkjema'):

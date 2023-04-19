@@ -131,7 +131,7 @@ Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUI
 Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
                    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
 Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                            "Diag_gr", "Navn")],
+                                            "Diag_gr", "Diagnose")],
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
 Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr != 3)
 
@@ -228,7 +228,7 @@ preprosess=F
 valgtShus=c('')
 hentData=F
 RegData=Diagnoser
-valgtVar='Navn'
+valgtVar='Diagnose'
 datovar='Diagnose_Klinisk_Dato'
 enhetsUtvalg <- 0
 aldervar='DiagnoseAlder'
@@ -410,10 +410,10 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 
 
 registreringer <- Inklusjon %>%
-  filter(!is.na(Navn) & Inklusjonsaar <= rap_aar) %>%
-  group_by(Sykehusnavn, Navn) %>%
+  filter(!is.na(Diagnose) & Inklusjonsaar <= rap_aar) %>%
+  group_by(Sykehusnavn, Diagnose) %>%
   summarise(N = n()) %>%
-  spread(key = "Navn", value = "N", fill = 0) %>%
+  spread(key = "Diagnose", value = "N", fill = 0) %>%
   arrange(rowSums(across(c(-1))))
 
 plotMatrise <- t(as.matrix(registreringer[,-1]))
@@ -457,9 +457,9 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 <<'Tab: Inkl.pr.diagnose', results='asis', echo=FALSE, warning=F>>=
 registreringer <- Inklusjon %>%
   filter(!is.na(Diag_gr) & Inklusjonsaar <= rap_aar) %>%
-  group_by(Sykehusnavn, Navn) %>%
+  group_by(Sykehusnavn, Diagnose) %>%
   summarise(N = n()) %>%
-  spread(key = "Navn", value = "N", fill = 0) %>%
+  spread(key = "Diagnose", value = "N", fill = 0) %>%
   arrange(rowSums(across(c(-1)))) %>%
   janitor::adorn_totals(where = c("row", "col"))
 
@@ -483,6 +483,44 @@ print(xtable::xtable(
 
 
 <<'Tab: Andel pas. som har brukt med. grupper.', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
+
+##### Nytt forsøk med intervaller #################################
+ekskluderte <- Oppfolging %>%
+  dplyr::filter(!is.na(EksklusjonsDato)) %>%
+  dplyr::select(EksklusjonsArsak, EksklusjonsDato,
+                HovedskjemaGUID)
+Medisiner <- merge(Medisiner, ekskluderte,
+              by = "HovedskjemaGUID",
+              all.x = T) %>%
+  merge(Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+        by.x = "HovedskjemaGUID",
+        by.y = "SkjemaGUID",
+        all.x = T)
+
+
+Medisiner$Med_SluttDato2 <- Medisiner$Med_SluttDato
+Medisiner$Med_SluttDato2[is.na(Medisiner$Med_SluttDato) &
+                           is.na(Medisiner$EksklusjonsDato)] <- as.Date("2100-01-01")
+Medisiner$Med_SluttDato2[is.na(Medisiner$Med_SluttDato) &
+                           !is.na(Medisiner$EksklusjonsDato)] <-
+  Medisiner$EksklusjonsDato[is.na(Medisiner$Med_SluttDato) &
+                           !is.na(Medisiner$EksklusjonsDato)]
+Medisiner$Paa_med <- lubridate::interval(Medisiner$Med_StartDato,
+                                         Medisiner$Med_SluttDato2)
+rapaar_intervall <- lubridate::interval(as.Date(paste0(rap_aar, "-01-01")),
+                                         as.Date(paste0(rap_aar, "-12-31")))
+foer_rapaar_intervall <- lubridate::interval(as.Date(paste0("1980", "-01-01")),
+                                         as.Date(paste0(rap_aar-1, "-12-31")))
+Medisiner$Medisinert_rapaar <- lubridate::int_overlaps(Medisiner$Paa_med, rapaar_intervall)
+Medisiner$Medisinert_foer_rapaar <- lubridate::int_overlaps(Medisiner$Paa_med, foer_rapaar_intervall)
+Medisiner$idag <- lubridate::today()
+Medisiner$idag[!is.na(Medisiner$EksklusjonsDato)] <- Medisiner$EksklusjonsDato[!is.na(Medisiner$EksklusjonsDato)]
+Medisiner$inkludert_intervall <- lubridate::interval(as.Date(paste0("1980", "-01-01")),
+                                         as.Date(paste0(rap_aar-1, "-12-31")))
+
+Medisiner %>% group_by(Sykehusnavn, Medikamentgruppe) %>%
+  summarise(med_rapaar = length(unique(PasientGUID[Medisinert_rapaar])),
+            med_foer_rapaar = length(unique(PasientGUID[Medisinert_foer_rapaar])))
 
 # ######## gr. 1 ################
 indMedisinert_rapaar <- which(((Medisiner$Med_StartDato <= datoTil & is.na(Medisiner$Med_SluttDato)) | (Medisiner$Med_StartDato <= datoTil & Medisiner$Med_SluttDato >= datoFra)) & Medisiner$Diag_gr_nr == 1)
@@ -1683,7 +1721,7 @@ andel_utredet_LVV_v2 <- sum(tmp$ct_utfort)/antall_nysyke_LVV*100
 ## Utredning kjempecellearteritt
 
 aux <- merge(nysyke, Utredning, by = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
-aux <- aux[aux$Navn == "Kjempecellearteritt", ]
+aux <- aux[aux$Diagnose == "Kjempecellearteritt", ]
 antall_nysyke_GCA <- dim(aux)[1]
 
 ## Ny variant - start
@@ -1955,9 +1993,7 @@ nokkeltall <- Inklusjon %>% group_by(Inklusjonsaar) %>% summarise("Antall avdeli
 
 Diagnoser$Inklusjonsaar <- as.numeric(format(Diagnoser$InklusjonDato, "%Y"))
 
-# table(Diagnoser$Navn, Diagnoser$Inklusjonsaar, useNA = 'ifany')
-
-diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Navn) %>%
+diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Diagnose) %>%
   summarise(Antall=n()) %>% spread(key = Inklusjonsaar, value = Antall, fill = NA)
 
 # write.csv2(diag_tbl, 'Q:/SKDE/Nasjonalt servicemiljø/Resultattjenester/Resultatportalen/3. NorVas/diagnosetabell.csv', na = '', fileEncoding = 'Latin1', row.names = F) # Skal med

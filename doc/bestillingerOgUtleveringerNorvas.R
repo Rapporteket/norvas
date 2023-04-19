@@ -7,6 +7,81 @@ library(xtable)
 library(lubridate)
 library(dplyr)
 
+##########################################################
+## Tall til dekningsgradsanalyse 2022 ####################
+
+Inklusjon_raa <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-04-19_0913.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM',
+  colClasses = c('PasientId'='character'))
+Inklusjon_raa <- Inklusjon_raa %>% dplyr::rename(PasientGUID = Fødselsnummer)
+Inklusjon <- Inklusjon_raa
+
+Diagnoser_raa <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- Diagnoser_raa
+
+Oppfolging_raa <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2023-04-19_0919.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Oppfolging <- Oppfolging_raa %>% filter(EksklusjonsDato != "") %>%
+  select(PasientGUID, EksklusjonsDato) %>%
+  mutate(EksklusjonsDato = as.Date(EksklusjonsDato, format ="%d.%m.%Y")) %>%
+  arrange(dplyr::desc(EksklusjonsDato)) %>%
+  group_by(PasientGUID) %>%
+  filter(EksklusjonsDato == min(EksklusjonsDato))
+
+Inklusjon <- norvasPreprosess(Inklusjon)
+Diagnoser <- norvasPreprosess(Diagnoser)
+
+Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
+Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUID), ]
+
+Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
+Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
+
+Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
+                                            "Diag_gr", "Diagnose")],
+                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
+
+Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+                   by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID') %>%
+  merge(Oppfolging, by = "PasientGUID", all.x = T)
+Diagnoser <- Diagnoser[Diagnoser$Diagnose_Klinisk_Dato  <= '2022-12-31' |
+                         Diagnoser$InklusjonDato <= '2022-12-31', ]
+Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "Icd", "Diagnose_Klinisk_Dato",
+                            "InklusjonDato", "UnitId", "Sykehusnavn", "DiagnoseNr",
+                            "EksklusjonsDato"), ]
+
+write.csv2(Diagnoser, '~/softlinks/mydata/norvas/diagnoser_npr_2022.csv', row.names = F)
+
+Kobling_norvas_pid_fn <- Inklusjon[Inklusjon$PasientGUID %in% Diagnoser$PasientGUID, c("PasientGUID", "PasientId")]
+names(Kobling_norvas_pid_fn)[2] <- 'Fodselsnummer'
+
+write.csv2(Kobling_norvas_pid_fn, '~/softlinks/mydata/norvas/kobling_norvas_npr_2022.csv', row.names = F)
+
+#
+# # tmp1 <- Inklusjon[!(Inklusjon$PasientGUID %in% Diagnoser$PasientGUID), ]
+# tmp1 <- Inklusjon_raa[!(Inklusjon_raa$PasientGUID %in% Diagnoser_raa$PasientGUID), ]
+# tmp2 <- Diagnoser_raa[!(Diagnoser_raa$PasientGUID %in% Inklusjon_raa$PasientGUID), ]
+#
+# length(intersect(Inklusjon_raa$PasientGUID))
+#
+# Diagnoser %>% group_by(Diagnose) %>%
+#   summarise(icd10 = paste0(sort(unique(Icd)), collapse = ",")) %>%
+#   arrange("icd10")
+#
+# Diagnoser %>% group_by(Diagnose) %>%
+#   summarise(icd10 = unique(DiagnoseNr)) %>%
+#   arrange(icd10)
+
+Diagnoser %>% group_by(Diagnose) %>%
+  summarise(antall = n()) %>%
+  arrange(-antall) %>%
+  janitor::adorn_totals()
+  write.csv2("/media/kevin/KINGSTON/diag_norvas.csv", row.names = F, fileEncoding = "Latin1")
+
 ## Hans Kristian Skaug 20. mars 2023 #############################
 
 variabler <- read.table('~/softlinks/mydata/norvas/Variabler_til_uttrekk_Liste.csv', header=TRUE, sep=";",
@@ -383,8 +458,8 @@ Medisiner <- read.table('I:/norvas/DataDump_MRS-PROD_MedisineringSkjema_2021-03-
 Inklusjon <- norvasPreprosess(Inklusjon)
 Diagnoser <- norvasPreprosess(Diagnoser)
 Medisiner <- norvasPreprosess(Medisiner)
-Diagnoser$Navn[Diagnoser$Navn %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
-Diagnoser <- Diagnoser[-which(Diagnoser$Navn == 'Polymyalgia Rheumatica'), ]
+Diagnoser$Diagnose[Diagnoser$Diagnose %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
+Diagnoser <- Diagnoser[-which(Diagnoser$Diagnose == 'Polymyalgia Rheumatica'), ]
 
 Medisiner <- merge(Medisiner, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
 Medisiner <- Medisiner[Medisiner$Diag_gr_nr %in% 2, ]
@@ -462,8 +537,8 @@ Alvorlig_infeksjon <- norvasPreprosess(Alvorlig_infeksjon)
 Utredning <- norvasPreprosess(Utredning)
 Labskjema <- norvasPreprosess(Labskjema)
 
-Diagnoser$Navn[Diagnoser$Navn %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
-Diagnoser <- Diagnoser[-which(Diagnoser$Navn == 'Polymyalgia Rheumatica'), ]
+Diagnoser$Diagnose[Diagnoser$Diagnose %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
+Diagnoser <- Diagnoser[-which(Diagnoser$Diagnose == 'Polymyalgia Rheumatica'), ]
 
 sykehusnavn <- sort(unique(Inklusjon$Sykehusnavn))
 
@@ -516,13 +591,13 @@ Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
 Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
 Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                            "Diag_gr", "Navn")],
+                                            "Diag_gr", "Diagnose")],
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
 
 Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
                    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
 Diagnoser <- Diagnoser[Diagnoser$Diagnose_Klinisk_Dato  <= '2020-12-31' | Diagnoser$InklusjonDato <= '2020-12-31', ]
-Diagnoser <- Diagnoser[ , c("PasientGUID", "Navn", "Icd", "Diagnose_Klinisk_Dato", "InklusjonDato", "UnitId", "Sykehusnavn"), ]
+Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "Icd", "Diagnose_Klinisk_Dato", "InklusjonDato", "UnitId", "Sykehusnavn"), ]
 # length(unique(Diagnoser$PasientGUID))
 
 write.csv2(Diagnoser, 'I:/norvas/diagnoser_npr_2020.csv', row.names = F)
@@ -534,7 +609,7 @@ write.csv2(Kobling_norvas_pid_fn, 'I:/norvas/kobling_norvas_npr_2020.csv', row.n
 
 ## Utvalg: Pasienter med diagnose- og inklusjonsskjema med enten Diagnose_Klinisk_Dato eller InklusjonDato <= 2018-12-31
 ##        Hvis flere diagnoser er nyeste brukt. Variabelen Icd er mangelfull så diagnosen må leses fra
-##        variabelen Navn
+##        variabelen Diagnose
 
 
 
@@ -620,8 +695,8 @@ Alvorlig_infeksjon <- norvasPreprosess(Alvorlig_infeksjon)
 Utredning <- norvasPreprosess(Utredning)
 Labskjema <- norvasPreprosess(Labskjema)
 
-Diagnoser$Navn[Diagnoser$Navn %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
-Diagnoser <- Diagnoser[-which(Diagnoser$Navn == 'Polymyalgia Rheumatica'), ]
+Diagnoser$Diagnose[Diagnoser$Diagnose %in% c('Systemisk Vaskulitt sykdom')] <- 'Uspesifisert nekrotiserende vaskulitt'
+Diagnoser <- Diagnoser[-which(Diagnoser$Diagnose == 'Polymyalgia Rheumatica'), ]
 
 sykehusnavn <- sort(unique(Inklusjon$Sykehusnavn))
 
@@ -691,14 +766,14 @@ Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "Fodselsdato", "Inklus
                    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
 
 Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                            "Diag_gr", "Navn")],
+                                            "Diag_gr", "Diagnose")],
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
 
 
 Inklusjon$Inklusjonsaar <- as.numeric(format(Inklusjon$InklusjonDato, format = '%Y'))
 Medisiner <- Medisiner[Medisiner$PasientGUID %in% unique(Inklusjon$PasientGUID), ]
 
-tmp <- as.data.frame.matrix(table(Diagnoser$Navn, Diagnoser$Diag_gr, useNA = 'ifany'))
+tmp <- as.data.frame.matrix(table(Diagnoser$Diagnose, Diagnoser$Diag_gr, useNA = 'ifany'))
 tmp <- tmp[order(tmp$`Storkarsvaskulitt (LVV)`, tmp$`ANCA assosiert vaskulitt (AAV)`, tmp$Andre, decreasing = T), ]
 write.csv2(tmp, "I:/norvas/diag_gr.csv", row.names = T, fileEncoding = "Latin1")
 registrerte <- addmargins(table(Inklusjon$Sykehusnavn, Inklusjon$Inklusjonsaar, useNA = 'ifany'))
@@ -792,7 +867,7 @@ Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
 Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
 Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                            "Diag_gr", "Navn")],
+                                            "Diag_gr", "Diagnose")],
                    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
 BVAS <- merge(BVAS, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")], by = 'HovedskjemaGUID', all.x = T)
 BVAS <- merge(BVAS, Inklusjon[, c('SkjemaGUID', "InklusjonDato")], by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
@@ -822,7 +897,7 @@ Diagnoser$DiagnoseAlder <- age(Diagnoser$Fodselsdato, Diagnoser$Diagnose_Klinisk
 
 Diagnoser <- Diagnoser[Diagnoser$Diagnose_Klinisk_Dato  <= '2018-12-31' | Diagnoser$InklusjonDato <= '2018-12-31', ]
 
-Diagnoser <- Diagnoser[ , c("PasientGUID", "Navn", "Icd", "Diagnose_Klinisk_Dato", "InklusjonDato", "UnitId", "Sykehusnavn"), ]
+Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "Icd", "Diagnose_Klinisk_Dato", "InklusjonDato", "UnitId", "Sykehusnavn"), ]
 # length(unique(Diagnoser$PasientGUID))
 
 write.csv2(Diagnoser, 'I:/norvas/diagnoser_npr_2018.csv', row.names = F)
@@ -834,7 +909,7 @@ write.csv2(Kobling_norvas_pid_fn, 'I:/norvas/kobling_norvas_npr_2018.csv', row.n
 
 ## Utvalg: Pasienter med diagnose- og inklusjonsskjema med enten Diagnose_Klinisk_Dato eller InklusjonDato <= 2018-12-31
 ##        Hvis flere diagnoser er nyeste brukt. Variabelen Icd er mangelfull så diagnosen må leses fra
-##        variabelen Navn.
+##        variabelen Diagnose.
 
 
 
