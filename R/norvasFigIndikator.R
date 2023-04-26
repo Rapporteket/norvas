@@ -42,11 +42,7 @@ norvasFigIndikator <- function(indikatordata, tittel='', terskel=5, minstekrav =
   andeler[andeler$Sykehusnavn %in% lavDG, -1] <- NA
 
   # Ordne rekkefølge, stigende eller synkende
-  if (decreasing){
-    rekkefolge <- order(andeler[, dim(andeler)[2]], decreasing = decreasing, na.last = F)
-  } else {
-    rekkefolge <- order(andeler[, dim(andeler)[2]], decreasing = decreasing, na.last = F)
-  }
+  rekkefolge <- order(andeler[[dim(andeler)[2]]], decreasing = decreasing, na.last = F)
 
   andeler <- andeler[rekkefolge, ]
   N <- N[rekkefolge, ]
