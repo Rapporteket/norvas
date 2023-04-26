@@ -50,9 +50,12 @@ Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
   merge(Oppfolging, by = "PasientGUID", all.x = T)
 Diagnoser <- Diagnoser[Diagnoser$Diagnose_Klinisk_Dato  <= '2022-12-31' |
                          Diagnoser$InklusjonDato <= '2022-12-31', ]
-Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "Icd", "Diagnose_Klinisk_Dato",
-                            "InklusjonDato", "UnitId", "Sykehusnavn", "DiagnoseNr",
-                            "EksklusjonsDato"), ]
+Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "Diagnose_Klinisk_Dato",
+                            "InklusjonDato", "UnitId", "Sykehusnavn",
+                            "EksklusjonsDato"), ] %>%
+  filter(Diagnose %in% c("Kjempecellearteritt", "Granulomatøs Polyangitt",
+                         "Mikroskopisk Polyangitt", "Takayasu Arteritt",
+                         "Aortitt INA", "Eosinofil Granulomatøs Polyangitt"))
 
 write.csv2(Diagnoser, '~/softlinks/mydata/norvas/diagnoser_npr_2022.csv', row.names = F)
 

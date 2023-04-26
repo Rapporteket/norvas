@@ -86,7 +86,7 @@ norvasPreprosess <- function(RegData) {
                         "DMARD", "DMARD", "DMARD", "Kortikosteroider", "DMARD",
                         "DMARD", "Kortikosteroider", "DMARD", "DMARD", "Cyclofosfamid",
                         "Biologiske legemidler", "Biologiske legemidler",
-                        "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "Immunglob.G",
+                        "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "Immunoglobulin",
                         "Kortikosteroider", "Biologiske legemidler",
                         "Rituximab", "Biologiske legemidler", "DMARD", "Annet")
   kobl_gruppe_kode <- data.frame(kode, Legemiddelgruppe)
@@ -119,18 +119,19 @@ norvasPreprosess <- function(RegData) {
     tmp <- RegData %>%
       group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
       summarise('ant_samme_startdato' = n(),
-                Med_SluttDato_min = min(Med_SluttDato, na.rm = T),
-                SkjemaGUID_min = if (is.na(which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1])) {SkjemaGUID[1]}
-                else {SkjemaGUID[which(Med_SluttDato == min(Med_SluttDato, na.rm = T))[1]]})
+                Med_SluttDato_min = if (sum(!is.na(Med_SluttDato))>0) {
+                  min(Med_SluttDato, na.rm = T)} else {NA},
+                SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {SkjemaGUID[1]}
+                else {SkjemaGUID[which(Med_SluttDato == Med_SluttDato_min)[1]]})
 
     RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
-    }
+  }
 
   if ('BvasPersistentTotal' %in% names(RegData)){
     indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'BvasSkjema'):
       (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='Sykdomsvurdering' & varnavn$skjema == 'BvasSkjema')+1])-1)
     RegData$SykdomsvurderingLabel <- factor(RegData$Sykdomsvurdering, levels = kodebok_norvas$kode[c(indekser_kodebok[-1])],
-                                          labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
+                                            labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
     RegData$bvas_samlet <- RegData$BvasPersistentTotal
     RegData$bvas_samlet[is.na(RegData$bvas_samlet)] <- RegData$BvasRenalNewOrWorseScore[is.na(RegData$bvas_samlet)]
 
@@ -141,14 +142,14 @@ norvasPreprosess <- function(RegData) {
                    tmp[, c("PasientGUID", "BVAS_Dato")], by = c('PasientGUID', 'BVAS_Dato'))
 
     RegData <- RegData[!(RegData$SkjemaGUID %in% tmp2$SkjemaGUID), ] ## Fjerner BVAS som har flere registreringer på
-                                                                     ## samme pasient på samme dag.
+    ## samme pasient på samme dag.
   }
 
   if ('KerrsKriterier_Dato' %in% names(RegData)){
     indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'Sykdomsvurdering' & kodebok_norvas$skjema == 'KerrsKriterierSkjema'):
       (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='Sykdomsvurdering' & varnavn$skjema == 'KerrsKriterierSkjema')+1] & kodebok_norvas$skjema == 'KerrsKriterierSkjema')-1)
     RegData$SykdomsvurderingLabel <- factor(RegData$Sykdomsvurdering, levels = kodebok_norvas$kode[c(indekser_kodebok[-1])],
-                                         labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
+                                            labels = kodebok_norvas$label[c(indekser_kodebok[-1])])
   }
 
   if ('AntallInfeksjoner' %in% names(RegData)){
@@ -158,7 +159,7 @@ norvasPreprosess <- function(RegData) {
       (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='AntallInfeksjoner' & varnavn$skjema == 'SelvrapportertAlvorligInfek')+1])-1)
     RegData$AntallInfeksjonerLabel <- factor(RegData$AntallInfeksjoner, levels = kodebok_norvas$kode[c(indekser_kodebok)],
                                              labels = kodebok_norvas$label[c(indekser_kodebok)])
-    }
+  }
 
   return(invisible(RegData))
 

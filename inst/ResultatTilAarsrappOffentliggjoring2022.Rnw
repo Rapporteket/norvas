@@ -57,26 +57,36 @@ options(dplyr.summarise.inform = FALSE)
 
 rap_aar <- 2022
 
-Inklusjon <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Oppfolging <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Diagnoser <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Medisiner <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_MedisineringSkjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-BVAS <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_BvasSkjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-KERR <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-02-10_1052.csv', header=TRUE, sep=";",
-                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-VDI <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_VdiSkjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Alvorlig_infeksjon <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-02-10_1052.csv',
-                                 header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Utredning <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_Utredning_2023-02-10_1051.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Labskjema <- read.table('~/softlinks/mydata/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-02-10_1051.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Inklusjon <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-04-19_0919.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Oppfolging <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2023-04-19_0919.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Medisiner <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_MedisineringSkjema_2023-04-19_0919.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+BVAS <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_BvasSkjema_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+KERR <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+VDI <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_VdiSkjema_2023-04-19_0919.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Alvorlig_infeksjon <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Utredning <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Utredning_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Labskjema <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-04-19_0920.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Inklusjon <- norvasPreprosess(Inklusjon)
 Oppfolging <- norvasPreprosess(Oppfolging)
@@ -670,7 +680,7 @@ par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = F, horiz = T, col = rev(figinfo$farger[1:dim(plotMatrise)[1]]), border=NA, xlab="Andel pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
 legend('bottomright', legend = norvas::wrap.it(paste0(names(ant_pas_pr_med_gr1)[-c(1, dim(ant_pas_pr_med_gr1)[2])], ", N=",
-                                                   colSums(ant_pas_pr_med_gr1[, -c(1, dim(ant_pas_pr_med_gr1)[2])])), 34),
+                                                      colSums(ant_pas_pr_med_gr1[, -c(1, dim(ant_pas_pr_med_gr1)[2])])), 34),
        col = rev(figinfo$farger[1:dim(plotMatrise)[1]]),
        pch = 15, border = NA, bty='n')
 title(main = c('Undergrupper av DMARD,', 'storkarsvaskulitter'))
@@ -782,7 +792,7 @@ par('fig'=c(vmarg, 1, 0, 1))
 pos <- barplot(plotMatrise, beside = F, horiz = T, col = rev(figinfo$farger[1:dim(plotMatrise)[1]]), border=NA, xlab="Andel pasienter")
 mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
 legend('bottomright', legend = norvas::wrap.it(paste0(names(ant_pas_pr_med_gr2)[-c(1, dim(ant_pas_pr_med_gr2)[2])], ", N=",
-                                                   colSums(ant_pas_pr_med_gr2[, -c(1, dim(ant_pas_pr_med_gr2)[2])])), 34),
+                                                      colSums(ant_pas_pr_med_gr2[, -c(1, dim(ant_pas_pr_med_gr2)[2])])), 34),
        col = rev(figinfo$farger[1:dim(plotMatrise)[1]]),
        pch = 15, border = NA, bty='n')
 title(main = c('Undergrupper av DMARD,', 'ANCA assosiert vaskulitt'))
@@ -1261,7 +1271,7 @@ tmp2 <- aux2 %>% group_by(Sykehusnavn.x, SkjemaGUID) %>%
 
 tull <- aux2 %>% group_by(Sykehusnavn.x) %>%
   summarise(ant_anca = sum(as.numeric(((1 %in% PR3AncaPositiv) | (0 %in% PR3AncaPositiv) |
-                      (1 %in% MPO_AncaPositiv) | (0 %in% MPO_AncaPositiv)))),
+                                         (1 %in% MPO_AncaPositiv) | (0 %in% MPO_AncaPositiv)))),
             N = n())
 
 
@@ -2306,8 +2316,8 @@ oppfolging_anca <- Oppfolging[which(Oppfolging$Diag_gr_nr == 2 &
                                       Oppfolging$Oppfolgingsaar <= rap_aar), ]
 
 oppfolging_anca <- merge(oppfolging_anca, Labskjema[, c("PasientGUID", "Blodprover_Dato", "IgGVerdi")],
-      by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID', 'Blodprover_Dato'), all.x = T)
+                         by.x = c('PasientGUID','OppfolgingsDato'),
+                         by.y = c('PasientGUID', 'Blodprover_Dato'), all.x = T)
 
 andel_utfort_igG <- oppfolging_anca %>%
   group_by(Sykehusnavn) %>%
