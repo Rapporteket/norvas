@@ -18,7 +18,7 @@ norvarStabelGrvar <- function(plotMatrise,
   farger <- if (dim(plotMatrise)[1]==2) {
     figinfo$farger[c(3,1)]
   } else {
-    figinfo$farger[1:dim(plotMatrise)[1]]
+    rev(figinfo$farger[1:dim(plotMatrise)[1]])
   }
   if (revcol) {farger <- rev(farger)}
   xmax <- if (beside) {min(100, 1.15*max(colSums(plotMatrise)), na.rm=T)} else {1.15*max(colSums(plotMatrise))}

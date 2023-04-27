@@ -386,6 +386,30 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
                   xlab ="Antall pasienter",
                   legendTxt = paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])))
 
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr) & Inklusjonsaar <= rap_aar) %>%
+  mutate(nysyk = case_match(Diagnose_ny_30, 0 ~ "etablert diagnose", 1 ~ "nysyk")) %>%
+  mutate(Diag_gr = case_match(Diag_gr_nr, 1 ~ "LVV", 2 ~ "ANCA")) %>%
+  summarise(N = n(),
+            .by = c(Sykehusnavn, Diag_gr, nysyk)) %>%
+  mutate(navn = paste0(Diag_gr, ", ", nysyk)) %>%
+  select(Sykehusnavn, navn, N) %>%
+  tidyr::pivot_wider(names_from = "navn", values_from = "N", values_fill = 0) %>%
+  arrange(rowSums(across(c(-1)))) %>%
+  select("Sykehusnavn", "LVV, nysyk", "LVV, etablert diagnose",
+         "ANCA, nysyk", "ANCA, etablert diagnose")
+
+plotMatrise <- t(as.matrix(registreringer[,-1]))
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'reg_pr_diaggr_nysyk.', utformat)
+grtxt <- registreringer$Sykehusnavn
+norvarStabelGrvar(plotMatrise=plotMatrise,
+                  grtxt = grtxt,
+                  outfile = outfile,
+                  tittel = c("Antall inklusjoner pr. HF", "og pr. diagnosegruppe"),
+                  xlab ="Antall pasienter",
+                  legendTxt = paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])))
+
 
 registreringer <- Inklusjon %>%
   filter(!is.na(Diagnose) & Inklusjonsaar <= rap_aar) %>%
@@ -421,6 +445,12 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diaggr.pdf}
 \caption{Antall inklusjoner per HF og per diagnosegruppe. T.o.m. \Sexpr{rap_aar}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diaggr_nysyk.pdf}
+\caption{Antall inklusjoner per HF og per diagnosegruppe splittet på nysyke og de som er inkludert med etablert diagnose. T.o.m. \Sexpr{rap_aar}}
 \end{figure}
 
 \begin{figure}[ht]
@@ -946,7 +976,7 @@ norvasIndikator(figurdata,
 
 <<'Tab: Antall nysyke', results='asis', echo=FALSE, warning=F>>=
 
-tabell <- Inklusjon %>% dplyr::filter(Diagnose_ny_180 == 1) %>%
+tabell <- Inklusjon %>% dplyr::filter(Diagnose_ny_30 == 1) %>%
   dplyr::filter(Inklusjonsaar %in% (rap_aar-4):rap_aar) %>%
   dplyr::group_by(Diag_gr, Inklusjonsaar) %>%
   dplyr::summarise(Antall = n()) %>%
@@ -959,7 +989,7 @@ print(xtable::xtable(
                  " år t.o.m. ", rap_aar, ". Nysyke er definert som pasienter som
                  har InkludertNyEtablertDiagnose = 1. Dersom InkludertNyEtablertDiagnose
                  ikke er utfylt telles pasienter med Diagnose\\_Klinisk\\_Dato og
-                 InklusjonDato innenfor plussminus 180 dager som nysyke.")
+                 InklusjonDato innenfor plussminus 30 dager som nysyke.")
 ),
 include.rownames = F)
 
@@ -1008,6 +1038,11 @@ outfile <- paste0(figfolder, "bvas_ved_oppf_anca.", utformat)
 norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
                 tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
                 maal = 95, minstekrav = 50)
+############ AD HOC, fjerner St. Olavs ##############
+outfile <- paste0(figfolder, "bvas_ved_oppf_anca_u_stolav.", utformat)
+norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar & figurdata$Sykehusnavn != "St. Olavs"),],
+                tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
+                maal = 95, minstekrav = 50)
 @
 
 
@@ -1047,6 +1082,11 @@ outfile <- paste0(figfolder, "vdi_ved_oppf_anca.", utformat)
 norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
                 tittel = c("Andel oppfølginger med utfylt VDI", "for ANCA-assosierte vaskulitter"),
                 outfile = outfile, maal = 95, minstekrav = 50)
+############ AD HOC, fjerner St. Olavs ##############
+outfile <- paste0(figfolder, "vdi_ved_oppf_anca_u_stolav.", utformat)
+norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar & figurdata$Sykehusnavn != "St. Olavs"),],
+                tittel = c("Andel oppfølginger med utfylt VDI", "for ANCA-assosierte vaskulitter"), outfile = outfile,
+                maal = 95, minstekrav = 50)
 @
 
 
@@ -1125,8 +1165,20 @@ Indikatorer <- bind_rows(Indikatorer, ind4_AndelKerr_NorVas)
 
 \begin{figure}[ht]
 \centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}bvas_ved_oppf_anca_u_stolav.pdf}
+\caption{Uten St. Olavs.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca.pdf}
 \caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca_u_stolav.pdf}
+\caption{Uten St. Olavs.}
 \end{figure}
 
 \begin{figure}[ht]
@@ -1249,10 +1301,13 @@ print(xtable::xtable(tabell_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0
 
 <<'Fig. anca remisjon v2', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 figurdata <- ind5_AndelAnCA_remisjon_NorVas_v2
-# figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
-# x11()
 outfile <- paste0(figfolder, "remisjon_6mnd_anca.", utformat)
 norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
+                tittel = c("Andel i remisjon innen 6 måneder ut fra", "BVAS for ANCA-assosierte vaskulitter"),
+                maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
+############ AD HOC, fjerner St. Olavs ##############
+outfile <- paste0(figfolder, "remisjon_6mnd_anca_u_stolav.", utformat)
+norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar & figurdata$Sykehusnavn != "St. Olavs"),],
                 tittel = c("Andel i remisjon innen 6 måneder ut fra", "BVAS for ANCA-assosierte vaskulitter"),
                 maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
 @
@@ -1263,6 +1318,11 @@ norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
 \caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr etter debut}
 \end{figure}
 
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}remisjon_6mnd_anca_u_stolav.pdf}
+\caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr etter debut. Uten St. Olavs.}
+\end{figure}
 
 <<'Tab: andel remisjon 6mnd, GVV, V2', results='asis', echo=FALSE, warning=F>>=
 KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato, KERR$Diagnose_Klinisk_Dato, units = 'days')
@@ -2114,21 +2174,34 @@ diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Diagnose) %>%
 Indikatorer$Oppfolgingsaar[is.na(Indikatorer$Oppfolgingsaar)] <- Indikatorer$Aar[is.na(Indikatorer$Oppfolgingsaar)]
 kobl_unitid_shusnavn_norvas$Sykehusnavn <- as.character(kobl_unitid_shusnavn_norvas$Sykehusnavn)
 
-kobl_unitid_shusnavn_norvas <- data.frame(kobl_unitid_shusnavn_norvas, qmongrdata::SykehusNavnStruktur[stringdist::amatch(kobl_unitid_shusnavn_norvas$Sykehusnavn, qmongrdata::SykehusNavnStruktur$SykehusNavn ), c("OrgNrHF", "HF", "OrgNrShus", "SykehusNavn")])
+##############3333 UNDER ARBEID - RYDD OPP I MAPPING RESH ORGNR ####################
+###################################################################################
+SykehusNavnStruktur <- read.csv2("~/GIT/hospital.csv")
+kobl_unitid_shusnavn_norvas <- data.frame(
+  kobl_unitid_shusnavn_norvas,
+  SykehusNavnStruktur[stringdist::amatch(kobl_unitid_shusnavn_norvas$Sykehusnavn,
+                                         SykehusNavnStruktur$short_name ), ])
 
-kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 974749025
-kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 974795787
-kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 974795361
-kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 974795515
-kobl_unitid_shusnavn_norvas$OrgNrShus[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 873255102
-kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 883974832
-kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 983974899
-kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 983974910
-kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 983974929
-kobl_unitid_shusnavn_norvas$OrgNrHF[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 981275721
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 974749025
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 974795787
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 974795361
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 974795515
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 873255102
+
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 102977]  974557746
+
+kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 883974832
+kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 983974899
+kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 700701] <- 983974910
+kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 983974929
+kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 981275721
+
+SykehusNavnStruktur[match(c(974749025, 974795787, 974795361,  974795515, 873255102), SykehusNavnStruktur$orgnr),]
 
 kobl_unitid_shusnavn_norvas$HF <- qmongrdata::SykehusNavnStruktur$HF[match(kobl_unitid_shusnavn_norvas$OrgNrHF, qmongrdata::SykehusNavnStruktur$OrgNrHF)]
 kobl_unitid_shusnavn_norvas$SykehusNavn <- qmongrdata::SykehusNavnStruktur$SykehusNavn[match(kobl_unitid_shusnavn_norvas$OrgNrShus, qmongrdata::SykehusNavnStruktur$OrgNrShus)]
+###################################################################################
+###################################################################################
 
 Indikatorer$orgnr <- kobl_unitid_shusnavn_norvas$OrgNrShus[match(Indikatorer$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 Indikatorer <- Indikatorer[, c(7,2,3,4,5)]
@@ -2286,7 +2359,7 @@ andel_utfort_igG <- oppfolging_anca %>%
             andel_igG = ant_igG/N*100)
 
 print(xtable::xtable(andel_utfort_igG, align= c('l','l',rep('r', ncol(andel_utfort_igG)-1)),
-                     caption=paste0('Andel oppfølginger med utført igG. Gjelder t.o.m. ', rap_aar),
+                     caption=paste0('Andel oppfølginger av ANCA-pasienter med utført igG. Gjelder t.o.m. ', rap_aar),
                      digits = c(0,0,0,0,1)), include.rownames = F)
 
 
