@@ -471,7 +471,7 @@ registreringer <- Inklusjon %>%
   group_by(Sykehusnavn, Diagnose) %>%
   summarise(N = n()) %>%
   spread(key = "Diagnose", value = "N", fill = 0) %>%
-  arrange(rowSums(across(c(-1)))) %>%
+  arrange(-rowSums(across(c(-1)))) %>%
   janitor::adorn_totals(where = c("row", "col"), name = c("Nasjonalt", "Total"))
 
 print(xtable::xtable(
@@ -823,6 +823,8 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
                   beside = T,
                   revcol = T,
                   revcol_legend = T)
+
+## Medikamentbruk ved debut ANCA, noe kommer etter hvert #####################
 
 @
 
