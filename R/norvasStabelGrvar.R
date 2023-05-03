@@ -24,13 +24,17 @@ norvarStabelGrvar <- function(plotMatrise,
   xmax <- if (beside) {min(100, 1.15*max(colSums(plotMatrise)), na.rm=T)} else {1.15*max(colSums(plotMatrise))}
   vmarg <- min(1,max(0, strwidth(grtxt, units='figure', cex=cexgr)*0.75))
   par('fig'=c(vmarg, 1, 0, 1))
-  pos <- barplot(plotMatrise, beside = beside, horiz = T,
-                 col = farger,
-                 border=NA, xlab=xlab,
-                 xlim = c(0, xmax))
   if (beside) {
+    pos <- barplot(plotMatrise, beside = beside, horiz = T,
+                   col = farger, space = c(0, 2),
+                   border=NA, xlab=xlab,
+                   xlim = c(0, xmax))
     mtext(at=colMeans(pos)+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
   } else {
+    pos <- barplot(plotMatrise, beside = beside, horiz = T,
+                   col = farger,
+                   border=NA, xlab=xlab,
+                   xlim = c(0, xmax))
     mtext(at=pos+0.00, text=grtxt, side=2, las=1, cex=cexgr, adj=1, line=0.25)
   }
   if (!is.na(legendTxt[1])) {

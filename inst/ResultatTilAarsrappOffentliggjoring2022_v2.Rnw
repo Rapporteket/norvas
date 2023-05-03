@@ -399,6 +399,9 @@ registreringer <- Inklusjon %>%
   select("Sykehusnavn", "LVV, nysyk", "LVV, etablert diagnose",
          "ANCA, nysyk", "ANCA, etablert diagnose")
 
+reg_tabell <- registreringer %>% arrange(-rowSums(across(-1))) %>%
+  janitor::adorn_totals(where = c("row", "col"), name = c("Nasjonalt", "Total"))
+
 plotMatrise <- t(as.matrix(registreringer[,-1]))
 colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
 outfile <- paste0(figfolder, 'reg_pr_diaggr_nysyk.', utformat)
@@ -469,12 +472,19 @@ registreringer <- Inklusjon %>%
   summarise(N = n()) %>%
   spread(key = "Diagnose", value = "N", fill = 0) %>%
   arrange(rowSums(across(c(-1)))) %>%
-  janitor::adorn_totals(where = c("row", "col"))
+  janitor::adorn_totals(where = c("row", "col"), name = c("Nasjonalt", "Total"))
 
 print(xtable::xtable(
   registreringer, align= c('l', 'l', rep('R{0.9in}', dim(registreringer)[2]-1)),
   digits = 0,
   caption=paste0("Antall inklusjoner pr. HF og pr. diagnose t.o.m ", rap_aar)),
+  include.rownames = F)
+
+
+print(xtable::xtable(
+  reg_tabell, align= c('l', 'l', rep('R{0.9in}', dim(reg_tabell)[2]-1)),
+  digits = 0,
+  caption=paste0("Antall inklusjoner pr. HF og pr. diagnosegruppe og nysykstatus t.o.m ", rap_aar)),
   include.rownames = F)
 
 @
@@ -540,7 +550,7 @@ Medisiner$Inkl_foer_rapaar <- lubridate::int_overlaps(Medisiner$inkludert_interv
 # ######## gr. 1 ################
 tabell <- Medisiner %>%
   filter(Diag_gr_nr == 1) %>%
-  filter(Inkl_rapaar) %>%
+  filter(Inkl_rapaar & Medisinert_rapaar) %>%
   filter(!is.na(Legemiddelgruppe)) %>%
   group_by(Sykehusnavn, Legemiddelgruppe) %>%
   summarise(Antall = length(unique(PasientGUID))) %>%
@@ -578,13 +588,13 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
                   revcol = T,
                   revcol_legend = T)
 
-####### NY: Andel pas. som har brukt undergrupper av DMARD Gr 1 ##################
+####### NY: Andel pas. som har brukt undergrupper av DMARD Gr 1 Storkarsvaskulitter ##################
 Medisiner$LegemiddelGenerisk[Medisiner$LegemiddelGenerisk %in% c("Mycofenolat mofetil", "Mycofenolsyre")] <-
   "Mycofenolat"
 
 ant_pas_pr_med <- Medisiner %>%
   filter(Diag_gr_nr == 1) %>%
-  filter(Inkl_rapaar) %>%
+  filter(Inkl_rapaar & Medisinert_rapaar) %>%
   filter(!is.na(LegemiddelGenerisk)) %>%
   filter(Legemiddelgruppe == "DMARD") %>%
   filter(LegemiddelGenerisk %in% c("Methotrexate", "Leflunomid", "Azathioprin", "Mycofenolat")) %>%
@@ -621,7 +631,7 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 
 ant_pas_pr_med <- Medisiner %>%
   filter(Diag_gr_nr == 1) %>%
-  filter(Inkl_rapaar) %>%
+  filter(Inkl_rapaar & Medisinert_rapaar) %>%
   filter(!is.na(LegemiddelGenerisk)) %>%
   # filter(LegemiddelNr %in% c(1:6, 8, 12, 14, 28, 30, 40, 42, 44:47)) %>%
   filter(Legemiddelgruppe == "Biologiske legemidler") %>%
@@ -664,7 +674,7 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 # ######## gr. 2 ANCA ################
 tabell <- Medisiner %>%
   filter(Diag_gr_nr == 2) %>%
-  filter(Inkl_rapaar) %>%
+  filter(Inkl_rapaar & Medisinert_rapaar) %>%
   filter(!is.na(Legemiddelgruppe)) %>%
   group_by(Sykehusnavn, Legemiddelgruppe) %>%
   summarise(Antall = length(unique(PasientGUID))) %>%
@@ -722,7 +732,7 @@ norvarStabelGrvar(plotMatrise=t(as.matrix(plotvektor)),
 
 ant_pas_pr_med <- Medisiner %>%
   filter(Diag_gr_nr == 2) %>%
-  filter(Inkl_rapaar) %>%
+  filter(Inkl_rapaar & Medisinert_rapaar) %>%
   filter(!is.na(LegemiddelGenerisk)) %>%
   filter(LegemiddelGenerisk %in% c("Methotrexate", "Leflunomid", "Azathioprin", "Mycofenolat")) %>%
   group_by(Sykehusnavn, LegemiddelGenerisk) %>%
@@ -733,6 +743,7 @@ ant_pas_pr_med <- Medisiner %>%
 
 ant_pas_pr_med_gr2 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
 ant_pas_pr_med_gr2 <- ant_pas_pr_med_gr2[ant_pas_pr_med_gr2$N >= 5, ]
+ant_pas_pr_med_gr2[is.na(ant_pas_pr_med_gr2)] <- 0
 
 plotMatrise <- ant_pas_pr_med_gr2[ , -c(1, dim(ant_pas_pr_med_gr2)[2])]/ant_pas_pr_med_gr2$N*100
 row.names(plotMatrise) <-ant_pas_pr_med_gr2$Sykehusnavn
@@ -786,8 +797,8 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
                   revcol_legend = T)
 
 tabell_medgr <- Medisiner %>% group_by(Legemiddelgruppe) %>%
-  summarise(med_rapaar = length(unique(PasientGUID[Medisinert_rapaar])),
-            med_foer_rapaar = length(unique(PasientGUID[Medisinert_foer_rapaar]))
+  summarise(med_rapaar = length(unique(PasientGUID[Medisinert_rapaar & Inkl_rapaar])),
+            med_foer_rapaar = length(unique(PasientGUID[Medisinert_foer_rapaar & Inkl_foer_rapaar]))
   ) %>%
   mutate(N_rapaar = length(unique(Medisiner$PasientGUID[Medisiner$Inkl_rapaar]))) %>%
   mutate(N_foer_rapaar = length(unique(Medisiner$PasientGUID[Medisiner$Inkl_foer_rapaar]))) %>%
@@ -1412,11 +1423,25 @@ prednisolon <- Medisiner[which(Medisiner$LegemiddelGenerisk == "Prednisolon"),
                          c("HovedskjemaGUID", "Med_StartDato", "Med_SluttDato",
                            "Dose")]
 
-nysyke <- InklusjonBVAS %>%
+# nysyke <- InklusjonBVAS %>%
+#   filter(Sykdomsvurdering == 1 &
+#            Diagnose_ny_30 == 1 &
+#            Diag_gr_nr==2 &
+#            InklusjonDato <= datoTil)
+
+nysyke <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar",
+                             "SkjemaGUID", "Diag_gr_nr", "Sykehusnavn",
+                             "UnitId", "PasientGUID")],
+                BVAS[, c("HovedskjemaGUID", "BVAS_Dato", "tid_diag_bvas", "Sykdomsvurdering")],
+                by.x = c("SkjemaGUID"),
+                by.y = c("HovedskjemaGUID"),
+                all = TRUE) %>%
+  filter(abs(difftime(BVAS_Dato, InklusjonDato, units = 'days')) <= 30) %>%
   filter(Sykdomsvurdering == 1 &
            Diagnose_ny_30 == 1 &
            Diag_gr_nr==2 &
-           InklusjonDato <= datoTil)
+           InklusjonDato <= datoTil) %>%
+  filter(tid_diag_bvas == min(tid_diag_bvas), .by = PasientGUID)
 
 PaaPrednisolon <- merge(nysyke, prednisolon, by.x = "SkjemaGUID", by.y = "HovedskjemaGUID")
 PaaPrednisolon$Med_SluttDato2 <- PaaPrednisolon$Med_SluttDato
@@ -1476,11 +1501,22 @@ norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
 
 <<'Fig: andel pred.dose mindre enn 7.5, KERR:Storkarsvaskulitter', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 
-nysyke <- InklusjonKERR %>%
+# nysyke <- InklusjonKERR %>%
+#   filter(Sykdomsvurdering == 1 &
+#            Diagnose_ny_30 == 1 &
+#            Diag_gr_nr==1 &
+#            InklusjonDato <= datoTil)
+
+nysyke <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
+                KERR %>% select(-InklusjonDato), by.x = c("SkjemaGUID"),
+                by.y = c("HovedskjemaGUID")) %>%
+  filter(abs(difftime(KerrsKriterier_Dato, InklusjonDato, units = 'days')) <= 30) %>%
   filter(Sykdomsvurdering == 1 &
            Diagnose_ny_30 == 1 &
            Diag_gr_nr==1 &
-           InklusjonDato <= datoTil)
+           InklusjonDato <= datoTil) %>%
+  filter(tid_diag_kerr == min(tid_diag_kerr), .by = PasientGUID) %>%
+  filter(SkjemaGUID.y == first(SkjemaGUID.y), .by = PasientGUID)
 
 PaaPrednisolon <- merge(nysyke, prednisolon, by.x = "SkjemaGUID", by.y = "HovedskjemaGUID")
 PaaPrednisolon$Med_SluttDato2 <- PaaPrednisolon$Med_SluttDato
@@ -2188,7 +2224,7 @@ kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 700701] 
 kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 974795515
 kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 873255102
 
-kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 102977]  974557746
+kobl_unitid_shusnavn_norvas$orgnr[kobl_unitid_shusnavn_norvas$UnitId == 102977] <- 974557746
 
 kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104579] <- 883974832
 kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 601159] <- 983974899
@@ -2196,10 +2232,11 @@ kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 70070
 kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 4210614] <- 983974929
 kobl_unitid_shusnavn_norvas$hf_orgnr[kobl_unitid_shusnavn_norvas$UnitId == 104209] <- 981275721
 
-SykehusNavnStruktur[match(c(974749025, 974795787, 974795361,  974795515, 873255102), SykehusNavnStruktur$orgnr),]
+# SykehusNavnStruktur[match(c(974749025, 974795787, 974795361,  974795515, 873255102), SykehusNavnStruktur$orgnr),]
+#
+# kobl_unitid_shusnavn_norvas$HF <- qmongrdata::SykehusNavnStruktur$HF[match(kobl_unitid_shusnavn_norvas$OrgNrHF, qmongrdata::SykehusNavnStruktur$OrgNrHF)]
+# kobl_unitid_shusnavn_norvas$SykehusNavn <- qmongrdata::SykehusNavnStruktur$SykehusNavn[match(kobl_unitid_shusnavn_norvas$OrgNrShus, qmongrdata::SykehusNavnStruktur$OrgNrShus)]
 
-kobl_unitid_shusnavn_norvas$HF <- qmongrdata::SykehusNavnStruktur$HF[match(kobl_unitid_shusnavn_norvas$OrgNrHF, qmongrdata::SykehusNavnStruktur$OrgNrHF)]
-kobl_unitid_shusnavn_norvas$SykehusNavn <- qmongrdata::SykehusNavnStruktur$SykehusNavn[match(kobl_unitid_shusnavn_norvas$OrgNrShus, qmongrdata::SykehusNavnStruktur$OrgNrShus)]
 ###################################################################################
 ###################################################################################
 
