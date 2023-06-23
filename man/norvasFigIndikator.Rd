@@ -7,7 +7,7 @@
 norvasFigIndikator(
   indikatordata,
   tittel = "",
-  terskel = 30,
+  terskel = 5,
   minstekrav = NA,
   maal = NA,
   skriftStr = 1.3,

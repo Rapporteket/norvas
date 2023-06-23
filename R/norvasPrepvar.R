@@ -55,18 +55,18 @@ norvasPrepvar <- function(RegData, valgtVar) {
   if (valgtVar == 'Inklusjonsalder') {
     tittel <- 'Aldersfordeling ved inklusjon'
     RegData$Variabel <- RegData[, valgtVar]
-    gr <- c(seq(15,75,by=10), 140)
+    gr <- c(seq(16,76,by=10), 140)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks = gr, include.lowest = T)
-    grtxt <- c('15-24', '25-34', '35-44', '45-54', '55-64', '65-74', '>75')
+    grtxt <- c('16-25', '26-35', '36-45', '46-55', '56-65', '66-75', '>75')
     retn <- 'V'
   }
 
   if (valgtVar == 'DiagnoseAlder') {
     tittel <- 'Aldersfordeling ved diagnose'
     RegData$Variabel <- RegData[, valgtVar]
-    gr <- c(seq(15,75,by=10), 140)
+    gr <- c(seq(16,76,by=10), 140)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks = gr, include.lowest = T)
-    grtxt <- c('15-24', '25-34', '35-44', '45-54', '55-64', '65-74', '>75')
+    grtxt <- c('16-25', '26-35', '36-45', '46-55', '56-65', '66-75', '>75')
     retn <- 'V'
   }
 
@@ -78,7 +78,7 @@ norvasPrepvar <- function(RegData, valgtVar) {
     gr <- c(0,30, 90, 180, 360, 100000)
     RegData$VariabelGr <- cut(RegData$Variabel, breaks = gr, include.lowest = T)
     grtxt <- levels(RegData$VariabelGr)
-      # c('15-24', '25-34', '35-44', '45-54', '55-64', '65-74', '>75')
+      # c('16-25', '26-35', '36-45', '46-55', '56-65', '66-75', '>75')
     retn <- 'V'
   }
 
@@ -95,7 +95,7 @@ norvasPrepvar <- function(RegData, valgtVar) {
     gr <- c(0,30, 90, 180, 360, 100000)
     RegData$VariabelGr <- cut(as.numeric(RegData$tid_diag_bvas), breaks = gr, include.lowest = T)
     grtxt <- levels(RegData$VariabelGr)
-    # c('15-24', '25-34', '35-44', '45-54', '55-64', '65-74', '>75')
+    # c('16-25', '26-35', '36-45', '46-55', '56-65', '66-75', '>75')
     retn <- 'V'
   }
 
