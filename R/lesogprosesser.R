@@ -8,36 +8,66 @@
 #'
 lesogprosesser <- function(rap_aar = 2022) {
   Inklusjon <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-04-19_0919.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_Inklusjonskjema_2023-08-03_1009.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Oppfolging <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2023-04-19_0919.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_OppfølgingSkjema_2023-08-03_1011.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Diagnoser <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-04-19_0920.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_DiagnoseSkjema_2023-08-03_1012.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Medisiner <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_MedisineringSkjema_2023-04-19_0919.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_MedisineringSkjema_2023-08-03_1011.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   BVAS <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_BvasSkjema_2023-04-19_0920.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_BvasSkjema_2023-08-03_1011.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   KERR <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-04-19_0920.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-08-03_1012.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   VDI <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_VdiSkjema_2023-04-19_0919.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_VdiSkjema_2023-08-03_1011.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Alvorlig_infeksjon <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-04-19_0920.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-08-03_1012.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Utredning <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Utredning_2023-04-19_0920.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_Utredning_2023-08-03_1012.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Labskjema <- read.table(
-    '~/softlinks/mydata/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-04-19_0920.csv',
+    '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-08-03_1012.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
+  # Inklusjon <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2023-04-19_0919.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Oppfolging <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_OppfølgingSkjema_2023-04-19_0919.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Diagnoser <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2023-04-19_0920.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Medisiner <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_MedisineringSkjema_2023-04-19_0919.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # BVAS <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_BvasSkjema_2023-04-19_0920.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # KERR <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-04-19_0920.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # VDI <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_VdiSkjema_2023-04-19_0919.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Alvorlig_infeksjon <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-04-19_0920.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Utredning <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Utredning_2023-04-19_0920.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Labskjema <- read.table(
+  #   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-04-19_0920.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
   Inklusjon <- norvasPreprosess(Inklusjon)
   Oppfolging <- norvasPreprosess(Oppfolging)

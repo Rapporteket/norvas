@@ -13,7 +13,9 @@ norvarStabelGrvar <- function(plotMatrise,
                               fargepalett = "BlaaOff",
                               beside = F,
                               revcol = F,
-                              revcol_legend = F) {
+                              revcol_legend = F,
+                              pstTxt = NA,
+                              NTxt = NA) {
   figinfo <- rapFigurer::figtype(outfile = outfile, fargepalett=fargepalett)
   farger <- if (dim(plotMatrise)[1]==2) {
     figinfo$farger[c(3,1)]
@@ -42,6 +44,14 @@ norvarStabelGrvar <- function(plotMatrise,
            pch = 15, border = NA, bty='n')
   }
   title(main = tittel)
+
+  if (!is.na(pstTxt[1])) {
+    mtext(at=pos+0.05, text=pstTxt, side=4, las=1, cex=0.8*cexgr, adj=0.5, line=0, col="#737373")
+  }
+  if (!is.na(NTxt[1])) {
+    text(x=colSums(plotMatrise), y=pos, labels = NTxt, adj = 0, cex=cexgr*0.7, col="#737373")
+  }
+
   if ( outfile != '') {dev.off()}
 
 }
