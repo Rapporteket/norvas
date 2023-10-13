@@ -6,6 +6,155 @@ library(norvas)
 library(xtable)
 library(lubridate)
 library(dplyr)
+rm(list = ls())
+
+##########################################################
+## Bestilling Julianne kvalitetsforbedringsprosjekt høst 2023 ####################
+
+rap_aar <- 2023
+datoFra <- paste0(rap_aar, "-01-01")
+datoTil=paste0(rap_aar, "-12-31")
+
+aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
+Inklusjon <- aarrappdata$Inklusjon
+Oppfolging <- aarrappdata$Oppfolging
+Diagnoser <- aarrappdata$Diagnoser
+Medisiner <- aarrappdata$Medisiner
+BVAS <- aarrappdata$BVAS
+KERR <- aarrappdata$KERR
+VDI <- aarrappdata$VDI
+Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
+Utredning <- aarrappdata$Utredning
+Labskjema <- aarrappdata$Labskjema
+
+figfolder <- "~/softlinks/mydata/norvas/"
+
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr),
+         Inklusjonsaar <= 2023,
+         Inklusjonsaar >= 2022) %>%
+  group_by(Sykehusnavn, Diag_gr) %>%
+  summarise(N = n()) %>%
+  tidyr::spread(key = "Diag_gr", value = "N", fill = 0) %>%
+  arrange(rowSums(across(c(-1))))
+
+plotMatrise <- t(as.matrix(registreringer[,-1]))
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'reg_pr_diaggr2022_2023.pdf')
+# outfile <- ""
+grtxt <- registreringer$Sykehusnavn
+norvarStabelGrvar(plotMatrise=plotMatrise,
+                  grtxt = grtxt,
+                  outfile = outfile,
+                  tittel = c("Antall inklusjoner pr. HF", "og pr. diagnosegruppe"),
+                  xlab ="Antall pasienter",
+                  legendTxt = paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])))
+
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr)) %>%
+  mutate(periode = case_when(Inklusjonsaar == 2023 ~ "2023",
+                             Inklusjonsaar == 2022 ~ "2022",
+                             Inklusjonsaar < 2022 ~ "T.o.m. 2021")) %>%
+  group_by(Sykehusnavn, Diag_gr, periode) %>%
+  summarise(N = n()) %>%
+  tidyr::spread(key = "Diag_gr", value = "N", fill = 0)
+
+reg2023 <- registreringer %>% filter(periode == "2023") %>%
+  select(-periode)
+reg2022 <- registreringer %>% filter(periode == "2022") %>%
+  select(-periode)
+reg2021 <- registreringer %>% filter(periode == "T.o.m. 2021") %>%
+  select(-periode)
+
+registreringer <- merge(reg2021, reg2022, by = "Sykehusnavn",
+                        suffixes = c(" - T.o.m. 2021", " - 2022"), all = T) %>%
+  merge(reg2023, by = "Sykehusnavn",
+        suffixes = c("", " - 2023"), all = T)
+names(registreringer)[6:7] <- paste0(names(registreringer)[6:7], " - 2023")
+write.csv2(registreringer, paste0(figfolder, 'registreringer.csv'),
+           row.names = F, na = "0", fileEncoding = "Latin1")
+
+
+## Figur 3.7 årsrapport
+KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato, KERR$Diagnose_Klinisk_Dato, units = 'days')
+prednisolon <- Medisiner[which(Medisiner$LegemiddelGenerisk == "Prednisolon"),
+                         c("HovedskjemaGUID", "Med_StartDato", "Med_SluttDato",
+                           "Dose")]
+
+nysyke <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
+                KERR %>% select(-InklusjonDato), by.x = c("SkjemaGUID"),
+                by.y = c("HovedskjemaGUID")) %>%
+  filter(abs(difftime(KerrsKriterier_Dato, InklusjonDato, units = 'days')) <= 30) %>%
+  filter(Sykdomsvurdering == 1 &
+           Diagnose_ny_30 == 1 &
+           Diag_gr_nr==1 &
+           InklusjonDato <= datoTil) %>%
+  filter(tid_diag_kerr == min(tid_diag_kerr), .by = PasientGUID) %>%
+  filter(SkjemaGUID.y == first(SkjemaGUID.y), .by = PasientGUID)
+
+PaaPrednisolon <- merge(nysyke, prednisolon, by.x = "SkjemaGUID", by.y = "HovedskjemaGUID")
+PaaPrednisolon$Med_SluttDato2 <- PaaPrednisolon$Med_SluttDato
+PaaPrednisolon$Med_SluttDato2[is.na(PaaPrednisolon$Med_SluttDato)] <- today() %m+% months(12)
+
+PaaPrednisolon$Ved_debut_int <- lubridate::interval(PaaPrednisolon$InklusjonDato %m-% months(1),
+                                                    PaaPrednisolon$InklusjonDato %m+% months(1))
+PaaPrednisolon$Ved_6mnd_int <- lubridate::interval(PaaPrednisolon$InklusjonDato %m+% months(5),
+                                                   PaaPrednisolon$InklusjonDato %m+% months(7))
+PaaPrednisolon$Paa_med <- lubridate::interval(PaaPrednisolon$Med_StartDato,
+                                              PaaPrednisolon$Med_SluttDato2)
+PaaPrednisolon$pred_v_deb <- int_overlaps(PaaPrednisolon$Ved_debut_int, PaaPrednisolon$Paa_med) %>%
+  as.numeric()
+PaaPrednisolon$pred_v_6mnd <- int_overlaps(PaaPrednisolon$Ved_6mnd_int, PaaPrednisolon$Paa_med) %>%
+  as.numeric()
+
+oppsum <- PaaPrednisolon %>%
+  dplyr::group_by(PasientGUID) %>%
+  summarise(Sykehusnavn = first(Sykehusnavn),
+            UnitId = first(UnitId),
+            InklusjonDato = first(InklusjonDato),
+            Ved_debut = max(pred_v_deb),
+            Ved_6mnd = max(pred_v_6mnd),
+            "Dose_deb_max" = if (Ved_debut == 1) {max(Dose[pred_v_deb == 1])} else {0},
+            "Dose_6mnd_min" = if (Ved_6mnd == 1) {min(Dose[pred_v_6mnd == 1])} else {0}) %>%
+  dplyr::mutate(Inklusjonsaar = format(InklusjonDato, "%Y") %>% as.numeric())
+
+tilprosjekt <- merge(oppsum, Diagnoser[, c("PasientGUID", "Diagnose")],
+                by = "PasientGUID", ) %>%
+  dplyr::select(Sykehusnavn, PasientGUID, Diagnose, Inklusjonsaar, Dose_deb_max,
+                Dose_6mnd_min) %>%
+  dplyr::rename(Dose_debut = Dose_deb_max,
+                Dose_6mnd = Dose_6mnd_min)
+
+xlsx::write.xlsx(tilprosjekt, paste0(figfolder, 'prednisolondata.xlsx'),
+           sheetName="Sheet1", col.names=TRUE, row.names=FALSE,
+           append=FALSE, showNA=TRUE, password=NULL)
+
+doser <- tilprosjekt %>%
+  mutate(dose6mnd_gr = case_when(Dose_6mnd <= 7.5 ~ "<=7.5",
+                                 Dose_6mnd > 7.5 & Dose_6mnd <= 10 ~ "7.5-10",
+                                 Dose_6mnd > 10 & Dose_6mnd <= 20 ~ "10-20",
+                                 Dose_6mnd > 20 ~ ">20")) %>%
+  summarise(N = n(),
+            .by = c(Sykehusnavn, dose6mnd_gr)) %>%
+  select(Sykehusnavn, dose6mnd_gr, N) %>%
+  tidyr::pivot_wider(names_from = "dose6mnd_gr", values_from = "N", values_fill = 0) %>%
+  arrange(rowSums(across(c(-1)))) %>%
+  select("Sykehusnavn", "<=7.5", "7.5-10", "10-20", ">20")
+
+plotMatrise <- t(as.matrix(doser[,-1]))
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'prednisolondose6mndHF.pdf')
+# outfile <- ""
+grtxt <- doser$Sykehusnavn
+norvarStabelGrvar(plotMatrise=plotMatrise,
+                  grtxt = grtxt,
+                  outfile = outfile,
+                  tittel = c("Prednisolondose etter 6 mnd", "per HF"),
+                  xlab ="Antall pasienter",
+                  legendTxt = paste0(names(doser)[-1], ", N=", colSums(doser[, -1])))
+
+
+
 
 ##########################################################
 ## Tall til dekningsgradsanalyse 2022 ####################

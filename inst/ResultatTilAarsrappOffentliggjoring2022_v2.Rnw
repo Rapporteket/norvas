@@ -49,7 +49,7 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2022
+rap_aar <- 2023
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
@@ -341,7 +341,7 @@ registreringer <- Inklusjon %>%
   filter(!is.na(Diag_gr) & Inklusjonsaar <= rap_aar) %>%
   group_by(Sykehusnavn, Diag_gr) %>%
   summarise(N = n()) %>%
-  spread(key = "Diag_gr", value = "N", fill = 0) %>%
+  tidyr::spread(key = "Diag_gr", value = "N", fill = 0) %>%
   arrange(rowSums(across(c(-1))))
 
 plotMatrise <- t(as.matrix(registreringer[,-1]))
@@ -1691,13 +1691,15 @@ norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_anca.pdf}
-\caption{Andel pasienter med ANCA-assosiert vaskulitt på Prednisolon $\leq$ 5mg 6 mndr etter debut}
+\caption{Andel pasienter med ANCA-assosiert vaskulitt på Prednisolon $\leq$ 5mg 6
+mndr etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}.}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_gvv_kerr.pdf}
-\caption{Andel pasienter med storkarsvaskulitt på Prednisolon $\leq$ 7.5mg 6 mndr etter debut}
+\caption{Andel pasienter med storkarsvaskulitt på Prednisolon $\leq$ 7.5mg 6 mndr
+etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}.}
 \end{figure}
 
 <<'Tab: Andel residiv', results='asis', echo=FALSE, warning=F>>=
