@@ -15,7 +15,9 @@ norvarStabelGrvar(
   fargepalett = "BlaaOff",
   beside = F,
   revcol = F,
-  revcol_legend = F
+  revcol_legend = F,
+  pstTxt = NA,
+  NTxt = NA
 )
 }
 \description{

@@ -8,6 +8,51 @@ library(lubridate)
 library(dplyr)
 rm(list = ls())
 
+####################################################################
+## Bestilling Julianne Rikshospitalet høst 2023 ####################
+
+rap_aar <- 2023
+datoFra <- paste0(rap_aar, "-01-01")
+datoTil=paste0(rap_aar, "-12-31")
+
+aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
+Inklusjon <- aarrappdata$Inklusjon
+Oppfolging <- aarrappdata$Oppfolging
+Diagnoser <- aarrappdata$Diagnoser
+Medisiner <- aarrappdata$Medisiner
+BVAS <- aarrappdata$BVAS
+KERR <- aarrappdata$KERR
+VDI <- aarrappdata$VDI
+Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
+Utredning <- aarrappdata$Utredning
+Labskjema <- aarrappdata$Labskjema
+
+figfolder <- "~/softlinks/mydata/norvas/"
+
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr),
+         Inklusjonsaar <= 2023,
+         Inklusjonsaar >= 2022) %>%
+  group_by(Sykehusnavn, Diag_gr) %>%
+  summarise(N = n()) %>%
+  tidyr::spread(key = "Diag_gr", value = "N", fill = 0) %>%
+  arrange(rowSums(across(c(-1))))
+
+plotMatrise <- t(as.matrix(registreringer[,-1]))
+colnames(plotMatrise) <- rep('', dim(plotMatrise)[2])
+outfile <- paste0(figfolder, 'reg_pr_diaggr2022_2023.pdf')
+# outfile <- ""
+grtxt <- registreringer$Sykehusnavn
+norvarStabelGrvar(plotMatrise=plotMatrise,
+                  grtxt = grtxt,
+                  outfile = outfile,
+                  tittel = c("Antall inklusjoner pr. HF", "og pr. diagnosegruppe"),
+                  xlab ="Antall pasienter",
+                  legendTxt = paste0(names(registreringer)[-1], ", N=", colSums(registreringer[, -1])))
+
+
+
+
 ##########################################################
 ## Bestilling Julianne kvalitetsforbedringsprosjekt høst 2023 ####################
 

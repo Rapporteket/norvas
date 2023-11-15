@@ -57,7 +57,8 @@ norvasPreprosess <- function(RegData) {
   if ("InklusjonDato" %in% names(RegData)) {
     RegData <- RegData[!is.na(RegData$InklusjonDato), ]
   }
-  if ('Icd_IcdDataDump' %in% names(RegData)) {names(RegData)[names(RegData)=='Icd_IcdDataDump'] <- 'Icd'}
+  if ('Icd_IcdDataDump' %in% names(RegData)) {
+    names(RegData)[names(RegData)=='Icd_IcdDataDump'] <- 'Icd'}
   if ('Diagnose' %in% names(RegData) & 'Icd' %in% names(RegData)) {
     # Kun store bokstaver
     RegData$Icd <- toupper(RegData$Icd)

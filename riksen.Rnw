@@ -1,0 +1,210 @@
+\documentclass[norsk,a4paper]{article} % ,twoside
+\usepackage[norsk]{babel}
+\usepackage[utf8x]{inputenc}
+\usepackage{subfig}
+\usepackage{pdfpages}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{caption}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+\usepackage{array}
+\usepackage{lscape}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}p{#1}}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+
+\title{Data til Rikshopitalet}
+\author{Norvas}
+
+\renewcommand\thempfootnote{\fnsymbol{mpfootnote}}
+\def\labelitemi{$\bullet$}
+\def\labelitemii{--}
+\def\labelitemiii{$\ast$}
+\def\labelitemiv{$\cdot$}
+
+%setter grå skrift fremfort sort
+\usepackage{xcolor}
+\usepackage{graphicx}
+\pagestyle{myheadings}
+\definecolor{lysblaa}{rgb}{0.27,0.51,0.71}
+\definecolor{moerkgraa}{rgb}{0.25,0.25,0.25}
+
+
+<<'initOpts',include=FALSE>>=
+knitr::opts_chunk$set(warnings=FALSE,echo=FALSE)
+knitr::opts_knit$set(root.dir = './')
+@
+
+\begin{document}
+
+\maketitle
+
+<<LastData, include=FALSE, echo=FALSE, cache=FALSE>>=
+library(norvas)
+library(xtable)
+library(lubridate)
+library(tidyverse)
+rm(list = ls())
+options(dplyr.summarise.inform = FALSE)
+
+rap_aar <- 2023
+# aarrappdata_m_andre <- norvas::lesogprosesser(rap_aar = rap_aar, fjern_andre_diagnoser = FALSE)
+# Inklusjon_m_andre <- aarrappdata_m_andre$Inklusjon
+aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar, fjern_andre_diagnoser = TRUE)
+Inklusjon <- aarrappdata$Inklusjon
+Oppfolging <- aarrappdata$Oppfolging
+Diagnoser <- aarrappdata$Diagnoser
+Medisiner <- aarrappdata$Medisiner
+BVAS <- aarrappdata$BVAS
+KERR <- aarrappdata$KERR
+VDI <- aarrappdata$VDI
+Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
+Utredning <- aarrappdata$Utredning
+Labskjema <- aarrappdata$Labskjema
+
+#### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
+kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId),
+                                               Inklusjon$UnitId), c("UnitId", "Sykehusnavn")]
+orgnr_table <-
+  tibble::tribble(
+    ~UnitId,   ~orgnr,
+    104579, 974749025,
+    601159, 974795787,
+    700701, 974795361,
+    4210614, 974795515,
+    104209, 873255102,
+    110353, 874632562,
+    4210431, 874716782,
+    110629, 974116588,
+    103725, 974631326,
+    108054, 974633698,
+    701344, 974703300,
+    106841, 974724774,
+    104092, 974733013,
+    105274, 974744570,
+    102708, 974747138,
+    105776, 974754118,
+    102977, 974557746
+  )
+kobl_unitid_shusnavn_norvas <- merge(kobl_unitid_shusnavn_norvas, orgnr_table,
+                                     by = "UnitId", all.x = TRUE)
+
+figstr <- 0.61
+tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
+
+figfolder <- "~/GIT/fig_og_tab/norvas/"
+if (!dir.exists(figfolder)) {
+  dir.create(figfolder)
+}
+
+@
+
+
+<<inkluderte_riksen, results='asis', echo=FALSE, warning=F>>=
+# riksen <- Inklusjon_m_andre %>%
+#   filter(Sykehusnavn == "Rikshospitalet") %>%
+#   mutate(periode = ifelse(Inklusjonsaar <= 2022, "tom2022", "2023"))
+#
+# tabell1_diagnoser <- riksen %>% summarise(antall = n(),
+#                      .by = c(Diag_gr_nr, periode)) %>% janitor::adorn_totals()
+# diag_riksen <- aarrappdata_m_andre$Diagnoser %>%
+#   filter(UnitId == 4210431)
+
+diag_ufiltrert <- read.table(
+  '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_DiagnoseSkjema_2023-11-14_1535.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>%
+  filter(UnitId == 4210431)
+
+diag_ufiltrert <- norvas::norvasPreprosess(diag_ufiltrert)
+
+inklusjon_ufiltrert <- read.table(
+  '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Inklusjonskjema_2023-11-14_1534.csv', header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>%
+  filter(UnitId == 4210431)
+
+tabell_diagnoser <- merge(inklusjon_ufiltrert, diag_ufiltrert,
+             by.x = "SkjemaGUID", by.y = "HovedskjemaGUID", all.x = T) %>%
+  mutate(Inklusjonsaar = as.Date(inklusjon_ufiltrert$InklusjonDato, format="%d.%m.%Y") %>%
+           format("%Y") %>% as.numeric()) %>%
+  mutate(periode = ifelse(Inklusjonsaar <= 2022, "tom2022", "2023")) %>%
+  summarise(antall = n(),
+            .by = c(Diagnosegruppe, periode)) %>%
+  mutate(Diagnosegruppe = ifelse(is.na(Diagnosegruppe), "Ingen", Diagnosegruppe))
+
+print(xtable::xtable(
+  tabell_diagnoser, align= c('l','l','r','r'),
+  digits=0,
+  caption=paste0('Antall registreringer ved Rikshopitalet')),
+  include.rownames = F)
+
+
+KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato, KERR$Diagnose_Klinisk_Dato, units = 'days')
+prednisolon <- Medisiner[which(Medisiner$LegemiddelGenerisk == "Prednisolon"),
+                         c("HovedskjemaGUID", "Med_StartDato", "Med_SluttDato",
+                           "Dose")]
+
+nysyke <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
+                KERR %>% select(-InklusjonDato), by.x = c("SkjemaGUID"),
+                by.y = c("HovedskjemaGUID")) %>%
+  filter(abs(difftime(KerrsKriterier_Dato, InklusjonDato, units = 'days')) <= 30) %>%
+  filter(Sykdomsvurdering == 1 &
+           Diagnose_ny_30 == 1 &
+           Diag_gr_nr==1) %>%
+  filter(tid_diag_kerr == min(tid_diag_kerr), .by = PasientGUID) %>%
+  filter(SkjemaGUID.y == first(SkjemaGUID.y), .by = PasientGUID)
+
+PaaPrednisolon <- merge(nysyke, prednisolon, by.x = "SkjemaGUID", by.y = "HovedskjemaGUID")
+PaaPrednisolon$Med_SluttDato2 <- PaaPrednisolon$Med_SluttDato
+PaaPrednisolon$Med_SluttDato2[is.na(PaaPrednisolon$Med_SluttDato)] <- today() %m+% months(12)
+
+PaaPrednisolon$Ved_debut_int <- lubridate::interval(PaaPrednisolon$InklusjonDato %m-% months(1),
+                                                    PaaPrednisolon$InklusjonDato %m+% months(1))
+PaaPrednisolon$Ved_6mnd_int <- lubridate::interval(PaaPrednisolon$InklusjonDato %m+% months(5),
+                                                   PaaPrednisolon$InklusjonDato %m+% months(7))
+PaaPrednisolon$Paa_med <- lubridate::interval(PaaPrednisolon$Med_StartDato,
+                                              PaaPrednisolon$Med_SluttDato2)
+PaaPrednisolon$pred_v_deb <- int_overlaps(PaaPrednisolon$Ved_debut_int, PaaPrednisolon$Paa_med) %>%
+  as.numeric()
+PaaPrednisolon$pred_v_6mnd <- int_overlaps(PaaPrednisolon$Ved_6mnd_int, PaaPrednisolon$Paa_med) %>%
+  as.numeric()
+
+oppsum <- PaaPrednisolon %>%
+  dplyr::group_by(PasientGUID) %>%
+  summarise(Sykehusnavn = first(Sykehusnavn),
+            UnitId = first(UnitId),
+            InklusjonDato = first(InklusjonDato),
+            Ved_debut = max(pred_v_deb),
+            Ved_6mnd = max(pred_v_6mnd),
+            "Dose_deb_max" = if (Ved_debut == 1) {max(Dose[pred_v_deb == 1])} else {0},
+            "Dose_6mnd_min" = if (Ved_6mnd == 1) {min(Dose[pred_v_6mnd == 1])} else {0}) %>%
+  dplyr::mutate(Inklusjonsaar = format(InklusjonDato, "%Y") %>% as.numeric())
+
+tilprosjekt <- merge(oppsum, Diagnoser[, c("PasientGUID", "Diagnose")],
+                by = "PasientGUID", ) %>%
+  dplyr::select(Sykehusnavn, PasientGUID, Diagnose, Inklusjonsaar, Dose_deb_max,
+                Dose_6mnd_min) %>%
+  dplyr::rename(Dose_debut = Dose_deb_max,
+                Dose_6mnd = Dose_6mnd_min) %>%
+  dplyr::filter(Sykehusnavn == "Rikshospitalet")
+
+xlsx::write.xlsx(tilprosjekt, paste0(figfolder, 'prednisolondata_rikshopitalet.xlsx'),
+           sheetName="Sheet1", col.names=TRUE, row.names=FALSE,
+           append=FALSE, showNA=TRUE, password=NULL)
+
+
+####
+
+pasientsvar <- read.table(
+  '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Svar+fra+pasienten_2023-11-14_1536.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>%
+  filter(UnitId == 4210431)
+
+
+n_kobl <- length(intersect(pasientsvar$HovedskjemaGUID, inklusjon_ufiltrert$SkjemaGUID))
+n_tot <- dim(pasientsvar)[1]
+@
+
+\Sexpr{n_kobl} av \Sexpr{n_tot} pasientsvar er koblet til et intervensjonsskjema.
+
+\end{document}

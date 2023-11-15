@@ -6,98 +6,38 @@
 #'
 #' @export
 #'
-lesogprosesser <- function(rap_aar = 2022) {
-  # Inklusjon <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_Inklusjonskjema_2023-08-03_1009.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Oppfolging <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_OppfølgingSkjema_2023-08-03_1011.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Diagnoser <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_DiagnoseSkjema_2023-08-03_1012.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Medisiner <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_MedisineringSkjema_2023-08-03_1011.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # BVAS <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_BvasSkjema_2023-08-03_1011.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # KERR <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-08-03_1012.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # VDI <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_VdiSkjema_2023-08-03_1011.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Alvorlig_infeksjon <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-08-03_1012.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Utredning <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_Utredning_2023-08-03_1012.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Labskjema <- read.table(
-  #   '~/softlinks/mydata/norvas/datadump_aarsrapp2022/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-08-03_1012.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-
-  # Inklusjon <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_Inklusjonskjema_2023-09-25_1421.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Oppfolging <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_OppfølgingSkjema_2023-09-25_1421.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Diagnoser <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_DiagnoseSkjema_2023-09-25_1421.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Medisiner <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_MedisineringSkjema_2023-09-25_1421.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # BVAS <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_BvasSkjema_2023-09-25_1421.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # KERR <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_KerrsKriterierSkjema_2023-09-25_1422.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # VDI <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_VdiSkjema_2023-09-25_1421.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Alvorlig_infeksjon <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_SelvrapportertAlvorligInfeksjonSkjema_2023-09-25_1422.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Utredning <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_Utredning_2023-09-25_1422.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Labskjema <- read.table(
-  #   '~/softlinks/mydata/norvas/QA_2023/DataDump_MRS-QA_BlodprøvesvarSkjema_2023-09-25_1422.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+lesogprosesser <- function(rap_aar = 2022,
+                           fjern_andre_diagnoser = TRUE) {
 
   Inklusjon <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Inklusjonskjema_2023-10-10_1434.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Inklusjonskjema_2023-11-14_1534.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Oppfolging <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_OppfølgingSkjema_2023-10-10_1436.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_OppfølgingSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Diagnoser <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_DiagnoseSkjema_2023-10-10_1438.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_DiagnoseSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Medisiner <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_MedisineringSkjema_2023-10-10_1437.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_MedisineringSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   BVAS <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BvasSkjema_2023-10-10_1437.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BvasSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   KERR <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-10-10_1441.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   VDI <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_VdiSkjema_2023-10-10_1437.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_VdiSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Alvorlig_infeksjon <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-10-10_1438.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Utredning <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Utredning_2023-10-10_1438.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Utredning_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Labskjema <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-10-10_1438.csv',
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
@@ -140,7 +80,9 @@ lesogprosesser <- function(rap_aar = 2022) {
   Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
                                               "Diag_gr", "Diagnose")],
                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
-  Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr != 3)
+  if (fjern_andre_diagnoser) {
+    Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr != 3)
+  }
 
   BVAS <- merge(BVAS, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
                 by = 'HovedskjemaGUID', all.x = T)
