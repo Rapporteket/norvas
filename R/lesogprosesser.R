@@ -39,6 +39,9 @@ lesogprosesser <- function(rap_aar = 2022,
   Labskjema <- read.table(
     '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-11-14_1535.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  Pasientsvar <- read.table(
+    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Svar+fra+pasienten_2023-11-14_1536.csv',
+    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
   Oppfolging <- norvas::norvasPreprosess(Oppfolging)
@@ -50,6 +53,7 @@ lesogprosesser <- function(rap_aar = 2022,
   Alvorlig_infeksjon <- norvas::norvasPreprosess(Alvorlig_infeksjon)
   Utredning <- norvas::norvasPreprosess(Utredning)
   Labskjema <- norvas::norvasPreprosess(Labskjema)
+  Pasientsvar <- norvas::norvasPreprosess(Pasientsvar)
 
   ### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
   Medisiner <- Medisiner[!(Medisiner$LegemiddelNr %in% c(0, 999)), ]
@@ -106,13 +110,17 @@ lesogprosesser <- function(rap_aar = 2022,
                      by = 'HovedskjemaGUID', all.x = T)
 
   Inklusjon$Diagnose_ny_30 <- NA
-  Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30] <- 1
-  Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) > 30] <- 0
+  Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
+                                        Inklusjon$InklusjonDato, units = 'days')) <= 30] <- 1
+  Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
+                                        Inklusjon$InklusjonDato, units = 'days')) > 30] <- 0
   Inklusjon$Diagnose_ny_30[Inklusjon$InkludertNyEtablertDiagnose==2] <- 0
   Inklusjon$Diagnose_ny_30[Inklusjon$InkludertNyEtablertDiagnose==1] <- 1
   Inklusjon$Diagnose_ny_180 <- NA
-  Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 180] <- 1
-  Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) > 180] <- 0
+  Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
+                                         Inklusjon$InklusjonDato, units = 'days')) <= 180] <- 1
+  Inklusjon$Diagnose_ny_180[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
+                                         Inklusjon$InklusjonDato, units = 'days')) > 180] <- 0
   Inklusjon$Diagnose_ny_180[Inklusjon$InkludertNyEtablertDiagnose==2] <- 0
   Inklusjon$Diagnose_ny_180[Inklusjon$InkludertNyEtablertDiagnose==1] <- 1
 
@@ -138,7 +146,8 @@ lesogprosesser <- function(rap_aar = 2022,
 
   return(list(Oppfolging=Oppfolging, Diagnoser=Diagnoser, Medisiner=Medisiner,
               BVAS=BVAS, VDI=VDI, Alvorlig_infeksjon=Alvorlig_infeksjon, KERR=KERR,
-              Utredning=Utredning, Labskjema=Labskjema, Inklusjon=Inklusjon))
+              Utredning=Utredning, Labskjema=Labskjema, Inklusjon=Inklusjon,
+              Pasientsvar=Pasientsvar))
 
 }
 

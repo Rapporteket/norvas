@@ -61,6 +61,7 @@ VDI <- aarrappdata$VDI
 Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
 Utredning <- aarrappdata$Utredning
 Labskjema <- aarrappdata$Labskjema
+Pasientsvar <- aarrappdata$Pasientsvar
 
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId),
@@ -709,7 +710,7 @@ ant_pas_pr_med <- Medisiner %>%
   summarise(Antall = length(unique(PasientGUID))) %>%
   ungroup() %>%
   spread(key=LegemiddelGenerisk, value = Antall, fill=0) # %>%
-  # select("Sykehusnavn", "Methotrexate", "Leflunomid", "Azathioprin", "Mycofenolat")
+# select("Sykehusnavn", "Methotrexate", "Leflunomid", "Azathioprin", "Mycofenolat")
 
 ant_pas_pr_med_gr2 <- merge(ant_pas_pr_med, N, by = 'Sykehusnavn', all = T)
 ant_pas_pr_med_gr2 <- ant_pas_pr_med_gr2[ant_pas_pr_med_gr2$N >= 5, ]
@@ -2177,11 +2178,53 @@ print(xtable::xtable(Utredninger, align= c('l','l',rep('r', ncol(Utredninger)-1)
 
 
 <<'PROM sykehusvisning', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-nysyke <- Inklusjon[which(abs(difftime(Inklusjon$Diagnose_Klinisk_Dato, Inklusjon$InklusjonDato, units = 'days')) <= 30 |
-                            Inklusjon$InkludertNyEtablertDiagnose == 1), ]
-nysyke <- nysyke[nysyke$FormDate >= paste0(rap_aar-1, "-01-01") &  nysyke$FormDate <=datoTil, ]
-Oppfolging_rap_aar <- Oppfolging[which(Oppfolging$PasientGUID %in% nysyke$PasientGUID &
-                                         Oppfolging$Oppfolgingsaar <= rap_aar), ]
+
+nysyke <- Inklusjon %>%
+  filter(Diagnose_ny_30 == 1,
+         FormDate >= paste0(rap_aar-1, "-01-01"),
+         FormDate <= datoTil)
+
+nysyke <- Pasientsvar[, c("PasientGUID", "FormDate", "SkjemaGUID",
+                          "Prom_Tretthet",
+                          "Prom_PasientGlobalSykdomsaktivitet",
+                          "Prom_PasientSmerter")] %>%
+  filter(!is.na(FormDate)) %>%
+  merge(nysyke[, c("PasientGUID", "InklusjonDato", "Inklusjonsaar",
+                   "Tretthet", "PasientGlobalSykdomsaktivitet",
+                   "Pasientsmerter", "Sykehusnavn")],
+        by = "PasientGUID", suffixes = c("_pas_svar", ""),
+        all.y = TRUE) %>%
+  mutate(tid_inkl_svar = abs(difftime(InklusjonDato, FormDate, units = "days"))) %>%
+  mutate(tid_inkl_svar = ifelse(is.na(tid_inkl_svar), 100000, tid_inkl_svar)) %>%
+  filter(tid_inkl_svar == min(tid_inkl_svar),.by = "PasientGUID") %>%
+  mutate(
+    Tretthet = ifelse(is.na(Tretthet) & tid_inkl_svar <= 30,
+                      Prom_Tretthet, Tretthet),
+    PasientGlobalSykdomsaktivitet = ifelse(is.na(PasientGlobalSykdomsaktivitet) &
+                                             tid_inkl_svar <= 30,
+                                           Prom_PasientGlobalSykdomsaktivitet,
+                                           PasientGlobalSykdomsaktivitet),
+    Pasientsmerter = ifelse(is.na(Pasientsmerter) & tid_inkl_svar <= 30,
+                            Prom_PasientSmerter, Pasientsmerter))
+
+Oppfolging_rap_aar <- Pasientsvar[, c("PasientGUID", "FormDate", "SkjemaGUID",
+                                      "Prom_Tretthet",
+                                      "Prom_PasientGlobalSykdomsaktivitet",
+                                      "Prom_PasientSmerter", "Sykehusnavn")] %>%
+  filter(!(SkjemaGUID %in% nysyke$SkjemaGUID[nysyke$tid_inkl_svar <= 30])) %>%
+  select(-SkjemaGUID) %>%
+  rename(OppfolgingsDato=FormDate,
+         Tretthet = Prom_Tretthet,
+         PasientGlobalSykdomsaktivitet = Prom_PasientGlobalSykdomsaktivitet,
+         Pasientsmerter = Prom_PasientSmerter) %>%
+  mutate(Oppfolgingsaar = format(OppfolgingsDato, "%Y") %>% as.numeric()) %>%
+  filter(!is.na(OppfolgingsDato)) %>%
+  bind_rows(Oppfolging[, c("PasientGUID", "OppfolgingsDato",
+                           "Oppfolgingsaar", "Tretthet", "Sykehusnavn",
+                           "PasientGlobalSykdomsaktivitet", "Pasientsmerter")]) %>%
+  filter(PasientGUID %in% nysyke$PasientGUID,
+         Oppfolgingsaar <= rap_aar)
+
 nysyke <- nysyke[which(nysyke$PasientGUID %in% Oppfolging_rap_aar$PasientGUID), ]
 
 prom_inklusjon <- nysyke %>% group_by(Sykehusnavn) %>%
@@ -2212,15 +2255,18 @@ prom_oppf <- Oppfolging_rap_aar %>% group_by(Sykehusnavn) %>%
   as_tibble()%>%
   mutate(Sykehusnavn=as.character(Sykehusnavn))
 
-tretthet_pre_post <- merge(prom_inklusjon[, c("Sykehusnavn", "gjsn.tretthet", "n1")],
-                           prom_oppf[, c("Sykehusnavn", "gjsn.tretthet", "n1")],
-                           suffixes = c("_pre", "_post"), by = "Sykehusnavn")
-pasientglobalsykdomsaktivitet_pre_post <- merge(prom_inklusjon[, c("Sykehusnavn", "gjsn.pasientglobalsykdomsaktivitet", "n2")],
-                                                prom_oppf[, c("Sykehusnavn", "gjsn.pasientglobalsykdomsaktivitet", "n2")],
-                                                suffixes = c("_pre", "_post"), by = "Sykehusnavn")
-pasientsmerter_pre_post <- merge(prom_inklusjon[, c("Sykehusnavn", "gjsn.pasientsmerter", "n3")],
-                                 prom_oppf[, c("Sykehusnavn", "gjsn.pasientsmerter", "n3")],
-                                 suffixes = c("_pre", "_post"), by = "Sykehusnavn")
+tretthet_pre_post <-
+  merge(prom_inklusjon[, c("Sykehusnavn", "gjsn.tretthet", "n1")],
+        prom_oppf[, c("Sykehusnavn", "gjsn.tretthet", "n1")],
+        suffixes = c("_pre", "_post"), by = "Sykehusnavn")
+pasientglobalsykdomsaktivitet_pre_post <-
+  merge(prom_inklusjon[, c("Sykehusnavn", "gjsn.pasientglobalsykdomsaktivitet", "n2")],
+        prom_oppf[, c("Sykehusnavn", "gjsn.pasientglobalsykdomsaktivitet", "n2")],
+        suffixes = c("_pre", "_post"), by = "Sykehusnavn")
+pasientsmerter_pre_post <-
+  merge(prom_inklusjon[, c("Sykehusnavn", "gjsn.pasientsmerter", "n3")],
+        prom_oppf[, c("Sykehusnavn", "gjsn.pasientsmerter", "n3")],
+        suffixes = c("_pre", "_post"), by = "Sykehusnavn")
 
 ## figur tretthet
 plotdata <- tretthet_pre_post[, c(1,2,4,3,5)]
@@ -2329,24 +2375,60 @@ if ( outfile != '') {dev.off()}
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}tretthet.pdf}
-\caption{Gjennomsnittlig pasientrapportert tretthet ved inklusjon og oppfølging for pasienter inkludert i \Sexpr{rap_aar-1} og \Sexpr{rap_aar}.}
+\caption{Gjennomsnittlig pasientrapportert tretthet ved inklusjon og oppfølging for nysyke pasienter inkludert i \Sexpr{rap_aar-1} og \Sexpr{rap_aar}.}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}globalsykdomsaktivitet.pdf}
-\caption{Gjennomsnittlig pasientrapportert global sykdomsaktivitet ved inklusjon og oppfølging for pasienter inkludert i \Sexpr{rap_aar-1} og \Sexpr{rap_aar}.}
+\caption{Gjennomsnittlig pasientrapportert global sykdomsaktivitet ved inklusjon og oppfølging for nysyke pasienter inkludert i \Sexpr{rap_aar-1} og \Sexpr{rap_aar}.}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}smerter.pdf}
-\caption{Gjennomsnittlig pasientrapportert smerte ved inklusjon og oppfølging for pasienter inkludert i \Sexpr{rap_aar-1} og \Sexpr{rap_aar}.}
+\caption{Gjennomsnittlig pasientrapportert smerte ved inklusjon og oppfølging for nysyke pasienter inkludert i \Sexpr{rap_aar-1} og \Sexpr{rap_aar}.}
 \end{figure}
 
 
 
 <<'PROM ved debut og 6mnd', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
+
+Inklusjon2 <- Pasientsvar[, c("PasientGUID", "FormDate",
+                              "Prom_Tretthet",
+                              "Prom_PasientGlobalSykdomsaktivitet",
+                              "Prom_PasientSmerter")] %>%
+  filter(!is.na(FormDate)) %>%
+  merge(Inklusjon,
+        by = "PasientGUID", suffixes = c("_pas_svar", ""),
+        all.y = TRUE) %>%
+  mutate(tid_inkl_svar = abs(difftime(InklusjonDato, FormDate, units = "days"))) %>%
+  mutate(tid_inkl_svar = ifelse(is.na(tid_inkl_svar), 100000, tid_inkl_svar)) %>%
+  filter(tid_inkl_svar == min(tid_inkl_svar),.by = "PasientGUID") %>%
+  mutate(
+    Tretthet = ifelse(is.na(Tretthet) & tid_inkl_svar <= 30,
+                      Prom_Tretthet, Tretthet),
+    PasientGlobalSykdomsaktivitet = ifelse(is.na(PasientGlobalSykdomsaktivitet) &
+                                             tid_inkl_svar <= 30,
+                                           Prom_PasientGlobalSykdomsaktivitet,
+                                           PasientGlobalSykdomsaktivitet),
+    Pasientsmerter = ifelse(is.na(Pasientsmerter) & tid_inkl_svar <= 30,
+                            Prom_PasientSmerter, Pasientsmerter))
+
+
+prom_oppf_pasientsvar <- Pasientsvar[, c("PasientGUID", "FormDate",
+                                         "Prom_Tretthet",
+                                         "Prom_PasientGlobalSykdomsaktivitet",
+                                         "Prom_PasientSmerter")] %>%
+  rename(OppfolgingsDato=FormDate,
+         Tretthet = Prom_Tretthet,
+         PasientGlobalSykdomsaktivitet = Prom_PasientGlobalSykdomsaktivitet,
+         Pasientsmerter = Prom_PasientSmerter) %>%
+  mutate(Oppfolgingsaar = format(OppfolgingsDato, "%Y") %>% as.numeric()) %>%
+  filter(!is.na(OppfolgingsDato)) %>%
+  bind_rows(Oppfolging[, c("PasientGUID", "OppfolgingsDato",
+                           "Oppfolgingsaar", "Tretthet",
+                           "PasientGlobalSykdomsaktivitet", "Pasientsmerter")])
 
 BVAS_debut <- BVAS %>%
   select(Sykdomsvurdering, BVAS_Dato, InklusjonDato, PasientGUID) %>%
@@ -2355,16 +2437,17 @@ BVAS_debut <- BVAS %>%
   filter(abs(difftime(InklusjonDato, Dato)) ==
            min(abs(difftime(InklusjonDato, Dato))), .by = PasientGUID) %>% # velg
   mutate(debut6mnd = interval(Dato %m+% months(5), Dato %m+% months(7))) %>%
-  merge(Oppfolging[, c("PasientGUID", "OppfolgingsDato", "Oppfolgingsaar", "Tretthet",
-                       "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
-        by = "PasientGUID") %>%
+  # merge(Oppfolging[, c("PasientGUID", "OppfolgingsDato", "Oppfolgingsaar", "Tretthet",
+  #                      "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
+  #       by = "PasientGUID") %>%
+  merge(prom_oppf_pasientsvar, by = "PasientGUID") %>%
   mutate(oppf6mnd = lubridate::int_overlaps(debut6mnd, interval(OppfolgingsDato,OppfolgingsDato))) %>%
   filter(oppf6mnd) %>%
   filter(abs(difftime(Dato %m+% months(6), OppfolgingsDato)) ==
            min(abs(difftime(Dato %m+% months(6), OppfolgingsDato))), .by = PasientGUID) %>%
-  merge(Inklusjon[, c("PasientGUID", "InklusjonDato", "Sykehusnavn", "UnitId",
-                      "Diag_gr_nr", "Diag_gr", "Tretthet",
-                      "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
+  merge(Inklusjon2[, c("PasientGUID", "InklusjonDato", "Sykehusnavn", "UnitId",
+                       "Diag_gr_nr", "Diag_gr", "Tretthet",
+                       "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
         by = c("InklusjonDato", "PasientGUID"), suffixes = c("_6mnd", "_debut"))
 
 KERR_debut <- KERR %>%
@@ -2374,16 +2457,17 @@ KERR_debut <- KERR %>%
   filter(abs(difftime(InklusjonDato, Dato)) ==
            min(abs(difftime(InklusjonDato, Dato))), .by = PasientGUID) %>% # velg
   mutate(debut6mnd = interval(Dato %m+% months(5), Dato %m+% months(7))) %>%
-  merge(Oppfolging[, c("PasientGUID", "OppfolgingsDato", "Oppfolgingsaar", "Tretthet",
-                       "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
-        by = "PasientGUID") %>%
+  # merge(Oppfolging[, c("PasientGUID", "OppfolgingsDato", "Oppfolgingsaar", "Tretthet",
+  #                      "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
+  #       by = "PasientGUID") %>%
+  merge(prom_oppf_pasientsvar, by = "PasientGUID") %>%
   mutate(oppf6mnd = lubridate::int_overlaps(debut6mnd, interval(OppfolgingsDato,OppfolgingsDato))) %>%
   filter(oppf6mnd) %>%
   filter(abs(difftime(Dato %m+% months(6), OppfolgingsDato)) ==
            min(abs(difftime(Dato %m+% months(6), OppfolgingsDato))), .by = PasientGUID) %>%
-  merge(Inklusjon[, c("PasientGUID", "InklusjonDato", "Sykehusnavn", "UnitId",
-                      "Diag_gr_nr", "Diag_gr", "Tretthet",
-                      "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
+  merge(Inklusjon2[, c("PasientGUID", "InklusjonDato", "Sykehusnavn", "UnitId",
+                       "Diag_gr_nr", "Diag_gr", "Tretthet",
+                       "PasientGlobalSykdomsaktivitet", "Pasientsmerter")],
         by = c("InklusjonDato", "PasientGUID"), suffixes = c("_6mnd", "_debut"))
 
 pguid <- intersect(KERR_debut$PasientGUID, BVAS_debut$PasientGUID)
@@ -2474,11 +2558,13 @@ mtext(N_txt, side = 1, line = -1, at = colMeans(pos), col = "white")
 
 <<'Nøkkeltall_norvas', results='asis', echo=FALSE, warning=F>>=
 
-nokkeltall <- Inklusjon %>% group_by(Inklusjonsaar) %>% summarise("Antall avdelinger" = length(unique(UnitId)),
-                                                                  "Antall inkluderte" = n(),
-                                                                  "Inklusjonsalder, gj.sn." = mean(Inklusjonsalder),
-                                                                  "Inklusjonsalder, median" = median(Inklusjonsalder),
-                                                                  "Andel kvinner" = sum(ErMann==0)/n()*100)
+nokkeltall <- Inklusjon %>%
+  group_by(Inklusjonsaar) %>%
+  summarise("Antall avdelinger" = length(unique(UnitId)),
+            "Antall inkluderte" = n(),
+            "Inklusjonsalder, gj.sn." = mean(Inklusjonsalder),
+            "Inklusjonsalder, median" = median(Inklusjonsalder),
+            "Andel kvinner" = sum(ErMann==0)/n()*100)
 
 # Diagnoser$Inklusjonsaar <- as.numeric(format(Diagnoser$InklusjonDato, "%Y"))
 # diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Diagnose) %>%
@@ -2494,8 +2580,8 @@ dg_samlet <- read.csv2("~/GIT/norvas/doc/dg_norvas_tom2022_v2.csv")
 
 Indikatorer <- Indikatorer %>%
   filter(ind_id %in% c("norvas_storvas_prednisolon", "norvas_anca_prednisolon",
-         "norvas_storkar_remisjon", "norvas_anca_remisjon",
-         "norvas_anca_ved_debut", "norvas_kerr", "norvas_bvas")) %>%
+                       "norvas_storkar_remisjon", "norvas_anca_remisjon",
+                       "norvas_anca_ved_debut", "norvas_kerr", "norvas_bvas")) %>%
   bind_rows(dg_samlet)
 write.csv2(Indikatorer, "~/GIT/norvas/doc/Indikatorer_tom2022.csv", row.names = F)
 

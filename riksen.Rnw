@@ -203,6 +203,8 @@ pasientsvar <- read.table(
 
 n_kobl <- length(intersect(pasientsvar$HovedskjemaGUID, inklusjon_ufiltrert$SkjemaGUID))
 n_tot <- dim(pasientsvar)[1]
+
+n_kobl2 <- length(intersect(pasientsvar$PasientGUID, inklusjon_ufiltrert$PasientGUID))
 @
 
 \Sexpr{n_kobl} av \Sexpr{n_tot} pasientsvar er koblet til et intervensjonsskjema.
