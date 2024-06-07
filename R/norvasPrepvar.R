@@ -70,6 +70,15 @@ norvasPrepvar <- function(RegData, valgtVar) {
     retn <- 'V'
   }
 
+  if (valgtVar == 'tid_inkl_oppf_kat') {
+    tittel <- 'Tid fra inklusjon til oppfølging (dager)'
+    RegData$Variabel <- RegData[, valgtVar]
+    RegData$VariabelGr <- RegData$Variabel
+    grtxt <- c('0-90', '91-180', '181-270', '271-360', '>360')
+    retn <- 'V'
+  }
+
+
   if (valgtVar == 'tid_symp_diagnose') {
     tittel <- 'Tid fra symptom til diagnose'
     RegData$Variabel <- as.numeric(RegData[, valgtVar])

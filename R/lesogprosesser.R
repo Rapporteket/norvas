@@ -6,42 +6,76 @@
 #'
 #' @export
 #'
-lesogprosesser <- function(rap_aar = 2022,
+lesogprosesser <- function(rap_aar = 2023,
                            fjern_andre_diagnoser = TRUE) {
 
   Inklusjon <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Inklusjonskjema_2023-11-14_1534.csv',
+      '~/softlinks/mydata/norvas/DataDump_MRS-QA_Inklusjonskjema_2024-06-07_0858.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Oppfolging <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_OppfølgingSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_OppfølgingSkjema_2024-06-07_0858.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Diagnoser <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_DiagnoseSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_DiagnoseSkjema_2024-06-07_0859.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Medisiner <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_MedisineringSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_MedisineringSkjema_2024-06-07_0858.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   BVAS <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BvasSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_BvasSkjema_2024-06-07_0858.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   KERR <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_KerrsKriterierSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_KerrsKriterierSkjema_2024-06-07_0859.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   VDI <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_VdiSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_VdiSkjema_2024-06-07_0858.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Alvorlig_infeksjon <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_SelvrapportertAlvorligInfeksjonSkjema_2024-06-07_0859.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Utredning <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Utredning_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_Utredning_2024-06-07_0859.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Labskjema <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_BlodprøvesvarSkjema_2023-11-14_1535.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_BlodprøvesvarSkjema_2024-06-07_0859.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Pasientsvar <- read.table(
-    '~/softlinks/mydata/norvas/prod_2023/DataDump_MRS-PROD_Svar+fra+pasienten_2023-11-14_1536.csv',
+    '~/softlinks/mydata/norvas/DataDump_MRS-QA_Svar+fra+pasienten_2024-06-07_0859.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+  # Inklusjon <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Inklusjonskjema_2024-05-15_0822.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Oppfolging <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_OppfølgingSkjema_2024-05-15_0822.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Diagnoser <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_DiagnoseSkjema_2024-05-15_0823.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Medisiner <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_MedisineringSkjema_2024-05-15_0822.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # BVAS <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_BvasSkjema_2024-05-15_0822.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # KERR <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_KerrsKriterierSkjema_2024-05-15_0823.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # VDI <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_VdiSkjema_2024-05-15_0822.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Alvorlig_infeksjon <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2024-05-15_0823.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Utredning <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Utredning_2024-05-15_0823.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Labskjema <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_BlodprøvesvarSkjema_2024-05-15_0823.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Pasientsvar <- read.table(
+  #   '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Svar+fra+pasienten_2024-05-15_0823.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
   Oppfolging <- norvas::norvasPreprosess(Oppfolging)
@@ -126,6 +160,7 @@ lesogprosesser <- function(rap_aar = 2022,
 
   Inklusjon$Inklusjonsaar <- as.numeric(format(Inklusjon$InklusjonDato, format = '%Y'))
   Oppfolging$Oppfolgingsaar <- as.numeric(format(Oppfolging$OppfolgingsDato, format = '%Y'))
+  Oppfolging <- Oppfolging[!is.na(Oppfolging$Oppfolgingsaar), ]
   Inklusjon <- Inklusjon[Inklusjon$Inklusjonsaar <= rap_aar, ]
   # Oppfolging <- Oppfolging[Oppfolging$Oppfolgingsaar<= rap_aar, ]
   Inklusjon$Inklusjonsalder <- Inklusjon$PatientAge

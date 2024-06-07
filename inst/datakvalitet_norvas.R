@@ -5,7 +5,7 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2022
+rap_aar <- 2023
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
@@ -17,6 +17,30 @@ VDI <- aarrappdata$VDI
 Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
 Utredning <- aarrappdata$Utredning
 Labskjema <- aarrappdata$Labskjema
+Pasientsvar <- aarrappdata$Pasientsvar
+
+# Pasientsvar$FormDate <- as.Date(Pasientsvar$FormDate)
+# Pasientsvar$SvarDato <- as.Date(Pasientsvar$SvarDato)
+# Pasientsvar$CreationDate <- as.Date(Pasientsvar$CreationDate)
+#
+# tmp <- merge(Oppfolging, Pasientsvar,
+#              by.x = c("PasientGUID", "OppfolgingsDato"),
+#              by.y = c("PasientGUID", "SvarDato"))
+
+# tmpi <- bind_rows(Oppfolging %>% filter(PasientGUID == tmp$PasientGUID,
+#                        OppfolgingsDato == tmp$OppfolgingsDato),
+#           Pasientsvar %>% filter(PasientGUID == tmp$PasientGUID,
+#                                  SvarDato == tmp$OppfolgingsDato))
+
+overlapp_oppf_pas <- intersect(toupper(names(Oppfolging)), toupper(stringr::str_remove(names(Pasientsvar), pattern = "Prom_")))
+overlapp_oppf_pas <- names(Oppfolging)[match(overlapp_oppf_pas, toupper(names(Oppfolging)))]
+overlapp_oppf_pas <- overlapp_oppf_pas[!is.na(overlapp_oppf_pas)]
+names(Pasientsvar)[
+  match(toupper(overlapp_oppf_pas),
+        toupper(stringr::str_remove(names(Pasientsvar), pattern = "Prom_")))] <-
+  overlapp_oppf_pas
+
+Oppfolging2 <- bind_rows(Oppfolging, Pasientsvar)
 
 ## Kompletthet av variabler
 
@@ -34,9 +58,11 @@ blodprover_utfort <- sum(Labskjemarap_aar$BT_utfort==1)/dim(Labskjemarap_aar)[1]
 
 
 Oppfolgingrap_aar <- bind_rows(Oppfolging[which(Oppfolging$Oppfolgingsaar == rap_aar),
-                                          c("Tretthet", "PasientGlobalSykdomsaktivitet", "Pasientsmerter", "SkjemaGUID")],
+                                          c("Tretthet", "PasientGlobalSykdomsaktivitet",
+                                            "Pasientsmerter", "SkjemaGUID", "Sykehusnavn")],
                                Inklusjon[which(Inklusjon$Inklusjonsaar == rap_aar),
-                                         c("Tretthet", "PasientGlobalSykdomsaktivitet", "Pasientsmerter", "SkjemaGUID")])
+                                         c("Tretthet", "PasientGlobalSykdomsaktivitet",
+                                           "Pasientsmerter", "SkjemaGUID", "Sykehusnavn")])
 
 
 prom_utfylt  <- Oppfolgingrap_aar %>% summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
@@ -44,6 +70,53 @@ prom_utfylt  <- Oppfolgingrap_aar %>% summarise(Tretthet_utfylt = sum(!is.na(Tre
                                                 Smerte_utfylt = sum(!is.na(Pasientsmerter)),
                                                 N = n())
 prom_utfylt[1:3]/prom_utfylt[[4]]*100
+
+Oppfolging3siste <- Oppfolging %>%
+  mutate(Aar = Oppfolgingsaar) %>%
+  select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
+  filter(Aar %in% (rap_aar-2):rap_aar) %>%
+  bind_rows(Inklusjon %>%
+              mutate(Aar = Inklusjonsaar) %>%
+              select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
+              filter(Aar %in% (rap_aar-2):rap_aar)) %>%
+  summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
+            Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
+            Smerte_utfylt = sum(!is.na(Pasientsmerter)),
+            N = n(),
+            Andel_Tretthet_utfylt = Tretthet_utfylt/N*100,
+            Andel_Sykdomsaktivitet_utfylt = Sykdomsaktivitet_utfylt/N*100,
+            Andel_Smerte_utfylt = Smerte_utfylt/N*100,
+            .by = c(Sykehusnavn, Aar)) %>%
+  pivot_wider(
+    names_from = Aar,
+    values_from = c(Tretthet_utfylt, Sykdomsaktivitet_utfylt, Smerte_utfylt,
+                    Andel_Tretthet_utfylt, Andel_Sykdomsaktivitet_utfylt,
+                    Andel_Smerte_utfylt, N)) %>%
+  arrange(-(Andel_Tretthet_utfylt_2023 +
+              Andel_Sykdomsaktivitet_utfylt_2023 +
+              Andel_Smerte_utfylt_2023)) %>%
+  janitor::adorn_totals() %>%
+  mutate(
+    Andel_Tretthet_utfylt_2023 =
+      ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2023/N_2023*100, Andel_Tretthet_utfylt_2023),
+    Andel_Tretthet_utfylt_2022 =
+      ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2022/N_2022*100, Andel_Tretthet_utfylt_2022),
+    Andel_Tretthet_utfylt_2021 =
+      ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2021/N_2021*100, Andel_Tretthet_utfylt_2021),
+    Andel_Sykdomsaktivitet_utfylt_2023 =
+      ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2023/N_2023*100, Andel_Sykdomsaktivitet_utfylt_2023),
+    Andel_Sykdomsaktivitet_utfylt_2022 =
+      ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2022/N_2022*100, Andel_Sykdomsaktivitet_utfylt_2022),
+    Andel_Sykdomsaktivitet_utfylt_2021 =
+      ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2021/N_2021*100, Andel_Sykdomsaktivitet_utfylt_2021),
+    Andel_Smerte_utfylt_2023 =
+      ifelse(Sykehusnavn=="Total", Smerte_utfylt_2023/N_2023*100, Andel_Smerte_utfylt_2023),
+    Andel_Smerte_utfylt_2022 =
+      ifelse(Sykehusnavn=="Total", Smerte_utfylt_2022/N_2022*100, Andel_Smerte_utfylt_2022),
+    Andel_Smerte_utfylt_2021 =
+      ifelse(Sykehusnavn=="Total", Smerte_utfylt_2021/N_2021*100, Andel_Smerte_utfylt_2021))
+
+write.csv2(Oppfolging3siste, "~/GIT/norvas/doc/KompletthetProm3sisteaar.csv", row.names = F, fileEncoding = "Latin1")
 
 Kompletthet <- bind_rows(Kompletthet, data.frame(Variabel = c("Tretthet", "PasientGlobalSykdomsaktivitet", "Pasientsmerter"),
                                                  Antall_utfylt = as.numeric(prom_utfylt[1:3]), N = rep(prom_utfylt[[4]], 3)))
@@ -158,6 +231,11 @@ selvrapp <- merge(Oppfolging,
 
 Kompletthet <- bind_rows(Kompletthet, selvrapp)
 
+############# Kompletthet av PROM ##############################################
+# prom <- merge(Oppfolging,
+#                   Pasientsvar,
+#                   by.x = c('PasientGUID','OppfolgingsDato'),
+#                   by.y = c('PasientGUID','FormDate'), all.x = T)
 
 
 ##########################################################################
@@ -166,5 +244,5 @@ Kompletthet$Kompletthet <- Kompletthet$Antall_utfylt/Kompletthet$N*100
 
 
 
-write.csv2(Kompletthet, "~/GIT/norvas/doc/Kompletthet2022.csv", row.names = F, fileEncoding = "Latin1")
+write.csv2(Kompletthet, "~/GIT/norvas/doc/Kompletthet2023.csv", row.names = F, fileEncoding = "Latin1")
 
