@@ -1,28 +1,74 @@
 library(norvas)
-library(xtable)
-library(lubridate)
+library(dplyr)
 # library(rapFigurer)
 rm(list = ls())
-options(dplyr.summarise.inform = FALSE)
+rap_aar <- 2023
 
-rap_aar <- 2021
+# Inklusjon <- read.table(
+#   '~/softlinks/mydata/norvas/DataDump_MRS-QA_Inklusjonskjema_2024-06-07_0858.csv',
+#   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Inklusjon <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2024-06-11_1506.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
-Inklusjon <- read.table('I:/norvas/DataDump_MRS-PROD_Inklusjonskjema_2022-03-17_1013.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Diagnoser <- read.table('I:/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2022-03-17_1013.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Inklusjon <- Inklusjon[!is.na(Inklusjon$InklusjonDato), ]
+Inklusjon <- Inklusjon %>%
+  dplyr::mutate(InklusjonDato= as.Date(InklusjonDato, format="%d.%m.%Y"),
+                Inklusjonsaar = as.numeric(format(InklusjonDato, format = '%Y'))) %>%
+  dplyr::filter(Inklusjonsaar <= rap_aar,
+                FormStatus == 2)
+mapEnhet <- data.frame(
+  UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
+             103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
+             701344, 103300),
+  Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
+                  'Nordlandsykehuset', 'Levanger', 'Rikshospitalet',
+                  'Drammen', 'Kristiansand',
+                  'Betanien', 'Lillehammer', 'Martina Hansen',
+                  'Ålesund', 'Helgelandssykehuset',
+                  'Moss', 'Stavanger', 'Drammen'))
+Inklusjon$Sykehusnavn <- mapEnhet$Sykehusnavn[match(Inklusjon$UnitId, mapEnhet$UnitId)]
 
-Inklusjon <- norvasPreprosess(Inklusjon)
-Diagnoser <- norvasPreprosess(Diagnoser)
+registreringer1 <- Inklusjon %>%
+  group_by(Sykehusnavn) %>%
+  summarise('Foer_rapaar' = sum(Inklusjonsaar<rap_aar),
+            'aar_rapaar' = sum(Inklusjonsaar==rap_aar)) %>%
+  arrange(-rowSums(across(-1))) %>%
+  janitor::adorn_totals()
 
 
-allevar <- merge(Inklusjon, Diagnoser, by.x = "SkjemaGUID", by.y = "HovedskjemaGUID")
+oppsum <- Inklusjon %>%
+  summarise(N=n(),
+            .by = PasientGUID) %>%
+  filter(N>1)
 
+dobbel <- Inklusjon %>% filter(PasientGUID %in% oppsum$PasientGUID)
 
+table(dobbel$Sykehusnavn, useNA = 'ifany')
 
+Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
+stolav <- Inklusjon %>% filter(UnitId==104579)
+aalesund <- Inklusjon %>% filter(UnitId==102708)
 
+overlapp_stolavs_aalesund <- intersect(stolav$PasientGUID, aalesund$PasientGUID)
 
+Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUID), ]
 
+registreringer2 <- Inklusjon %>%
+  group_by(Sykehusnavn) %>%
+  summarise('Foer_rapaar' = sum(Inklusjonsaar<rap_aar),
+            'aar_rapaar' = sum(Inklusjonsaar==rap_aar)) %>%
+  arrange(-rowSums(across(-1))) %>%
+  janitor::adorn_totals()
+
+# write.csv2(registreringer1, "~/GIT/norvas/doc/registreringer_ufiltrert_qa.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(registreringer2, "~/GIT/norvas/doc/registreringer_1regprpas_qa.csv",
+#            row.names = F, fileEncoding = "Latin1")
+write.csv2(registreringer1, "~/GIT/norvas/doc/registreringer_ufiltrert_prod_juni.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(registreringer2, "~/GIT/norvas/doc/registreringer_1regprpas_prod_juni.csv",
+           row.names = F, fileEncoding = "Latin1")
 
 
 
@@ -53,28 +99,28 @@ setwd("C:/GIT/norvas/doc/")
 rm(list = ls())
 
 Inklusjon_old <- read.table('I:/norvas/DataDump_Prod_Inklusjonskjema_2019-05-31.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Inklusjon_pguid <- read.table('I:/norvas/DataDump_Prod_Inklusjonskjema_2019-05-31 (1).csv', header=TRUE, sep=";",
                               stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Inklusjon_old$PasientGUID <- Inklusjon_pguid$PasientGUID
 Oppfolging_old <- read.table('I:/norvas/DataDump_Prod_OppfølgingSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                         stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                             stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Diagnoser_old <- read.table('I:/norvas/DataDump_Prod_DiagnoseSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Medisiner_old <- read.table('I:/norvas/DataDump_Prod_MedisineringSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 BVAS_old <- read.table('I:/norvas/DataDump_Prod_BvasSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                       stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 KERR_old <- read.table('I:/norvas/DataDump_Prod_KerrsKriterierSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                       stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 VDI_old <- read.table('I:/norvas/DataDump_Prod_VdiSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                      stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Alvorlig_infeksjon_old <- read.table('I:/norvas/DataDump_Prod_SelvrapportertAlvorligInfeksjonSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                                 stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                                     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Utredning_old <- read.table('I:/norvas/DataDump_Prod_BilledDiagnostikkSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Labskjema_old <- read.table('I:/norvas/DataDump_Prod_BlodprøvesvarSkjema_2019-05-31.csv', header=TRUE, sep=";",
-                        stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+                            stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 Inklusjon <- norvasPreprosess(Inklusjon)
 Oppfolging <- norvasPreprosess(Oppfolging)
@@ -138,9 +184,9 @@ diag_gruppe=99
 
 x11()
 norvasFigAndelTid(RegData=Inklusjon, valgtVar='Andel_ANCA', datoFra='2010-01-01', datoTil='2050-12-31',
-                              minald=0, maxald=130, erMann=99, outfile='', datovar='InklusjonDato',
-                              reshID=601159, enhetsUtvalg=0, inkl_konf=1, aldervar='Inklusjonsalder',
-                              valgtShus='', tidsenhet='Aar')
+                  minald=0, maxald=130, erMann=99, outfile='', datovar='InklusjonDato',
+                  reshID=601159, enhetsUtvalg=0, inkl_konf=1, aldervar='Inklusjonsalder',
+                  valgtShus='', tidsenhet='Aar')
 
 x11()
 norvasFigAndelTid(RegData=BVAS, valgtVar='Andel_remisjon', datoFra='2014-01-01', datoTil='2050-12-31',
@@ -155,8 +201,8 @@ norvasFigAndelTid(RegData=BVAS, valgtVar='Andel_remisjon', datoFra='2014-01-01',
 
 BVAS$Aar <- as.numeric(format(BVAS[, "BVAS_Dato"], '%Y'))
 tabell<-BVAS %>% group_by(PasientGUID, Aar) %>% summarise(Gj.bvas.pr.pas = mean(bvas_samlet),
-                                                  Sykehusnavn = Sykehusnavn[1],
-                                                  N =n())
+                                                          Sykehusnavn = Sykehusnavn[1],
+                                                          N =n())
 
 tabell %>% group_by(Sykehusnavn, Aar) %>% summarise(Gj.bvas.pr.pas.pr.aar = mean(Gj.bvas.pr.pas),
                                                     N = sum(N))
@@ -183,7 +229,7 @@ BVAS <- BVAS[order(BVAS$BVAS_Dato, decreasing = F), ]
 # remisjon$tid_diag_bvas
 
 # table(BVAS$Sykdomsvurdering[which(BVAS$PasientGUID %in% setdiff(unique(BVAS$PasientGUID), remisjon$PasientGUID))],
-      # useNA = 'ifany')
+# useNA = 'ifany')
 # Inkluderer kun de med diagnosedato og inklusjonasdato innenfor 30 dager
 
 ### Versjon 1 nysyke: Differanse mellom Diagnose_Klinisk_Dato og InklusjonDato
@@ -210,7 +256,7 @@ prednisolon <- Medisiner[which(Medisiner$LegemiddelType == "Prednisolon"), ]
 PaaPrednisolon <- merge(remisjon, prednisolon, by='HovedskjemaGUID', all.x = T)
 PaaPrednisolon$medisinert <- 0
 PaaPrednisolon$medisinert[which((PaaPrednisolon$BVAS_Dato >= PaaPrednisolon$StartDato & PaaPrednisolon$BVAS_Dato <= PaaPrednisolon$SluttDato) |
-  (PaaPrednisolon$BVAS_Dato >= PaaPrednisolon$StartDato & is.na(PaaPrednisolon$SluttDato)))] <- 1
+                                  (PaaPrednisolon$BVAS_Dato >= PaaPrednisolon$StartDato & is.na(PaaPrednisolon$SluttDato)))] <- 1
 PaaPrednisolon <- PaaPrednisolon[PaaPrednisolon$medisinert==1 | PaaPrednisolon$HovedskjemaGUID %in%
                                    remisjon$HovedskjemaGUID[!(remisjon$HovedskjemaGUID %in% prednisolon$HovedskjemaGUID)], ]
 # indekser <- names(sort(table(PaaPrednisolon$PasientGUID.x, useNA = 'ifany'), decreasing = T))[1:5]
@@ -353,7 +399,7 @@ aux$samlet <- !is.na(aux$BlodKar) | !is.na(aux$MrMellomstoreKar) | !is.na(aux$Ul
 ## Lag indikatorfigur
 
 tmp2 <- merge(Oppfolging, BVAS[, c("bvas_samlet", "PasientGUID", "BVAS_Dato")], by.x = c('PasientGUID','OppfolgingsDato'),
-      by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
+              by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
 tmp2 <- tmp2[tmp2$Diag_gr_nr %in% 2:3, ]
 sum(!is.na(tmp2$bvas_samlet))/dim(tmp2)[1]*100
 
@@ -391,7 +437,7 @@ aux <- merge(Oppfolging, BVAS, by.x = c('PasientGUID', 'OppfolgingsDato'), by.y 
 table(aux$bvas_samlet, useNA = 'ifany')
 
 andel_bvas <- aux %>% group_by(Sykehusnavn.x) %>% summarise(antall_utfylt = sum(!is.na(bvas_samlet)),
-                                              n = n())
+                                                            n = n())
 andel_bvas$andel_utfylt <- andel_bvas$antall_utfylt/andel_bvas$n*100
 
 
