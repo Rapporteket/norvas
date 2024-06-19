@@ -77,6 +77,7 @@ orgnr_table <-
     110353, 874632562,
     4210431, 874716782,
     110629, 974116588,
+    103300, 974631326,
     103725, 974631326,
     108054, 974633698,
     701344, 974703300,
@@ -2601,9 +2602,12 @@ Indikatorer <- Indikatorer %>%
   filter(ind_id %in% c("norvas_storvas_prednisolon", "norvas_anca_prednisolon",
                        "norvas_storkar_remisjon", "norvas_anca_remisjon",
                        "norvas_anca_ved_debut", "norvas_kerr", "norvas_bvas")) %>%
-  bind_rows(dg_samlet)
-write.csv2(Indikatorer, "~/GIT/norvas/doc/Indikatorer_tom2022.csv", row.names = F)
+  bind_rows(dg_samlet) %>%
+  dplyr::filter(year <= rap_aar)
 
+# write.csv2(Indikatorer, "~/GIT/norvas/doc/Indikatorer_tom2022.csv", row.names = F)
+
+write.csv2(Indikatorer, paste0("~/GIT/norvas/doc/Indikatorer_", Sys.Date(), ".csv"), row.names = F)
 @
 
 

@@ -5,7 +5,7 @@ library(dplyr)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2022
+rap_aar <- 2023
 datoTil <- paste0(rap_aar, "-12-31")
 
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
@@ -34,6 +34,7 @@ orgnr_table <-
     110353, 874632562,
     4210431, 874716782,
     110629, 974116588,
+    103300, 974631326,
     103725, 974631326,
     108054, 974633698,
     701344, 974703300,
