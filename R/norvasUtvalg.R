@@ -3,12 +3,22 @@
 #' @inheritParams norvasFigAndeler
 #' @param fargepalett Hvilken fargepalett skal brukes i figurer (Default: BlaaRapp)
 #'
-#' @return UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
+#' @return UtData En liste bestående av det filtrerte datasettet,
+#'                utvalgstekst for figur og tekststreng som angir fargepalett
 #'
 #' @export
 
-norvasUtvalg <- function(RegData, datoFra, datoTil, datovar='InklusjonDato', minald, maxald,
-                             aldervar='PatientAge', erMann, valgtShus='', fargepalett='BlaaRapp', diag_gruppe=99)
+norvasUtvalg <- function(RegData,
+                         datoFra = "2000-01-01",
+                         datoTil = "2100-01-01",
+                         datovar='InklusjonDato',
+                         minald = 0,
+                         maxald = 130,
+                         aldervar='PatientAge',
+                         erMann = 99,
+                         valgtShus='',
+                         fargepalett='BlaaRapp',
+                         diag_gruppe=99)
 {
   # Definerer intersect-operator
   "%i%" <- intersect

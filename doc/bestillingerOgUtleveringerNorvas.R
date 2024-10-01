@@ -3,10 +3,202 @@
 #  - Kun diagnoseskjema med tilhørende inklusjonsskjema beholdes
 
 library(norvas)
-library(xtable)
+# library(xtable)
 library(lubridate)
 library(dplyr)
 rm(list = ls())
+
+
+##########################################################################
+## Bestilling Christine Antall på medisin  26.09.2024 ####################
+figfolder <- "~/softlinks/mydata/norvas/"
+
+aarrappdata <- norvas::lesogprosesser(rap_aar = 2024)
+Inklusjon <- aarrappdata$Inklusjon
+Medisiner <- aarrappdata$Medisiner
+Diagnoser <- aarrappdata$Diagnoser
+
+Aktuelle <- Inklusjon %>%
+  dplyr::select(SkjemaGUID, PasientGUID, InklusjonDato, Diagnose_Klinisk_Dato,
+                Diagnose_ny_30, Diagnose, ICD10, Sykehusnavn, FormStatus) %>%
+  dplyr::filter(
+    ICD10 %in%
+      c("M31.5/M31.6", "I77.6", "M31.4"))
+
+antall_pr_sh <- Aktuelle %>% dplyr::count(Sykehusnavn, ICD10) %>%
+  tidyr::pivot_wider(names_from = ICD10, values_from = n, values_fill = 0) %>%
+  janitor::adorn_totals()
+# write.csv2(antall_pr_sh, paste0(figfolder, 'prednisolonpasienter_tabell.csv'),
+#            row.names = F, na = "0", fileEncoding = "Latin1")
+
+medisinerte <- Aktuelle %>%
+  merge(Medisiner %>% select("HovedskjemaGUID", "Med_StartDato",
+                                          "Med_SluttDato", "LegemiddelGenerisk", "Dose"),
+                     by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+  dplyr::filter(abs(difftime(Diagnose_Klinisk_Dato, Med_StartDato, units = 'days')) <= 30,
+                LegemiddelGenerisk == "Prednisolon") %>%
+  dplyr::filter(abs(difftime(Diagnose_Klinisk_Dato, Med_StartDato, units = 'days')) ==
+                  min(abs(difftime(Diagnose_Klinisk_Dato, Med_StartDato, units = 'days'))),
+                .by = PasientGUID) %>%
+  dplyr::filter(Dose == max(Dose), .by = PasientGUID) %>%
+  merge(Medisiner %>% select("HovedskjemaGUID", "Med_StartDato",
+                             "Med_SluttDato", "LegemiddelGenerisk", "Dose"), suffixes = c("", "_28uker"),
+        by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+  dplyr::filter(LegemiddelGenerisk_28uker == "Prednisolon") %>%
+  dplyr::filter(abs(difftime(Med_StartDato %m+% weeks(28), Med_StartDato_28uker, units = 'days')) <= 30) %>%
+  dplyr::filter(abs(difftime(Med_StartDato %m+% weeks(28), Med_StartDato_28uker, units = 'days')) ==
+                  min(abs(difftime(Med_StartDato %m+% weeks(28), Med_StartDato_28uker, units = 'days'))),
+                .by = PasientGUID) %>%
+  arrange(Sykehusnavn, InklusjonDato) %>%
+  relocate(Sykehusnavn)
+
+# write.csv2(medisinerte, paste0(figfolder, 'prednisolonpasienter.csv'),
+#            row.names = F, na = "0", fileEncoding = "Latin1")
+
+doser <- medisinerte %>%
+  dplyr::mutate(Dose_kat = cut(Dose_28uker, breaks = c(0, 7.5, 15, 100000),
+                                      labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
+                                      include.lowest = T)) %>%
+  dplyr::summarise(N = n(), .by = c(Sykehusnavn, Dose_kat)) %>%
+  tidyr::pivot_wider(names_from = Dose_kat, values_from = N, values_fill = 0) %>%
+  dplyr::arrange(rowSums(across(c(-1))))
+grtxt <- doser$Sykehusnavn
+figdata <- t(as.matrix(doser[,-1]))
+colnames(figdata) <- rep('', dim(figdata)[2])
+outfile <- paste0(figfolder, 'prednisolondose28ukerHF.pdf')
+# outfile <- ""
+norvarStabelGrvar(plotMatrise=figdata,
+                  grtxt = grtxt,
+                  outfile = outfile,
+                  tittel = c("Prednisolondose etter 28 uker", "per HF"),
+                  xlab ="Antall pasienter",
+                  legendTxt = paste0(names(doser)[-1], ", N=", colSums(doser[, -1])))
+
+
+## Figur -----
+
+library(ggplot2)
+plotdata <- medisinerte %>%
+  dplyr::mutate(Dose_kat = cut(Dose, breaks = c(0, 7.5, 15, 100000),
+                               labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
+                               include.lowest = T),
+                Dose_28uker_kat = cut(Dose_28uker, breaks = c(0, 7.5, 15, 100000),
+                               labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
+                               include.lowest = T)) %>%
+  # dplyr::count(Dose_kat, Dose_28uker_kat) %>%
+  select(PasientGUID, Dose_kat, Dose_28uker_kat) %>%
+  tidyr::pivot_longer(cols = c(Dose_kat, Dose_28uker_kat), names_to = "Tidspunkt", values_to = "Dose") %>%
+  dplyr::mutate(Tidspunkt = ifelse(Tidspunkt=="Dose_kat", "Ved diagnose", "Etter 28 uker") %>%
+                  factor(., levels = c("Ved diagnose", "Etter 28 uker"))) %>%
+  dplyr::count(Tidspunkt, Dose)
+
+plotdata %>% ggplot(aes(x = Dose, y = n, fill = Tidspunkt)) +
+  geom_col(position = "dodge") +
+  labs(title = "Prednisolondose ved diagnose \n og etter 28 uker") +
+  xlab("Dose prednisolon") +
+  ylab("Antall pasienter") +
+  theme_classic() +
+  theme(plot.title = element_text(hjust = 0.5))
+# ggsave(paste0(figfolder, "prednisolonfig.png"))
+
+
+
+
+
+
+##########################################################################
+## Bestilling Christine Antall på medisin  24.09.2024 ####################
+aarrappdata <- norvas::lesogprosesser(rap_aar = 2024)
+Inklusjon <- aarrappdata$Inklusjon
+Medisiner <- aarrappdata$Medisiner
+
+Aktuelle <- Inklusjon %>%
+  dplyr::select(SkjemaGUID, PasientGUID, InklusjonDato, Diagnose_Klinisk_Dato,
+                Diagnose_ny_30, Diagnose, Sykehusnavn, FormStatus) %>%
+  dplyr::filter(
+    FormStatus == 2,
+    Diagnose_ny_30 == 1,
+    Diagnose %in%
+      c("Kjempecellearteritt med polymyalgia rheumatica /Annen kjempecellearteritt",
+        "Uspesifisert arteritt")) %>%
+  merge(Medisiner %>% select("HovedskjemaGUID", "Med_StartDato",
+                             "Med_SluttDato", "LegemiddelGenerisk", "Dose"),
+        by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+  dplyr::filter(abs(difftime(Diagnose_Klinisk_Dato, Med_StartDato, units = 'days')) <= 30) %>%
+  merge(Medisiner %>% select("HovedskjemaGUID", "Med_StartDato",
+                             "Med_SluttDato", "LegemiddelGenerisk", "Dose"), suffixes = c("", "2"),
+        by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+  dplyr::filter(abs(difftime(Med_StartDato %m+% weeks(28), Med_StartDato2, units = 'days')) <= 30)
+
+oppsummering_medisiner <- Aktuelle %>%
+  summarise(Med_v_diagtid = paste0(unique(LegemiddelGenerisk), collapse = ", "),
+            Med_v_28uker = paste0(unique(LegemiddelGenerisk2), collapse = ", "),
+            N = n(),
+            .by = PasientGUID) %>%
+  dplyr::filter(N > 1)
+
+Aktuelle_prednisolon <- Aktuelle %>%
+  dplyr::filter(LegemiddelGenerisk == "Prednisolon",
+                LegemiddelGenerisk2 == "Prednisolon")
+
+oppsummering_prednisolon <- Aktuelle_prednisolon %>%
+  summarise(Med_v_diagtid = paste0(unique(LegemiddelGenerisk), collapse = ", "),
+            Med_v_28uker = paste0(unique(LegemiddelGenerisk2), collapse = ", "),
+            N = n(),
+            .by = PasientGUID)
+
+Aktuelle_prednisolon_7_5mg <- Aktuelle_prednisolon %>%
+  dplyr::filter(Dose > 7.5)
+
+oppsummering_prednisolon_7_5mg <- Aktuelle_prednisolon_7_5mg %>%
+  summarise(doser_diag = paste0(Dose, collapse = ", "),
+            doser_28uker = paste0(Dose2, collapse = ", "),
+            N = n(),
+            .by = PasientGUID)
+
+####################################################################
+## Bestilling Julianne reg.oversikt 11.09.2024 ####################
+rap_aar <- 2024
+datoFra <- paste0(rap_aar, "-01-01")
+datoTil=paste0(rap_aar, "-12-31")
+
+aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
+Inklusjon <- aarrappdata$Inklusjon
+
+registreringer <- Inklusjon %>%
+  filter(!is.na(Diag_gr)) %>%
+  mutate(periode = case_when(Inklusjonsaar == 2024 ~ "2024",
+                             Inklusjonsaar == 2023 ~ "2023",
+                             Inklusjonsaar < 2023 ~ "T.o.m. 2022")) %>%
+  # group_by(Sykehusnavn, Diag_gr, periode) %>%
+  # summarise(n = n()) %>%
+  dplyr::count(Sykehusnavn, Diag_gr, periode) %>%
+  tidyr::spread(key = "Diag_gr", value = "n", fill = 0)
+
+reg2024 <- registreringer %>% filter(periode == "2024") %>%
+  select(-periode)
+reg2023 <- registreringer %>% filter(periode == "2023") %>%
+  select(-periode)
+reg2022 <- registreringer %>% filter(periode == "T.o.m. 2022") %>%
+  select(-periode)
+
+registreringer <- merge(reg2022, reg2023, by = "Sykehusnavn",
+                        suffixes = c(" - T.o.m. 2022", " - 2023"), all = T) %>%
+  merge(reg2024, by = "Sykehusnavn",
+        suffixes = c("", " - 2024"), all = T)
+names(registreringer)[6:7] <- paste0(names(registreringer)[6:7], " - 2024")
+registreringer$Sykehusnavn <- as.character(registreringer$Sykehusnavn)
+registreringer$Sykehusnavn[is.na(registreringer$Sykehusnavn)] <- "Ny avdeling?"
+registreringer <- registreringer %>% janitor::adorn_totals()
+
+figfolder <- "~/softlinks/mydata/norvas/"
+write.csv2(registreringer, paste0(figfolder, 'registreringer_tom2024.csv'),
+           row.names = F, na = "0", fileEncoding = "Latin1")
+
+
+
+
+
 
 ####################################################################
 ## Bestilling Julianne Rikshospitalet høst 2023 ####################
@@ -164,15 +356,15 @@ oppsum <- PaaPrednisolon %>%
   dplyr::mutate(Inklusjonsaar = format(InklusjonDato, "%Y") %>% as.numeric())
 
 tilprosjekt <- merge(oppsum, Diagnoser[, c("PasientGUID", "Diagnose")],
-                by = "PasientGUID", ) %>%
+                     by = "PasientGUID", ) %>%
   dplyr::select(Sykehusnavn, PasientGUID, Diagnose, Inklusjonsaar, Dose_deb_max,
                 Dose_6mnd_min) %>%
   dplyr::rename(Dose_debut = Dose_deb_max,
                 Dose_6mnd = Dose_6mnd_min)
 
 xlsx::write.xlsx(tilprosjekt, paste0(figfolder, 'prednisolondata.xlsx'),
-           sheetName="Sheet1", col.names=TRUE, row.names=FALSE,
-           append=FALSE, showNA=TRUE, password=NULL)
+                 sheetName="Sheet1", col.names=TRUE, row.names=FALSE,
+                 append=FALSE, showNA=TRUE, password=NULL)
 
 doser <- tilprosjekt %>%
   mutate(dose6mnd_gr = case_when(Dose_6mnd <= 7.5 ~ "<=7.5",
@@ -277,7 +469,7 @@ Diagnoser %>% group_by(Diagnose) %>%
   summarise(antall = n()) %>%
   arrange(-antall) %>%
   janitor::adorn_totals()
-  write.csv2("/media/kevin/KINGSTON/diag_norvas.csv", row.names = F, fileEncoding = "Latin1")
+write.csv2("/media/kevin/KINGSTON/diag_norvas.csv", row.names = F, fileEncoding = "Latin1")
 
 ## Hans Kristian Skaug 20. mars 2023 #############################
 

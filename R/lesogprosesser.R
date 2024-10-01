@@ -9,72 +9,38 @@
 lesogprosesser <- function(rap_aar = 2023,
                            fjern_andre_diagnoser = TRUE) {
 
-  # Inklusjon <- read.table(
-  #     '~/softlinks/mydata/norvas/DataDump_MRS-QA_Inklusjonskjema_2024-06-07_0858.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Oppfolging <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_OppfølgingSkjema_2024-06-07_0858.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Diagnoser <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_DiagnoseSkjema_2024-06-07_0859.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Medisiner <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_MedisineringSkjema_2024-06-07_0858.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # BVAS <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_BvasSkjema_2024-06-07_0858.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # KERR <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_KerrsKriterierSkjema_2024-06-07_0859.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # VDI <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_VdiSkjema_2024-06-07_0858.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Alvorlig_infeksjon <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_SelvrapportertAlvorligInfeksjonSkjema_2024-06-07_0859.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Utredning <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_Utredning_2024-06-07_0859.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Labskjema <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_BlodprøvesvarSkjema_2024-06-07_0859.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  # Pasientsvar <- read.table(
-  #   '~/softlinks/mydata/norvas/DataDump_MRS-QA_Svar+fra+pasienten_2024-06-07_0859.csv',
-  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-
   Inklusjon <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Inklusjonskjema_2024-05-15_0822.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Inklusjonskjema_2024-09-27_0945.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Oppfolging <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_OppfølgingSkjema_2024-05-15_0822.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_OppfølgingSkjema_2024-09-27_0945.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Diagnoser <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_DiagnoseSkjema_2024-05-15_0823.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_DiagnoseSkjema_2024-09-27_1014.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Medisiner <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_MedisineringSkjema_2024-05-15_0822.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_MedisineringSkjema_2024-09-27_1014.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   BVAS <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_BvasSkjema_2024-05-15_0822.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_BvasSkjema_2024-09-27_1014.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   KERR <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_KerrsKriterierSkjema_2024-05-15_0823.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_KerrsKriterierSkjema_2024-09-27_1015.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   VDI <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_VdiSkjema_2024-05-15_0822.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_VdiSkjema_2024-09-27_1014.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Alvorlig_infeksjon <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2024-05-15_0823.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2024-09-27_1015.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Utredning <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Utredning_2024-05-15_0823.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Utredning_2024-09-27_1014.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Labskjema <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_BlodprøvesvarSkjema_2024-05-15_0823.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_BlodprøvesvarSkjema_2024-09-27_1014.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Pasientsvar <- read.table(
-    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Svar+fra+pasienten_2024-05-15_0823.csv',
+    '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Svar+fra+pasienten_2024-09-27_1015.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
@@ -116,7 +82,7 @@ lesogprosesser <- function(rap_aar = 2023,
   Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
                      by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
   Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                              "Diag_gr", "Diagnose")],
+                                              "Diag_gr", "Diagnose", "ICD10")],
                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
   if (fjern_andre_diagnoser) {
     Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr != 3)

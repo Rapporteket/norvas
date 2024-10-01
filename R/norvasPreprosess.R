@@ -22,13 +22,15 @@ norvasPreprosess <- function(RegData) {
   RegData <- RegData %>% dplyr::mutate_at(flyttall, function(x){as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
   RegData <- RegData %>% dplyr::mutate_at(boolsk, function(x){as.logical(x)}) # Gjør booske variabler til logicals
 
-  mapEnhet <- data.frame(UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
-                                    103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
-                                    701344, 103300),
-                         Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
-                                         'Nordlandsykehuset', 'Levanger', 'Rikshospitalet', 'Drammen', 'Kristiansand',
-                                         'Betanien', 'Lillehammer', 'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
-                                         'Moss', 'Stavanger', 'Drammen'))
+  mapEnhet <- data.frame(
+    UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
+               103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
+               701344, 103300),
+    Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
+                    'Nordlandsykehuset', 'Levanger', 'Rikshospitalet',
+                    'Drammen', 'Kristiansand', 'Betanien', 'Lillehammer',
+                    'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
+                    'Moss', 'Stavanger', 'Drammen'))
   RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
   RegData$ErMann <- RegData$PatientGender
   RegData$ErMann[RegData$PatientGender==2] <- 0
@@ -66,21 +68,21 @@ norvasPreprosess <- function(RegData) {
                                    ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
                                    ,"Annen"),
                             navn_ny=c("Takayasus sykdom (Aortabuesyndrom)"
-                                   ,"Granulomatose med polyangiitt (GPA)"
-                                   ,"Polyarteritt med lungeaffeksjon (EGPA)"
-                                   ,"Kjempecellearteritt med polymyalgia rheumatica /Annen kjempecellearteritt"
-                                   ,"Polymyalgia Rheumatica"
-                                   ,"Behcets sykdom"
-                                   ,"Mikroskopisk polyangiitt (MPA)"
-                                   ,"Uspesifisert arteritt"
-                                   ,"Kawasakis syndrom"
-                                   ,"Kryoglobulin Vaskulitt"
-                                   ,"Uspesifisert nekrotiserende vaskulitt"
-                                   ,"Polyarteritis Nodosa"
-                                   ,"IgA Vaskulitt (Henoch-Schoenlein)"
-                                   ,"Systemisk Vaskulitt sykdom"
-                                   ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
-                                   ,"Annen"),
+                                      ,"Granulomatose med polyangiitt (GPA)"
+                                      ,"Polyarteritt med lungeaffeksjon (EGPA)"
+                                      ,"Kjempecellearteritt med polymyalgia rheumatica /Annen kjempecellearteritt"
+                                      ,"Polymyalgia Rheumatica"
+                                      ,"Behcets sykdom"
+                                      ,"Mikroskopisk polyangiitt (MPA)"
+                                      ,"Uspesifisert arteritt"
+                                      ,"Kawasakis syndrom"
+                                      ,"Kryoglobulin Vaskulitt"
+                                      ,"Uspesifisert nekrotiserende vaskulitt"
+                                      ,"Polyarteritis Nodosa"
+                                      ,"IgA Vaskulitt (Henoch-Schoenlein)"
+                                      ,"Systemisk Vaskulitt sykdom"
+                                      ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
+                                      ,"Annen"),
                             kortnavn = c("TAK"
                                          ,"GPA"
                                          ,"EGPA"
@@ -131,6 +133,11 @@ norvasPreprosess <- function(RegData) {
     RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:2, labels = c('Storkarsvaskulitt (LVV)',
                                                                            'ANCA assosiert vaskulitt (AAV)'))
     RegData$Navn <- RegData$Diagnose
+    icd10_map <- data.frame(diagnr = c(3,4,7,8,9,15),
+                            icd10 = c("M31.4", "M31.5/M31.6", "M31.3",
+                                      "M30.1", "M31.7", "I77.6"))
+    RegData$ICD10 <- icd10_map$icd10[match(RegData$DiagnoseNr, icd10_map$diagnr)]
+
   }
 
   kode <- c(1, 2, 3, 4, 5, 6, 8, 12, 14, 15, 16, 18, 19, 20, 22, 23, 24, 25, 26, 28, 30,
@@ -158,8 +165,9 @@ norvasPreprosess <- function(RegData) {
       (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2022' & varnavn$skjema == 'MedisineringSkjema')+1])-1)
     kobl_generisknavn_kode <- data.frame(kode=as.numeric(kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
                                          label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
+    kobl_generisknavn_kode_2022 <- kobl_generisknavn_kode #
     kobl_generisknavn_kode <- kobl_generisknavn_kode %>%
-      mutate(label = case_when(
+      dplyr::mutate(label = dplyr::case_when(
         kode == 18 ~ "Azatioprin",
         kode == 20 ~ "Metotreksat",
         kode == 32 ~ "Mykofenolsyre",
@@ -174,8 +182,8 @@ norvasPreprosess <- function(RegData) {
                                                                                       norvas::mapping_med$gml_nr)])
     ny_medisinnr <- which(RegData$LegemiddelType2022 != "")
     RegData$LegemiddelType2022[RegData$LegemiddelType2022 %in% "MycofenolatMofetil"] <- "Mycofenolat mofetil"
-    RegData$LegemiddelNr[ny_medisinnr] <- kobl_generisknavn_kode$kode[match(RegData$LegemiddelType2022[ny_medisinnr],
-                                                                            kobl_generisknavn_kode$label)]
+    RegData$LegemiddelNr[ny_medisinnr] <- kobl_generisknavn_kode_2022$kode[match(RegData$LegemiddelType2022[ny_medisinnr],
+                                                                                 kobl_generisknavn_kode_2022$label)]
     RegData$LegemiddelGenerisk <- NA
     RegData$LegemiddelGenerisk<- kobl_generisknavn_kode$label[match(RegData$LegemiddelNr, kobl_generisknavn_kode$kode)]
     RegData$LegemiddelTypeLabel <- factor(RegData$LegemiddelNr, levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
@@ -184,8 +192,8 @@ norvasPreprosess <- function(RegData) {
     RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
 
     tmp <- RegData %>%
-      group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
-      summarise('ant_samme_startdato' = n(),
+      dplyr::group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
+      dplyr::summarise('ant_samme_startdato' = dplyr::n(),
                 Med_SluttDato_min = if (sum(!is.na(Med_SluttDato))>0) {
                   min(Med_SluttDato, na.rm = T)} else {NA},
                 SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {SkjemaGUID[1]}

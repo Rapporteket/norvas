@@ -1,0 +1,239 @@
+---
+title: "Datakvalitet Norvas"
+format: html
+editor: visual
+---
+
+## Bakgrunn
+
+Etter overgangen til Helseplattformen i Helse Midt har det oppstått en del utfordringer med registreringene. Dette dokumentet er et forsøk på å lage en oversikt over noen av utfordringene.
+
+## Antall registreringer
+
+```{r}
+#| echo: false
+#| warning: false
+library(norvas)
+# library(lubridate)
+library(dplyr)
+rm(list = ls())
+
+Inklusjon_mai2024 <- read.table(
+  '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_Inklusjonskjema_2024-05-15_0822.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>% 
+  mutate(InklusjonDato = as.Date(InklusjonDato, format="%d.%m.%Y"),
+         Aar = as.numeric(format(InklusjonDato, format = '%Y')))
+Diagnoser_mai2024 <- read.table(
+  '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_DiagnoseSkjema_2024-05-15_0823.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>% 
+  mutate(Diagnose_Klinisk_Dato = as.Date(Diagnose_Klinisk_Dato, format="%d.%m.%Y"),
+         Aar = as.numeric(format(Diagnose_Klinisk_Dato, format = '%Y')))
+# Inklusjon_juni2024 <- read.table(
+#   '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2024-06-11_1506.csv',
+#   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Inklusjon_aug2024 <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2024-08-02_1505.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>% 
+  mutate(InklusjonDato = as.Date(InklusjonDato, format="%d.%m.%Y"),
+         Aar = as.numeric(format(InklusjonDato, format = '%Y')))
+Diagnoser_aug2024 <- read.table(
+  '~/softlinks/mydata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2024-08-02_1506.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') %>% 
+  mutate(Diagnose_Klinisk_Dato = as.Date(Diagnose_Klinisk_Dato, format="%d.%m.%Y"),
+         Aar = as.numeric(format(Diagnose_Klinisk_Dato, format = '%Y')))
+
+mapEnhet <- data.frame(
+  UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
+             103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
+             701344, 103300),
+  Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
+                  'Nordlandsykehuset', 'Levanger', 'Rikshospitalet',
+                  'Drammen', 'Kristiansand', 'Betanien', 'Lillehammer',
+                  'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
+                  'Moss', 'Stavanger', 'Drammen'))
+
+Inklusjon_mai2024$Sykehusnavn <-
+  mapEnhet$Sykehusnavn[match(Inklusjon_mai2024$UnitId, mapEnhet$UnitId)]
+Inklusjon_aug2024$Sykehusnavn <-
+  mapEnhet$Sykehusnavn[match(Inklusjon_aug2024$UnitId, mapEnhet$UnitId)]
+Diagnoser_mai2024$Sykehusnavn <-
+  mapEnhet$Sykehusnavn[match(Diagnoser_mai2024$UnitId, mapEnhet$UnitId)]
+Diagnoser_aug2024$Sykehusnavn <-
+  mapEnhet$Sykehusnavn[match(Diagnoser_aug2024$UnitId, mapEnhet$UnitId)]
+
+tmptabellmai <- Inklusjon_mai2024 %>% 
+  filter(Sykehusnavn %in% c("St. Olavs", "Ålesund")) %>% 
+  summarise(N = n(),
+            .by = c(Sykehusnavn, Aar)) %>% 
+  tidyr::pivot_wider(names_from = Sykehusnavn, values_from = N, values_fill = 0) %>% 
+  arrange(Aar) %>% 
+  dplyr::rename("St. Olavs mai"= "St. Olavs",
+                "Ålesund mai" = "Ålesund")
+
+tmptabellaugust <- Inklusjon_aug2024 %>% 
+  filter(Sykehusnavn %in% c("St. Olavs", "Ålesund")) %>% 
+  summarise(N = n(),
+            .by = c(Sykehusnavn, Aar)) %>% 
+  tidyr::pivot_wider(names_from = Sykehusnavn, values_from = N, values_fill = 0) %>% 
+  arrange(Aar) %>% 
+  dplyr::rename("St. Olavs aug"= "St. Olavs",
+                "Ålesund aug" = "Ålesund")
+
+samlet <- merge(tmptabellmai, tmptabellaugust, by="Aar") %>% 
+  dplyr::select("Aar", "St. Olavs mai", "St. Olavs aug", "Ålesund mai", "Ålesund aug") %>% 
+  janitor::adorn_totals()
+
+```
+
+Tabellen under angir årvis antall registreringer ved St. Olavs og Ålesund basert på datadump hentet ut 15. mai 2024, dvs. før Helseplattformen ble innført i Ålesund, sammen med antall registreringer basert på datadump fra 2. august, altså etter innføring av Helseplattformen. Merk den dramatiske økningen av inklusjoner ved Ålesund etter overgang til Helseplattformen, også tilbake i tid.
+
+```{r}
+#| echo: false
+knitr:: kable(samlet)
+
+```
+
+## Pasienter med inklusjonsskjema ved flere sykehus
+
+Det har lenge vært et problem for Norvas at pasienter har kunnet bli inkludert ved flere sykehus, og dette bør ryddes opp i uavhengig av tilknytning til Helseplattformen. Tabellen under viser antall som er inkludert ved flere enn én avdeling, før og etter Ålesund ble tilknyttet Helseplattformen. Mye tyder på at den dramatiske økningen i antall inklusjoner fra Ålesund etter innføring av Helseplattformen skyldes at pasienter allerede inkludert ved St. Olavs blir inkludert også fra Ålesund. Det ser ut til at de også har samme inklusjonsdato fra begge avdelingene.
+
+```{r}
+#| echo: false
+
+tmp <- Inklusjon_mai2024 %>% 
+  filter(n() > 1, .by = PasientGUID) %>% 
+  summarise(Sykehus = paste0(sort(Sykehusnavn), collapse = ", "),
+            .by = PasientGUID) %>% 
+  summarise(N =n(),
+            .by = Sykehus) %>% 
+  arrange(Sykehus) %>% 
+  rename("N_mai" = "N")
+
+tmp2 <- Inklusjon_aug2024 %>% 
+  filter(n() > 1, .by = PasientGUID) %>% 
+  summarise(Sykehus = paste0(sort(Sykehusnavn), collapse = ", "),
+            .by = PasientGUID) %>% 
+  summarise(N =n(),
+            .by = Sykehus) %>% 
+  arrange(Sykehus) %>% 
+  rename("N_aug" = "N")
+
+foer_og_etter <- merge(tmp, tmp2, by = "Sykehus", all = TRUE) %>% 
+  mutate(N_mai = ifelse(is.na(N_mai), 0, N_mai),
+         N_aug = ifelse(is.na(N_aug), 0, N_aug)) %>% 
+  janitor::adorn_totals()
+
+knitr:: kable(foer_og_etter)
+```
+
+```{r}
+#| echo: false
+aalesund_inkl_mai <- Inklusjon_mai2024 %>% 
+  filter(Sykehusnavn == "Ålesund")
+stolav_inkl_mai <- Inklusjon_mai2024 %>% 
+  filter(Sykehusnavn == "St. Olavs")
+felles_mai <- Inklusjon_mai2024 %>% 
+  filter(PasientGUID %in% intersect(aalesund_inkl_mai$PasientGUID, stolav_inkl_mai$PasientGUID),
+         Sykehusnavn %in% c("St. Olavs", "Ålesund")) %>% 
+  select(PasientGUID, SkjemaGUID, InklusjonDato, Sykehusnavn)
+felles_m_diag_mai <- felles_mai %>% filter(SkjemaGUID %in% Diagnoser_mai2024$HovedskjemaGUID)
+
+diag_felles_mai <- Diagnoser_mai2024 %>% 
+  filter(HovedskjemaGUID %in% felles_m_diag_mai$SkjemaGUID)
+
+antall_u_diag_aalesund_mai <- setdiff(aalesund_inkl_mai$SkjemaGUID, Diagnoser_mai2024$HovedskjemaGUID)
+
+aalesund_inkl_aug <- Inklusjon_aug2024 %>% 
+  filter(Sykehusnavn == "Ålesund")
+stolav_inkl_aug <- Inklusjon_aug2024 %>% 
+  filter(Sykehusnavn == "St. Olavs")
+felles_aug <- Inklusjon_aug2024 %>% 
+  filter(PasientGUID %in% intersect(aalesund_inkl_aug$PasientGUID, stolav_inkl_aug$PasientGUID),
+         Sykehusnavn %in% c("St. Olavs", "Ålesund")) %>% 
+  select(PasientGUID, SkjemaGUID, InklusjonDato, Sykehusnavn)
+felles_m_diag_aug <- felles_aug %>% filter(SkjemaGUID %in% Diagnoser_aug2024$HovedskjemaGUID)
+
+diag_felles_aug <- Diagnoser_aug2024 %>% 
+  filter(HovedskjemaGUID %in% felles_m_diag_aug$SkjemaGUID) %>% 
+  select(PasientGUID, Diagnose, Diagnosegruppe, DiagnoseNr, Icd_IcdDataDump,
+         PatientAge, PatientGender, Diagnose_Klinisk_Dato, Aar, Sykehusnavn)
+
+antall_u_diag_aalesund_aug <- length(setdiff(aalesund_inkl_aug$SkjemaGUID, Diagnoser_aug2024$HovedskjemaGUID))
+
+
+```
+
+## Diagnoser
+
+Generelt er det en del utfordringer med diagnosedata i Norvas. Det finnes pasienter som mangler diagnoser, men det finnes også diagnoser som ikke er knyttet til et inklusjonsskjema. I tillegg finnes det tilfeller der én pasient har flere diagnoseskjemaer.
+
+### Manglende DiagnoseNr
+Det har vært et vedvarende problem at diagnoser som importeres fra Helseplattformen har et annet format enn øvrig diagnosedata i registeret. Det største problemet er at DiagnoseNr ikke alltid leveres. Alle tabellene i dette avsnittet er basert på Diagnoseskjema lastet ned 2. august der kun registreringer som mangler DiagnoseNr er beholdt. De to første tabellene under viser hhv. variabelen Diagnose og Icd_IcdDataDump fordelt på diagnoseår. Den siste viser hvilke sykehus registreringene er gjort ved, og tyder på at problemet ikke er utelukkende for HP-data siden Rikshospitalet ser ut til å slite med det samme.
+
+```{r}
+#| echo: false
+ingen_diagnr_aug <- Diagnoser_aug2024 %>% filter(is.na(DiagnoseNr))
+ingen_diagnr_mai <- Diagnoser_mai2024 %>% filter(is.na(DiagnoseNr))
+
+
+diag_tab <- ingen_diagnr_aug %>% 
+  mutate(Aar = ifelse(Aar > 2021, Aar, "<2022")) %>% 
+  summarise(N=n(),
+            .by = c(Diagnose, Aar)) %>% 
+  tidyr::pivot_wider(names_from = Aar, values_from = N, values_fill = 0) %>% 
+  janitor::adorn_totals()
+
+knitr::kable(diag_tab)
+
+icd10_tab <- ingen_diagnr_aug %>% 
+  mutate(Aar = ifelse(Aar > 2021, Aar, "<2022")) %>% 
+  summarise(N=n(),
+            .by = c(Icd_IcdDataDump, Aar)) %>% 
+  tidyr::pivot_wider(names_from = Aar, values_from = N, values_fill = 0) %>% 
+  janitor::adorn_totals()
+
+knitr::kable(icd10_tab)
+
+shus_tab <- ingen_diagnr_aug %>% 
+  mutate(Aar = ifelse(Aar > 2021, Aar, "<2022")) %>% 
+  summarise(N=n(),
+            .by = c(Sykehusnavn, Aar)) %>% 
+  tidyr::pivot_wider(names_from = Aar, values_from = N, values_fill = 0) %>% 
+  janitor::adorn_totals()
+
+knitr::kable(shus_tab)
+```
+
+
+### Flere diagnoser på samme pasient
+
+Under er en oppsummerende tabell over pasienter med flere innslag i Diagnoseskjema for datadump fra hhv. mai og august. Problemet med multiple diagnoser er ikke eksklusivt for HP, men man ser en markert forverring for Ålesund etter tilknytning til HP.
+
+#### Mai 2024
+```{r}
+#| echo: false
+multireg_mai <- Diagnoser_mai2024 %>% 
+  summarise(Diagnoser = paste0(Diagnose, collapse = ", "),
+            DiagnoseNr = paste0(DiagnoseNr, collapse = ", "),
+            Diagnosedato = paste0(Diagnose_Klinisk_Dato, collapse = ", "),
+            Sykehus = paste0(Sykehusnavn, collapse = ", "),
+            N = n(),
+            .by = PasientGUID) %>% 
+  filter(N>1)
+
+knitr::kable(multireg_mai)
+```
+#### August 2024
+```{r}
+#| echo: false
+multireg_aug <- Diagnoser_aug2024 %>% 
+  summarise(Diagnoser = paste0(Diagnose, collapse = ", "),
+            DiagnoseNr = paste0(DiagnoseNr, collapse = ", "),
+            Diagnosedato = paste0(Diagnose_Klinisk_Dato, collapse = ", "),
+            Sykehus = paste0(Sykehusnavn, collapse = ", "),
+            N = n(),
+            .by = PasientGUID) %>% 
+  filter(N>1)
+
+knitr::kable(multireg_aug)
+```
