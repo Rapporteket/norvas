@@ -8,6 +8,12 @@ library(lubridate)
 library(dplyr)
 rm(list = ls())
 
+##########################################################################
+## Bestilling Julianne datakvalitet mm  26.09.2024 ####################
+
+vaskulittintervensjon <- read.table(
+  '~/softlinks/mydata/norvas/prod_2024/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2024-11-08_1114.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 
 ##########################################################################
 ## Bestilling Christine Antall på medisin  26.09.2024 ####################

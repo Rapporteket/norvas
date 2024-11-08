@@ -51,59 +51,63 @@ norvasPreprosess <- function(RegData) {
                  "Juvenil temporalisarteritt"),
     DiagnoseNr = c(13, 8, 7, 4, 4, 4, 98, 9, 14, 14, 3, 14, 97)
   )
-  mapDiagKode <- data.frame(navn=c("Takayasu Arteritt"
-                                   ,"Granulomatøs Polyangitt"
-                                   ,"Eosinofil Granulomatøs Polyangitt"
-                                   ,"Kjempecellearteritt"
-                                   ,"Polymyalgia Rheumatica"
-                                   ,"Behcets sykdom"
-                                   ,"Mikroskopisk Polyangitt"
-                                   ,"Aortitt INA"
-                                   ,"Kawasakis syndrom"
-                                   ,"Kryoglobulin Vaskulitt"
-                                   ,"Uspesifisert nekrotiserende vaskulitt"
-                                   ,"Polyarteritis Nodosa"
-                                   ,"IgA Vaskulitt (Henoch-Schoenlein)"
-                                   ,"Systemisk Vaskulitt sykdom"
-                                   ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
-                                   ,"Annen"),
-                            navn_ny=c("Takayasus sykdom (Aortabuesyndrom)"
-                                      ,"Granulomatose med polyangiitt (GPA)"
-                                      ,"Polyarteritt med lungeaffeksjon (EGPA)"
-                                      ,"Kjempecellearteritt med polymyalgia rheumatica /Annen kjempecellearteritt"
-                                      ,"Polymyalgia Rheumatica"
-                                      ,"Behcets sykdom"
-                                      ,"Mikroskopisk polyangiitt (MPA)"
-                                      ,"Uspesifisert arteritt"
-                                      ,"Kawasakis syndrom"
-                                      ,"Kryoglobulin Vaskulitt"
-                                      ,"Uspesifisert nekrotiserende vaskulitt"
-                                      ,"Polyarteritis Nodosa"
-                                      ,"IgA Vaskulitt (Henoch-Schoenlein)"
-                                      ,"Systemisk Vaskulitt sykdom"
-                                      ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
-                                      ,"Annen"),
-                            kortnavn = c("TAK"
-                                         ,"GPA"
-                                         ,"EGPA"
-                                         ,"KCA"
-                                         ,"Polymyalgia Rheumatica"
-                                         ,"Behcets sykdom"
-                                         ,"MPA"
-                                         ,"Aortitt"
-                                         ,"Kawasakis syndrom"
-                                         ,"Kryoglobulin Vaskulitt"
-                                         ,"Uspesifisert nekrotiserende vaskulitt"
-                                         ,"Polyarteritis Nodosa"
-                                         ,"IgA Vaskulitt (Henoch-Schoenlein)"
-                                         ,"Systemisk Vaskulitt sykdom"
-                                         ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
-                                         ,"Annen"),
-                            gtiKode = c(3, 7, 8, 4, 98, 13, 9, 15, 6, 11, 14, 5, 10, 99, 12, 97),
-                            gruppering=c('Storkarsvaskulitt (LVV)', 'ANCA assosiert vaskulitt (AAV)', 'ANCA assosiert vaskulitt (AAV)',
-                                         'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'ANCA assosiert vaskulitt (AAV)',
-                                         'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre', 'Andre'),
-                            gr_nr= c(1,2,2,1,3,3,2,1,3,3,3,3,3,3,3,3))
+  mapDiagKode <- data.frame(
+    navn=c("Takayasu Arteritt"
+           ,"Granulomatøs Polyangitt"
+           ,"Eosinofil Granulomatøs Polyangitt"
+           ,"Kjempecellearteritt"
+           ,"Polymyalgia Rheumatica"
+           ,"Behcets sykdom"
+           ,"Mikroskopisk Polyangitt"
+           ,"Aortitt INA"
+           ,"Kawasakis syndrom"
+           ,"Kryoglobulin Vaskulitt"
+           ,"Uspesifisert nekrotiserende vaskulitt"
+           ,"Polyarteritis Nodosa"
+           ,"IgA Vaskulitt (Henoch-Schoenlein)"
+           ,"Systemisk Vaskulitt sykdom"
+           ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
+           ,"Annen"),
+    navn_ny=c("Takayasus sykdom (Aortabuesyndrom)"
+              ,"Granulomatose med polyangiitt (GPA)"
+              ,"Polyarteritt med lungeaffeksjon (EGPA)"
+              ,"Kjempecellearteritt med polymyalgia rheumatica /Annen kjempecellearteritt"
+              ,"Polymyalgia Rheumatica"
+              ,"Behcets sykdom"
+              ,"Mikroskopisk polyangiitt (MPA)"
+              ,"Uspesifisert arteritt"
+              ,"Kawasakis syndrom"
+              ,"Kryoglobulin Vaskulitt"
+              ,"Uspesifisert nekrotiserende vaskulitt"
+              ,"Polyarteritis Nodosa"
+              ,"IgA Vaskulitt (Henoch-Schoenlein)"
+              ,"Systemisk Vaskulitt sykdom"
+              ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
+              ,"Annen"),
+    kortnavn = c("TAK"
+                 ,"GPA"
+                 ,"EGPA"
+                 ,"KCA"
+                 ,"Polymyalgia Rheumatica"
+                 ,"Behcets sykdom"
+                 ,"MPA"
+                 ,"Aortitt"
+                 ,"Kawasakis syndrom"
+                 ,"Kryoglobulin Vaskulitt"
+                 ,"Uspesifisert nekrotiserende vaskulitt"
+                 ,"Polyarteritis Nodosa"
+                 ,"IgA Vaskulitt (Henoch-Schoenlein)"
+                 ,"Systemisk Vaskulitt sykdom"
+                 ,"Annen Immunkompleks Vaskulitt (Goodpasture)"
+                 ,"Annen"),
+    gtiKode = c(3, 7, 8, 4, 98, 13, 9, 15, 6, 11, 14, 5, 10, 99, 12, 97),
+    gruppering=c('Storkarsvaskulitt (LVV)', 'ANCA assosiert vaskulitt (AAV)',
+                 'ANCA assosiert vaskulitt (AAV)',
+                 'Storkarsvaskulitt (LVV)', 'Andre', 'Andre',
+                 'ANCA assosiert vaskulitt (AAV)',
+                 'Storkarsvaskulitt (LVV)', 'Andre', 'Andre', 'Andre',
+                 'Andre', 'Andre', 'Andre', 'Andre', 'Andre'),
+    gr_nr= c(1,2,2,1,3,3,2,1,3,3,3,3,3,3,3,3))
 
   if ("InklusjonDato" %in% names(RegData)) {
     RegData <- RegData[!is.na(RegData$InklusjonDato), ]
@@ -194,10 +198,10 @@ norvasPreprosess <- function(RegData) {
     tmp <- RegData %>%
       dplyr::group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
       dplyr::summarise('ant_samme_startdato' = dplyr::n(),
-                Med_SluttDato_min = if (sum(!is.na(Med_SluttDato))>0) {
-                  min(Med_SluttDato, na.rm = T)} else {NA},
-                SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {SkjemaGUID[1]}
-                else {SkjemaGUID[which(Med_SluttDato == Med_SluttDato_min)[1]]})
+                       Med_SluttDato_min = if (sum(!is.na(Med_SluttDato))>0) {
+                         min(Med_SluttDato, na.rm = T)} else {NA},
+                       SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {SkjemaGUID[1]}
+                       else {SkjemaGUID[which(Med_SluttDato == Med_SluttDato_min)[1]]})
 
     RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
   }
