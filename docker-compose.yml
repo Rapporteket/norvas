@@ -1,20 +1,11 @@
-version: '3.3'
-
 services:
-  db:
-    image: mysql:5.7
-    command: --innodb-log-file-size=500M --innodb_strict_mode=0
-    restart: "no"
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-
   dev:
-    depends_on:
-      - db
-    image: rapporteket/norvas-dev:test
+    image: rapporteket/norvas-dev:main
     volumes:
       - ~/.ssh:/home/rstudio/.ssh
       - ~/.gitconfig:/home/rstudio/.gitconfig
+      - .:/home/rstudio/norvas
+      - ~/softlinks/mydata:/home/rstudio/mydata
     ports:
       - "8787:8787"
       - "3838:3838"
@@ -22,18 +13,5 @@ services:
       - 8.8.8.8
     restart: "no"
     environment:
-      USERID: $$UID
-      PASSWORD: password
-      DB_HOST: db
-      DB_USER: root
-      DB_PASS: root
+      DISABLE_AUTH: "true"
 
-  adminer:
-    depends_on:
-      - db
-    image: adminer
-    restart: "no"
-    environment:
-      ADMINER_PLUGINS: frames
-    ports:
-      - 8888:8080
