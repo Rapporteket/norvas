@@ -42,6 +42,10 @@ lesogprosesser <- function(rap_aar = 2024,
   Pasientsvar <- read.table(
     '~/mydata/norvas/prod_2024/DataDump_MRS-PROD_Svar+fra+pasienten_2024-11-08_1237.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  VaskulittIntervensjon <- read.table(
+    '~/mydata/norvas/prod_2024/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2024-11-08_1236.csv',
+    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
   Oppfolging <- norvas::norvasPreprosess(Oppfolging)
@@ -54,6 +58,7 @@ lesogprosesser <- function(rap_aar = 2024,
   Utredning <- norvas::norvasPreprosess(Utredning)
   Labskjema <- norvas::norvasPreprosess(Labskjema)
   Pasientsvar <- norvas::norvasPreprosess(Pasientsvar)
+  VaskulittIntervensjon <- norvas::norvasPreprosess(VaskulittIntervensjon)
 
   ### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
   Medisiner <- Medisiner[!(Medisiner$LegemiddelNr %in% c(0, 999)), ]
@@ -61,16 +66,27 @@ lesogprosesser <- function(rap_aar = 2024,
 
   sykehusnavn <- sort(unique(Inklusjon$Sykehusnavn))
 
-  Inklusjon$Sykehusnavn <- factor(as.character(Inklusjon$Sykehusnavn), levels = sykehusnavn)
-  Oppfolging$Sykehusnavn <- factor(as.character(Oppfolging$Sykehusnavn), levels = sykehusnavn)
-  Diagnoser$Sykehusnavn <- factor(as.character(Diagnoser$Sykehusnavn), levels = sykehusnavn)
-  Medisiner$Sykehusnavn <- factor(as.character(Medisiner$Sykehusnavn), levels = sykehusnavn)
-  BVAS$Sykehusnavn <- factor(as.character(BVAS$Sykehusnavn), levels = sykehusnavn)
-  KERR$Sykehusnavn <- factor(as.character(KERR$Sykehusnavn), levels = sykehusnavn)
+  Inklusjon$Sykehusnavn <-
+    factor(as.character(Inklusjon$Sykehusnavn), levels = sykehusnavn)
+  Oppfolging$Sykehusnavn <-
+    factor(as.character(Oppfolging$Sykehusnavn), levels = sykehusnavn)
+  Diagnoser$Sykehusnavn <-
+    factor(as.character(Diagnoser$Sykehusnavn), levels = sykehusnavn)
+  Medisiner$Sykehusnavn <-
+    factor(as.character(Medisiner$Sykehusnavn), levels = sykehusnavn)
+  BVAS$Sykehusnavn <-
+    factor(as.character(BVAS$Sykehusnavn), levels = sykehusnavn)
+  KERR$Sykehusnavn <-
+    factor(as.character(KERR$Sykehusnavn), levels = sykehusnavn)
   VDI$Sykehusnavn <- factor(as.character(VDI$Sykehusnavn), levels = sykehusnavn)
-  Alvorlig_infeksjon$Sykehusnavn <- factor(as.character(Alvorlig_infeksjon$Sykehusnavn), levels = sykehusnavn)
-  Utredning$Sykehusnavn <- factor(as.character(Utredning$Sykehusnavn), levels = sykehusnavn)
-  Labskjema$Sykehusnavn <- factor(as.character(Labskjema$Sykehusnavn), levels = sykehusnavn)
+  Alvorlig_infeksjon$Sykehusnavn <-
+    factor(as.character(Alvorlig_infeksjon$Sykehusnavn), levels = sykehusnavn)
+  Utredning$Sykehusnavn <-
+    factor(as.character(Utredning$Sykehusnavn), levels = sykehusnavn)
+  Labskjema$Sykehusnavn <-
+    factor(as.character(Labskjema$Sykehusnavn), levels = sykehusnavn)
+  VaskulittIntervensjon$Sykehusnavn <-
+    factor(as.character(VaskulittIntervensjon$Sykehusnavn), levels = sykehusnavn)
 
 
   Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
@@ -148,7 +164,7 @@ lesogprosesser <- function(rap_aar = 2024,
   return(list(Oppfolging=Oppfolging, Diagnoser=Diagnoser, Medisiner=Medisiner,
               BVAS=BVAS, VDI=VDI, Alvorlig_infeksjon=Alvorlig_infeksjon, KERR=KERR,
               Utredning=Utredning, Labskjema=Labskjema, Inklusjon=Inklusjon,
-              Pasientsvar=Pasientsvar))
+              Pasientsvar=Pasientsvar, VaskulittIntervensjon=VaskulittIntervensjon))
 
 }
 

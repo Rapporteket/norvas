@@ -64,8 +64,9 @@ Labskjema <- aarrappdata$Labskjema
 Pasientsvar <- aarrappdata$Pasientsvar
 
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
-kobl_unitid_shusnavn_norvas <- Inklusjon[match(unique(Inklusjon$UnitId),
-                                               Inklusjon$UnitId), c("UnitId", "Sykehusnavn")]
+kobl_unitid_shusnavn_norvas <-
+  Inklusjon[match(unique(Inklusjon$UnitId),
+                  Inklusjon$UnitId), c("UnitId", "Sykehusnavn")]
 orgnr_table <-
   tibble::tribble(
     ~UnitId,   ~orgnr,

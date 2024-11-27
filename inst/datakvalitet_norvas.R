@@ -5,7 +5,7 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2023
+rap_aar <- 2024
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
@@ -44,41 +44,48 @@ Oppfolging2 <- bind_rows(Oppfolging, Pasientsvar)
 
 ## Kompletthet av variabler
 
-Labskjema$BT_utfort <- rowSums(!is.na(Labskjema[, c("BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre", "BlodtrykkDiastolisk",
-                                                    "BlodtrykkSystolisk", "BlodtrykkSystoliskHoyre", "BlodtrykkSystoliskVenstre")]))
+Labskjema$BT_utfort <- rowSums(
+  !is.na(Labskjema[, c("BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre",
+                       "BlodtrykkDiastolisk", "BlodtrykkSystolisk",
+                       "BlodtrykkSystoliskHoyre", "BlodtrykkSystoliskVenstre")]))
 
 Labskjema$BT_utfort[Labskjema$BT_utfort > 0] <- 1
 
-Labskjemarap_aar <- Labskjema[which(as.numeric(format(Labskjema$Blodprover_Dato, format="%Y")) == rap_aar), ]
+Labskjemarap_aar <- Labskjema[
+  which(as.numeric(format(Labskjema$Blodprover_Dato, format="%Y")) == rap_aar), ]
 
-Kompletthet <- data.frame(Variabel = "Blodprøve", Antall_utfylt = sum(Labskjemarap_aar$BT_utfort==1),
+Kompletthet <- data.frame(Variabel = "Blodprøve",
+                          Antall_utfylt = sum(Labskjemarap_aar$BT_utfort==1),
                           N = dim(Labskjemarap_aar)[1])
 
 blodprover_utfort <- sum(Labskjemarap_aar$BT_utfort==1)/dim(Labskjemarap_aar)[1]*100
 
 
-Oppfolgingrap_aar <- bind_rows(Oppfolging[which(Oppfolging$Oppfolgingsaar == rap_aar),
-                                          c("Tretthet", "PasientGlobalSykdomsaktivitet",
-                                            "Pasientsmerter", "SkjemaGUID", "Sykehusnavn")],
-                               Inklusjon[which(Inklusjon$Inklusjonsaar == rap_aar),
-                                         c("Tretthet", "PasientGlobalSykdomsaktivitet",
-                                           "Pasientsmerter", "SkjemaGUID", "Sykehusnavn")])
+Oppfolgingrap_aar <- bind_rows(
+  Oppfolging[which(Oppfolging$Oppfolgingsaar == rap_aar),
+             c("Tretthet", "PasientGlobalSykdomsaktivitet",
+               "Pasientsmerter", "SkjemaGUID", "Sykehusnavn")],
+  Inklusjon[which(Inklusjon$Inklusjonsaar == rap_aar),
+            c("Tretthet", "PasientGlobalSykdomsaktivitet",
+              "Pasientsmerter", "SkjemaGUID", "Sykehusnavn")])
 
 
-prom_utfylt  <- Oppfolgingrap_aar %>% summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
-                                                Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
-                                                Smerte_utfylt = sum(!is.na(Pasientsmerter)),
-                                                N = n())
+prom_utfylt  <- Oppfolgingrap_aar %>%
+  summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
+            Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
+            Smerte_utfylt = sum(!is.na(Pasientsmerter)),
+            N = n())
 prom_utfylt[1:3]/prom_utfylt[[4]]*100
 
 Oppfolging3siste <- Oppfolging %>%
   mutate(Aar = Oppfolgingsaar) %>%
   select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
   filter(Aar %in% (rap_aar-2):rap_aar) %>%
-  bind_rows(Inklusjon %>%
-              mutate(Aar = Inklusjonsaar) %>%
-              select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
-              filter(Aar %in% (rap_aar-2):rap_aar)) %>%
+  bind_rows(
+    Inklusjon %>%
+      mutate(Aar = Inklusjonsaar) %>%
+      select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
+      filter(Aar %in% (rap_aar-2):rap_aar)) %>%
   summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
             Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
             Smerte_utfylt = sum(!is.na(Pasientsmerter)),
@@ -101,20 +108,20 @@ Oppfolging3siste <- Oppfolging %>%
       ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2023/N_2023*100, Andel_Tretthet_utfylt_2023),
     Andel_Tretthet_utfylt_2022 =
       ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2022/N_2022*100, Andel_Tretthet_utfylt_2022),
-    Andel_Tretthet_utfylt_2021 =
-      ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2021/N_2021*100, Andel_Tretthet_utfylt_2021),
+    Andel_Tretthet_utfylt_2024 =
+      ifelse(Sykehusnavn=="Total", Tretthet_utfylt_2024/N_2024*100, Andel_Tretthet_utfylt_2024),
     Andel_Sykdomsaktivitet_utfylt_2023 =
       ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2023/N_2023*100, Andel_Sykdomsaktivitet_utfylt_2023),
     Andel_Sykdomsaktivitet_utfylt_2022 =
       ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2022/N_2022*100, Andel_Sykdomsaktivitet_utfylt_2022),
-    Andel_Sykdomsaktivitet_utfylt_2021 =
-      ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2021/N_2021*100, Andel_Sykdomsaktivitet_utfylt_2021),
+    Andel_Sykdomsaktivitet_utfylt_2024 =
+      ifelse(Sykehusnavn=="Total", Sykdomsaktivitet_utfylt_2024/N_2024*100, Andel_Sykdomsaktivitet_utfylt_2024),
     Andel_Smerte_utfylt_2023 =
       ifelse(Sykehusnavn=="Total", Smerte_utfylt_2023/N_2023*100, Andel_Smerte_utfylt_2023),
     Andel_Smerte_utfylt_2022 =
       ifelse(Sykehusnavn=="Total", Smerte_utfylt_2022/N_2022*100, Andel_Smerte_utfylt_2022),
-    Andel_Smerte_utfylt_2021 =
-      ifelse(Sykehusnavn=="Total", Smerte_utfylt_2021/N_2021*100, Andel_Smerte_utfylt_2021))
+    Andel_Smerte_utfylt_2024 =
+      ifelse(Sykehusnavn=="Total", Smerte_utfylt_2024/N_2024*100, Andel_Smerte_utfylt_2024))
 
 write.csv2(Oppfolging3siste, "~/GIT/norvas/doc/KompletthetProm3sisteaar.csv", row.names = F, fileEncoding = "Latin1")
 
@@ -159,23 +166,27 @@ Kompletthet <- bind_rows(Kompletthet, data.frame(Variabel = "tbquant_test",
 Labskjemarap_aargr2 <- Labskjemarap_aar[which(Labskjemarap_aar$Diag_gr_nr == 2), ]
 
 
-Labskjemarap_aargr2$ancapos_saml <- rowSums(Labskjemarap_aargr2[, c("PR3AncaPositiv", "MPO_AncaPositiv")] != -1)
+Labskjemarap_aargr2$ancapos_saml <- rowSums(
+  Labskjemarap_aargr2[, c("PR3AncaPositiv", "MPO_AncaPositiv")] != -1)
 
 Labskjemarap_aargr2$ancapos_saml[Labskjemarap_aargr2$ancapos_saml>0] <- 1
 
 sum(Labskjemarap_aargr2$ancapos_saml)/dim(Labskjemarap_aargr2)[1]*100
 
-Kompletthet <- bind_rows(Kompletthet, data.frame(Variabel = "ancapos_test",
-                                                 Antall_utfylt = sum(Labskjemarap_aargr2$ancapos_saml),
-                                                 N = dim(Labskjemarap_aargr2)[1]))
+Kompletthet <- bind_rows(
+  Kompletthet,
+  data.frame(Variabel = "ancapos_test",
+             Antall_utfylt = sum(Labskjemarap_aargr2$ancapos_saml),
+             N = dim(Labskjemarap_aargr2)[1]))
 
 
 ####
 
 ########  BVAS ##############
-tmp2 <- merge(Oppfolging, BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")],
-              by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
+tmp2 <- merge(
+  Oppfolging, BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")],
+  by.x = c('PasientGUID','OppfolgingsDato'),
+  by.y = c('PasientGUID','BVAS_Dato'), all.x = T)
 tmp2 <- tmp2[tmp2$Diag_gr_nr %in% 2, ]
 Tabell_bvas_oppf <- tmp2[tmp2$Oppfolgingsaar==rap_aar, ] %>%
   group_by(Sykehusnavn) %>%
@@ -188,9 +199,11 @@ total <- tibble(Variabel = 'Andel_bvas',
 Kompletthet <- bind_rows(Kompletthet, total)
 
 ########  KERR ##############
-tmp3 <- merge(Oppfolging, KERR[, c("KerrsKriterier_Dato", "PasientGUID", "SykdomsvurderingLabel")],
-              by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID','KerrsKriterier_Dato'), all.x = T)
+tmp3 <- merge(
+  Oppfolging,
+  KERR[, c("KerrsKriterier_Dato", "PasientGUID", "SykdomsvurderingLabel")],
+  by.x = c('PasientGUID','OppfolgingsDato'),
+  by.y = c('PasientGUID','KerrsKriterier_Dato'), all.x = T)
 tmp3 <- tmp3[which(tmp3$Diag_gr_nr == 1), ]
 
 
@@ -215,15 +228,21 @@ vdi <- merge(Oppfolging, VDI[, c("Cataract", "PasientGUID", "VDI_Dato")],
             N = n()) %>%
   mutate(Variabel = 'Andel_vdi')
 
+
+
+vdi_v2 <-
+
 Kompletthet <- bind_rows(Kompletthet, vdi)
 
 
 ########## Selvrapportert infeksjon ############################################
-selvrapp <- merge(Oppfolging,
-                  Alvorlig_infeksjon[, c("OvreLuftveierInfeksjon", "PasientGUID",
-                                         "SelvrapportertAlvorligInfeksjon_Registrert_Dato")],
-                  by.x = c('PasientGUID','OppfolgingsDato'),
-                  by.y = c('PasientGUID','SelvrapportertAlvorligInfeksjon_Registrert_Dato'), all.x = T) %>%
+selvrapp <- merge(
+  Oppfolging,
+  Alvorlig_infeksjon[, c("OvreLuftveierInfeksjon", "PasientGUID",
+                         "SelvrapportertAlvorligInfeksjon_Registrert_Dato")],
+  by.x = c('PasientGUID','OppfolgingsDato'),
+  by.y = c('PasientGUID','SelvrapportertAlvorligInfeksjon_Registrert_Dato'),
+  all.x = T) %>%
   dplyr::filter(Oppfolgingsaar==rap_aar) %>%
   summarise(Antall_utfylt = sum(!is.na(OvreLuftveierInfeksjon)),
             N = n()) %>%
@@ -244,5 +263,6 @@ Kompletthet$Kompletthet <- Kompletthet$Antall_utfylt/Kompletthet$N*100
 
 
 
-write.csv2(Kompletthet, "~/GIT/norvas/doc/Kompletthet2023.csv", row.names = F, fileEncoding = "Latin1")
+write.csv2(Kompletthet, "~/GIT/norvas/doc/Kompletthet2023.csv", row.names = F,
+           fileEncoding = "Latin1")
 
