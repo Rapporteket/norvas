@@ -12,7 +12,7 @@ Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
 VaskulittIntervensjon <- aarrappdata$VaskulittIntervensjon
 # Diagnoser <- aarrappdata$Diagnoser
-# Medisiner <- aarrappdata$Medisiner
+Medisiner <- aarrappdata$Medisiner
 # BVAS <- aarrappdata$BVAS
 # KERR <- aarrappdata$KERR
 # VDI <- aarrappdata$VDI
@@ -50,8 +50,12 @@ vasint <- merge(Inkl_oppf,
             .by = c(Aar, Diag_gr)) %>%
   mutate(andel = Antall_utfylt/N*100,
          andel_txt = paste0(round(andel,1), "% (", Antall_utfylt, " av ", N, ")")) %>%
+  dplyr::filter(Aar >= rap_aar-2) %>%
   tidyr::pivot_wider(id_cols = Aar, names_from = Diag_gr, values_from = andel_txt) %>%
   arrange(Aar)
+
+write.csv2(vasint, "~/mydata/norvas/Utfylt_stottebehandling.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
 
 
 
@@ -236,9 +240,24 @@ Samlet_Annenantibiotikaprofylakse_ANCA <-
             sisteaar = 2024,
             variabel = "Annenantibiotikaprofylakse")
 
+write.csv2(Samlet_CaVitaminD_GCA, "~/mydata/norvas/CaVitaminD_GCA.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
+write.csv2(Samlet_Bisfosfonat_GCA, "~/mydata/norvas/Bisfosfonat_GCA.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
+write.csv2(Samlet_CaVitaminD_ANCA, "~/mydata/norvas/CaVitaminD_ANCA.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
+write.csv2(Samlet_Bisfosfonat_ANCA, "~/mydata/norvas/Bisfosfonat_ANCA.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
+write.csv2(Samlet_TrimetoprimSulfa_ANCA, "~/mydata/norvas/TrimetoprimSulfa_ANCA.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
+write.csv2(Samlet_Annenantibiotikaprofylakse_ANCA,
+           "~/mydata/norvas/Annenantibiotikaprofylakse_ANCA.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
+
 
 Diag_aar <- Inklusjon %>%
-  dplyr::filter(FormStatus == 2) %>%
+  dplyr::filter(FormStatus == 2,
+                Diagnose_ny_30 == 1) %>%
   dplyr::mutate(DiagnoseAar = format(Diagnose_Klinisk_Dato, format = "%Y") %>%
                   as.numeric()) %>%
   dplyr::count(DiagnoseAar, Diag_gr) %>%
@@ -247,7 +266,53 @@ Diag_aar <- Inklusjon %>%
   dplyr::filter(DiagnoseAar >= rap_aar-2) %>%
   janitor::adorn_totals()
 
+write.csv2(Diag_aar, "~/mydata/norvas/Diag_aar.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
 
+
+rituksimab <- Medisiner %>%
+  dplyr::filter(LegemiddelGenerisk == "Rituksimab") %>%
+  dplyr::mutate(med_interval = lubridate::interval(
+    Med_StartDato, ifelse(is.na(Med_SluttDato), today(), Med_SluttDato)))
+
+
+inkl_ritux <- dplyr::left_join(
+  Inklusjon %>% dplyr::filter(
+    FormStatus == 2,
+    Diag_gr == "ANCA assosiert vaskulitt (AAV)") %>%
+    dplyr::select(PasientGUID, Sykehusnavn, SkjemaGUID,
+                  InklusjonDato, Inklusjonsaar),
+  rituksimab %>% dplyr::select(PasientGUID, med_interval),
+  by = "PasientGUID") %>%
+  dplyr::mutate(med_interval = if_else(is.na(med_interval),
+                                      lubridate::interval(as.Date("2000-01-01"),
+                                                          as.Date("2000-01-02")),
+                                      med_interval)) %>%
+  dplyr::summarise(
+    rituksimab_inklaar = max(lubridate::int_overlaps(
+      med_interval,
+      lubridate::interval(floor_date(InklusjonDato, "year"),
+                          ceiling_date(InklusjonDato, "year")))),
+    .by = c(Inklusjonsaar, Sykehusnavn, PasientGUID)
+  ) %>%
+  dplyr::summarise(
+    antall = sum(rituksimab_inklaar),
+    N = n(),
+    .by = c(Sykehusnavn, Inklusjonsaar)
+  ) %>%
+  dplyr::filter(Inklusjonsaar >= rap_aar-2) %>%
+  dplyr::bind_rows(
+    data.frame(Sykehusnavn="Total",
+    dplyr::summarise(., antall=sum(antall), N=sum(N), .by = Inklusjonsaar))
+  ) %>%
+  dplyr::mutate(andel = paste0(round(antall/N*100, 1),
+                               "% (", antall, " av ", N, ")")) %>%
+  tidyr::pivot_wider(id_cols = Sykehusnavn,
+                     names_from = "Inklusjonsaar",
+                     values_from = andel)
+
+write.csv2(inkl_ritux, "~/mydata/norvas/rituksimab_inklaar_anca.csv", row.names = F,
+           fileEncoding = "Latin1", na = "")
 
 
 
