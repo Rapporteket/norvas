@@ -25,12 +25,12 @@ norvasPreprosess <- function(RegData) {
   mapEnhet <- data.frame(
     UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
                103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
-               701344, 103300),
+               701344, 103300, 4001031),
     Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
                     'Nordlandsykehuset', 'Levanger', 'Rikshospitalet',
                     'Drammen', 'Kristiansand', 'Betanien', 'Lillehammer',
                     'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
-                    'Moss', 'Stavanger', 'Drammen'))
+                    'Moss', 'Stavanger', 'Drammen', 'OUS HF'))
   RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
   RegData$ErMann <- RegData$PatientGender
   RegData$ErMann[RegData$PatientGender==2] <- 0
