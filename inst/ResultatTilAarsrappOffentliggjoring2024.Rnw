@@ -1059,11 +1059,6 @@ outfile <- paste0(figfolder, "bvas_ved_oppf_anca.", utformat)
 norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
                 tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
                 maal = 95, minstekrav = 50)
-############ AD HOC, fjerner St. Olavs ##############
-outfile <- paste0(figfolder, "bvas_ved_oppf_anca_u_stolav.", utformat)
-norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar & figurdata$Sykehusnavn != "St. Olavs"),],
-                tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
-                maal = 95, minstekrav = 50)
 @
 
 
@@ -1192,12 +1187,6 @@ Indikatorer <- ind4_AndelKerr_NorVas %>%
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}bvas_ved_oppf_anca_u_stolav.pdf}
-\caption{Uten St. Olavs.}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca.pdf}
 \caption{}
 \end{figure}
@@ -1227,11 +1216,8 @@ anca_debut <- Inklusjon %>%
         by.x = c('SkjemaGUID', "InklusjonDato"),
         by.y = c('HovedskjemaGUID', "Blodprover_Dato"),
         all.x = TRUE) %>%
-  mutate(anca = ((PR3AncaPositiv %in% c(0,1))  | (MPO_AncaPositiv %in% c(0,1))))
-
-
-
-
+  mutate(anca = ((PR3AncaPositiv %in% c(0,1))  |
+                   (MPO_AncaPositiv %in% c(0,1))))
 
 tabell_anca_debut_pr_aar <- anca_debut %>%
   filter(Inklusjonsaar >= rap_aar-2) %>%
@@ -1242,18 +1228,20 @@ tabell_anca_debut_pr_aar <- anca_debut %>%
     Sykehusnavn=rep("Total",3),
     summarise(., antall = sum(antall),
               N = sum(N), .by = Inklusjonsaar))) %>%
-  mutate(andel = antall/N*100) %>%
-  select(-c(antall, N)) %>%
-  tidyr::pivot_wider(names_from = Inklusjonsaar, values_from = andel)
+  mutate(andel = antall/N*100)
 
-%>%
-  select(Sykehusnavn, andel, N)
+Tabell <- tabell_anca_debut_pr_aar %>%
+  mutate(verdi = paste0(sprintf("%.1f", andel), " (N=", N, ")")) %>%
+  arrange(-Inklusjonsaar, -andel) %>%
+  select(Sykehusnavn, Inklusjonsaar, verdi) %>%
+  tidyr::pivot_wider(names_from = Inklusjonsaar,
+                     values_from = verdi, names_sort = TRUE)
+
 
 print(xtable::xtable(
-  tabell_anca_debut, align= c('l','l','r','r'),
-  digits=c(0, 0,1,0),
-  caption=paste0('Andel ANCA test ved debut for gruppe 2. T.o.m. ', rap_aar)),
-  include.rownames = F)
+  Tabell, align= c('l','l','r','r','r'),
+  caption='Andel ANCA test ved debut av ANCA-assosiert vaskulitt etter inklusjonsår.\\ Nevner: Pasienter med ANCA-assosiert vaskulitt inkludert gjeldende år. Teller: Pasienter som har et labskjema tilknyttet inklusjonsskjema som har utfylt enten PR3AncaPositiv eller MPO\\_AncaPositiv',
+  include.rownames = F))
 
 @
 
@@ -1285,7 +1273,7 @@ Indikatorer <- Ind1_ANCAvdebut_NorVas %>%
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}anca_v_debut_ancaass_vas.pdf}
-\caption{Andel med utført ANCA-test ved debut for ANCA-assosierte vaskulitter}
+\caption{Andel ANCA test ved debut av ANCA-assosiert vaskulitt.\\ Nevner: Pasienter med ANCA-assosiert vaskulitt. Teller: Pasienter som har et labskjema tilknyttet inklusjonsskjema som har utfylt enten PR3AncaPositiv eller MPO\_AncaPositiv. Gjelder for pasienter inkludert t.o.m. \Sexpr{rap_aar}.}
 \end{figure}
 
 <<'Tab: andel på medikamenter ved debut', results='asis', echo=FALSE, warning=F>>=
