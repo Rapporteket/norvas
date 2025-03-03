@@ -8,6 +8,88 @@ library(lubridate)
 library(dplyr)
 rm(list = ls())
 
+## Tall til dekningsgradsanalyse 2024 ####################
+
+Inklusjon_raa <- read.table(
+  "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2025-03-03_1300.csv",
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM',
+  colClasses = c('PasientId'='character'))
+Inklusjon_raa <- Inklusjon_raa |> dplyr::rename(PasientGUID = Fødselsnummer)
+Inklusjon <- Inklusjon_raa
+
+Diagnoser_raa <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2025-03-03_1248.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- Diagnoser_raa
+
+Oppfolging_raa <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/DataDump_MRS-PROD_OppfolgingSkjema_2025-03-03_1247.csv',
+  header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Oppfolging <- Oppfolging_raa |> filter(EksklusjonsDato != "") |>
+  select(PasientGUID, EksklusjonsDato) |>
+  mutate(EksklusjonsDato = as.Date(EksklusjonsDato, format ="%d.%m.%Y")) |>
+  arrange(dplyr::desc(EksklusjonsDato)) |>
+  group_by(PasientGUID) |>
+  filter(EksklusjonsDato == min(EksklusjonsDato))
+
+Inklusjon <- norvasPreprosess(Inklusjon)
+Diagnoser <- norvasPreprosess(Diagnoser)
+
+Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
+Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUID), ]
+
+Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
+Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
+
+Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
+                                            "Diag_gr", "Diagnose")],
+                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
+
+Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+                   by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID') |>
+  merge(Oppfolging, by = "PasientGUID", all.x = T)
+Diagnoser <- Diagnoser[Diagnoser$Diagnose_Klinisk_Dato  <= '2024-12-31' |
+                         Diagnoser$InklusjonDato <= '2024-12-31', ]
+Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "ICD10",
+                            "Diagnose_Klinisk_Dato",
+                            "InklusjonDato", "UnitId", "Sykehusnavn",
+                            "EksklusjonsDato"), ] |>
+  filter(!is.na(ICD10))
+
+# write.csv2(
+#   Diagnoser,
+#   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/diagnoser_npr_2024.csv', row.names = F)
+
+Kobling_norvas_pid_fn <- Inklusjon[Inklusjon$PasientGUID %in% Diagnoser$PasientGUID, c("PasientGUID", "PasientId")]
+names(Kobling_norvas_pid_fn)[2] <- 'Fodselsnummer'
+
+# write.csv2(
+#   Kobling_norvas_pid_fn,
+#   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/kobling_norvas_npr_2024.csv', row.names = F)
+
+#
+# # tmp1 <- Inklusjon[!(Inklusjon$PasientGUID %in% Diagnoser$PasientGUID), ]
+# tmp1 <- Inklusjon_raa[!(Inklusjon_raa$PasientGUID %in% Diagnoser_raa$PasientGUID), ]
+# tmp2 <- Diagnoser_raa[!(Diagnoser_raa$PasientGUID %in% Inklusjon_raa$PasientGUID), ]
+#
+# length(intersect(Inklusjon_raa$PasientGUID))
+#
+# Diagnoser |> group_by(Diagnose) |>
+#   summarise(icd10 = paste0(sort(unique(Icd)), collapse = ",")) |>
+#   arrange("icd10")
+#
+# Diagnoser |> group_by(Diagnose) |>
+#   summarise(icd10 = unique(DiagnoseNr)) |>
+#   arrange(icd10)
+
+Diagnoser |> group_by(Diagnose) |>
+  summarise(antall = n()) |>
+  arrange(-antall) |>
+  janitor::adorn_totals()
+# write.csv2("/media/kevin/KINGSTON/diag_norvas.csv", row.names = F, fileEncoding = "Latin1")
+
+
+
 ##########################################################################
 ## Bestilling Julianne datakvalitet mm  26.09.2024 ####################
 
