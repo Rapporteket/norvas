@@ -31,7 +31,8 @@ norvasBeregnIndikator <- function(norvasdata,
       105274, 974744570,
       102708, 974747138,
       105776, 974754118,
-      102977, 974557746
+      102977, 974557746,
+      4001031, 993467049
     )
 
   Inklusjon <- norvasdata$Inklusjon

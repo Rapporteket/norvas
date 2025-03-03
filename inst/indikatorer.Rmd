@@ -1,0 +1,77 @@
+---
+title: "Norvas indikatorer"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+Dette er et dokument med Norvas sine kvalitetsindikatorer.
+
+```{r last data, echo=FALSE}
+library(norvas)
+library(xtable)
+library(lubridate)
+library(tidyverse)
+rm(list = ls())
+options(dplyr.summarise.inform = FALSE)
+
+rap_aar <- 2024
+aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
+Inklusjon <- aarrappdata$Inklusjon
+Oppfolging <- aarrappdata$Oppfolging
+Diagnoser <- aarrappdata$Diagnoser
+Medisiner <- aarrappdata$Medisiner
+BVAS <- aarrappdata$BVAS
+KERR <- aarrappdata$KERR
+VDI <- aarrappdata$VDI
+Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
+Utredning <- aarrappdata$Utredning
+Labskjema <- aarrappdata$Labskjema
+Pasientsvar <- aarrappdata$Pasientsvar
+
+#### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
+kobl_unitid_shusnavn_norvas <-
+  Inklusjon[match(unique(Inklusjon$UnitId),
+                  Inklusjon$UnitId), c("UnitId", "Sykehusnavn")]
+orgnr_table <-
+  tibble::tribble(
+    ~UnitId,   ~orgnr,
+    104579, 974749025,
+    601159, 974795787,
+    700701, 974795361,
+    4210614, 974795515,
+    104209, 873255102,
+    110353, 874632562,
+    4210431, 874716782,
+    110629, 974116588,
+    103300, 974631326,
+    103725, 974631326,
+    108054, 974633698,
+    701344, 974703300,
+    106841, 974724774,
+    104092, 974733013,
+    105274, 974744570,
+    102708, 974747138,
+    105776, 974754118,
+    102977, 974557746
+  )
+kobl_unitid_shusnavn_norvas <- 
+  merge(kobl_unitid_shusnavn_norvas, 
+        orgnr_table,
+        by = "UnitId", all.x = TRUE)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
