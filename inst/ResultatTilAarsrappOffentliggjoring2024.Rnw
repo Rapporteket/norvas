@@ -66,6 +66,8 @@ Pasientsvar <- aarrappdata$Pasientsvar
 ######### AD-HOC : Flytt ous hf til rh ############
 Inklusjon$UnitId[Inklusjon$UnitId==4001031] <- 4210431
 Oppfolging$UnitId[Oppfolging$UnitId==4001031] <- 4210431
+Inklusjon$UnitId[Inklusjon$UnitId==103300] <- 103725
+Oppfolging$UnitId[Oppfolging$UnitId==103300] <- 103725
 
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <-
@@ -1023,7 +1025,7 @@ for (id in tmp$PasientGUID) {
 # Legg til en indikatorvariabel som sier om pasienten har vært følgt opp
 Oppfolging$FolgtOpp <- 1
 
-indikator_2oppf <- merge(
+ant_oppf_pr_aar <- merge(
   aux,
   Oppfolging[, c("UnitId", "PasientGUID", "SkjemaGUID",
                  "Oppfolgingsaar", "FolgtOpp")],
@@ -1039,7 +1041,24 @@ indikator_2oppf <- merge(
   dplyr::filter(Oppfolgingsaar > Inklusjonsaar,
                 Oppfolgingsaar <= Eksklusjonsaar) |>
   dplyr::summarise(Antall_oppf = sum(FolgtOpp),
-                   .by = c(PasientGUID, UnitId, Oppfolgingsaar)) |>
+                   .by = c(PasientGUID, UnitId, Oppfolgingsaar))
+
+gjsn_ant_oppf_pr_aar <- ant_oppf_pr_aar |>
+  merge(Diagnoser[, c("PasientGUID", "Diag_gr")],
+        by = "PasientGUID", all.x = TRUE) |>
+  summarise(ant_oppf = mean(Antall_oppf),
+            N = n(),
+            .by = c(UnitId, Oppfolgingsaar, Diag_gr)) |>
+  filter(Oppfolgingsaar == rap_aar) |>
+  merge(kobl_unitid_shusnavn_norvas[, c("Sykehusnavn", "UnitId")],
+        by = "UnitId", all.x = TRUE) |>
+  mutate(verdi = paste0(sprintf("%.1f", ant_oppf), " (", N, ")")) |>
+  select(Sykehusnavn, Diag_gr, verdi) |>
+  tidyr::pivot_wider(names_from = Diag_gr, values_from = verdi) |>
+  arrange(Sykehusnavn) |> select(1,3,2)
+
+
+indikator_2oppf <- ant_oppf_pr_aar |>
   dplyr::mutate(var = as.numeric(Antall_oppf>=2),
                 denominator = 1,
                 ind_id = "norvas_minimum_2oppf") |>
