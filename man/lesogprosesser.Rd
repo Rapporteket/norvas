@@ -4,7 +4,7 @@
 \alias{lesogprosesser}
 \title{Les og preprosesser data for bruk i Norvas sine rapporter}
 \usage{
-lesogprosesser(rap_aar = 2022, fjern_andre_diagnoser = FALSE)
+lesogprosesser(rap_aar = 2024, fjern_andre_diagnoser = TRUE)
 }
 \value{
 Ferdig prosessert data for Norvas

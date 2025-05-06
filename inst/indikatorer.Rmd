@@ -60,10 +60,17 @@ orgnr_table <-
     105776, 974754118,
     102977, 974557746
   )
+
 kobl_unitid_shusnavn_norvas <- 
   merge(kobl_unitid_shusnavn_norvas, 
         orgnr_table,
         by = "UnitId", all.x = TRUE)
+
+figfolder <- "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/figfolder/"
+if (!dir.exists(figfolder)) {
+  dir.create(figfolder)
+}
+
 ```
 
 ## Including Plots

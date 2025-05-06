@@ -6,13 +6,13 @@
 \usage{
 norvasUtvalg(
   RegData,
-  datoFra,
-  datoTil,
+  datoFra = "2000-01-01",
+  datoTil = "2100-01-01",
   datovar = "InklusjonDato",
-  minald,
-  maxald,
+  minald = 0,
+  maxald = 130,
   aldervar = "PatientAge",
-  erMann,
+  erMann = 99,
   valgtShus = "",
   fargepalett = "BlaaRapp",
   diag_gruppe = 99
@@ -40,7 +40,8 @@ Denne overstyrer reshID og er bare tilgjengelig for SC-bruker.}
 \item{fargepalett}{Hvilken fargepalett skal brukes i figurer (Default: BlaaRapp)}
 }
 \value{
-UtData En liste bestående av det filtrerte datasettet, utvalgstekst for figur og tekststreng som angir fargepalett
+UtData En liste bestående av det filtrerte datasettet,
+               utvalgstekst for figur og tekststreng som angir fargepalett
 }
 \description{
 Funksjon som gjør utvalg av dataene, returnerer det reduserte datasettet og utvalgsteksten.

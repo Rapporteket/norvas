@@ -63,6 +63,10 @@ Utredning <- aarrappdata$Utredning
 Labskjema <- aarrappdata$Labskjema
 Pasientsvar <- aarrappdata$Pasientsvar
 
+######### AD-HOC : Flytt ous hf til rh ############
+Inklusjon$UnitId[Inklusjon$UnitId==4001031] <- 4210431
+Oppfolging$UnitId[Oppfolging$UnitId==4001031] <- 4210431
+
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <-
   Inklusjon[match(unique(Inklusjon$UnitId),
@@ -98,11 +102,11 @@ kobl_unitid_shusnavn_norvas <- merge(kobl_unitid_shusnavn_norvas, orgnr_table,
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
 
-figfolder <- "~/mydata/norvas/figfolder/"
+figfolder <- "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/figfolder/"
 if (!dir.exists(figfolder)) {
   dir.create(figfolder)
 }
-
+# knitr::knit2pdf("ResultatTilAarsrappOffentliggjoring2024.Rnw")
 @
 
 
@@ -185,6 +189,55 @@ print(xtable::xtable(
                  splittet på de som følges opp i ', rap_aar, ' og de som er ekskluderte.
                  Definisjonen på at en pasient følges opp i ', rap_aar, ' er at det ikke er
                  registrert en eksklusjonsdato før ', rap_aar)),
+  include.rownames = F)
+
+
+reg3aar <- Inklusjon |>
+  dplyr::mutate(DiagnoseAar = lubridate::year(Diagnose_Klinisk_Dato)) |>
+  dplyr::filter(DiagnoseAar %in% (rap_aar-2):rap_aar,
+                Diagnose_ny_30 == 1) |>
+  dplyr::count(DiagnoseAar, Diag_gr) |>
+  tidyr::pivot_wider(names_from = Diag_gr, values_from = n) |>
+  janitor::adorn_totals()
+
+print(xtable::xtable(
+  reg3aar, align= c('l','l','r', 'r'),
+  caption = "Oversikt over antall nysyke pasienter med AAV og LVV. Nysyke er definert ved at pasienten enten er registrert som  Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). "),
+  include.rownames = F)
+
+
+reg3aar_shus <- Inklusjon |>
+  dplyr::mutate(DiagnoseAar = lubridate::year(Diagnose_Klinisk_Dato),
+                Diagnose_ny = factor(Diagnose_ny_30, levels=0:1,
+                                     labels=c("etablert", "nysyk"))) |>
+  dplyr::filter(DiagnoseAar %in% (rap_aar-2):rap_aar,
+                Diag_gr_nr == 1) |>
+  dplyr::count(DiagnoseAar, Sykehusnavn, Diagnose_ny) |>
+  dplyr::arrange(DiagnoseAar, Diagnose_ny) |>
+  tidyr::pivot_wider(names_from = c(DiagnoseAar, Diagnose_ny),
+                     names_sep = ".", values_from = n, values_fill = 0) |>
+  janitor::adorn_totals()
+
+print(xtable::xtable(
+  reg3aar_shus, align= c('l','l',rep('r', dim(reg3aar_shus)[2]-1)),
+  caption = "Oversikt over antall nysyke pasienter med LVV. Nysyke er definert ved at pasienten enten er registrert som  Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). År angir diagnoseår."),
+  include.rownames = F)
+
+reg3aar_shus <- Inklusjon |>
+  dplyr::mutate(DiagnoseAar = lubridate::year(Diagnose_Klinisk_Dato),
+                Diagnose_ny = factor(Diagnose_ny_30, levels=0:1,
+                                     labels=c("etablert", "nysyk"))) |>
+  dplyr::filter(DiagnoseAar %in% (rap_aar-2):rap_aar,
+                Diag_gr_nr == 2) |>
+  dplyr::count(DiagnoseAar, Sykehusnavn, Diagnose_ny) |>
+  dplyr::arrange(DiagnoseAar, Diagnose_ny) |>
+  tidyr::pivot_wider(names_from = c(DiagnoseAar, Diagnose_ny),
+                     names_sep = ".", values_from = n, values_fill = 0) |>
+  janitor::adorn_totals()
+
+print(xtable::xtable(
+  reg3aar_shus, align= c('l','l',rep('r', dim(reg3aar_shus)[2]-1)),
+  caption = "Oversikt over antall nysyke pasienter med AAV. Nysyke er definert ved at pasienten enten er registrert som  Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). År angir diagnoseår."),
   include.rownames = F)
 
 @
@@ -916,74 +969,124 @@ print(xtable::xtable(
                  inkludert før ', rap_aar)), include.rownames = F)
 
 ########### Andel med 2 eller flere oppfølginger per år ##################################
-oppfolgdata <- dplyr::bind_rows(
-  Oppfolging,
-  Inklusjon[Inklusjon$PasientGUID %in%
-              setdiff(Inklusjon$PasientGUID, Oppfolging$PasientGUID), ]) %>%
-  select(-Diag_gr) %>%
-  merge(Diagnoser[, c("PasientGUID", "Diag_gr")],
-        by = "PasientGUID") %>%
-  mutate(Inklusjonsaar = as.numeric(format(InklusjonDato, format = '%Y'))) %>%
-  mutate(Eksklusjonsaar = as.numeric(format(EksklusjonsDato, format = '%Y')))
-indikator_2oppf <- oppfolgdata %>%
-  group_by(PasientGUID) %>%
-  summarise(Sykehusnavn = first(Sykehusnavn),
-            UnitId = first(UnitId),
-            N = sum(InklusjonDato < datoFra & (is.na(EksklusjonsDato) |
-                                                 Eksklusjonsaar > rap_aar)),
-            ant_oppf = sum(Oppfolgingsaar == rap_aar & Inklusjonsaar < rap_aar &
-                             (is.na(EksklusjonsDato) | Eksklusjonsaar > rap_aar)),
-            Teller = as.numeric(ant_oppf >= 2)
-  ) %>% filter(N>0) %>%
-  mutate(Aar = rap_aar) %>%
-  mutate(Nevner = 1)
+# oppfolgdata <- dplyr::bind_rows(
+#   Oppfolging,
+#   Inklusjon[Inklusjon$PasientGUID %in%
+#               setdiff(Inklusjon$PasientGUID, Oppfolging$PasientGUID), ]) %>%
+#   select(-Diag_gr) %>%
+#   merge(Diagnoser[, c("PasientGUID", "Diag_gr")],
+#         by = "PasientGUID") %>%
+#   mutate(Inklusjonsaar = as.numeric(format(InklusjonDato, format = '%Y'))) %>%
+#   mutate(Eksklusjonsaar = as.numeric(format(EksklusjonsDato, format = '%Y')))
+# indikator_2oppf <- oppfolgdata %>%
+#   group_by(PasientGUID) %>%
+#   summarise(Sykehusnavn = first(Sykehusnavn),
+#             UnitId = first(UnitId),
+#             N = sum(Inklusjonsaar < rap_aar & (is.na(EksklusjonsDato) |
+#                                                  Eksklusjonsaar > rap_aar)),
+#             ant_oppf = sum(Oppfolgingsaar == rap_aar & Inklusjonsaar < rap_aar &
+#                              (is.na(EksklusjonsDato) | Eksklusjonsaar > rap_aar)),
+#             Teller = as.numeric(ant_oppf >= 2)
+#   ) %>% filter(N>0) %>%
+#   mutate(Aar = rap_aar) %>%
+#   mutate(Nevner = 1)
+#
+# for (aar in (rap_aar -3):(rap_aar-1)){
+#   indikator_2oppf <- oppfolgdata %>%
+#     group_by(PasientGUID) %>%
+#     summarise(Sykehusnavn = first(Sykehusnavn),
+#               UnitId = first(UnitId),
+#               N = sum(Inklusjonsaar < aar & (is.na(EksklusjonsDato) |
+#                                                    Eksklusjonsaar > aar)),
+#               ant_oppf = sum(Oppfolgingsaar == aar & Inklusjonsaar < aar &
+#                                (is.na(EksklusjonsDato) | Eksklusjonsaar > aar)),
+#               Teller = as.numeric(ant_oppf >= 2)
+#     ) %>% filter(N>0) %>%
+#     mutate(Aar = aar) %>%
+#     mutate(Nevner = 1) %>%
+#     dplyr::bind_rows(indikator_2oppf)
+# }
+# indikator_2oppf$Teller[is.na(indikator_2oppf$Teller)] <- 0
 
-for (aar in (rap_aar -3):(rap_aar-1)){
-  indikator_2oppf <- oppfolgdata %>%
-    group_by(PasientGUID) %>%
-    summarise(Sykehusnavn = first(Sykehusnavn),
-              UnitId = first(UnitId),
-              N = sum(InklusjonDato < datoFra & (is.na(EksklusjonsDato) |
-                                                   Eksklusjonsaar > aar)),
-              ant_oppf = sum(Oppfolgingsaar == aar & Inklusjonsaar < aar &
-                               (is.na(EksklusjonsDato) | Eksklusjonsaar > aar)),
-              Teller = as.numeric(ant_oppf >= 2)
-    ) %>% filter(N>0) %>%
-    mutate(Aar = aar) %>%
-    mutate(Nevner = 1) %>%
-    dplyr::bind_rows(indikator_2oppf)
+############ Ny variant  ######################################
+tmp <- as_tibble(Inklusjon[, c("UnitId", "PasientGUID", "Inklusjonsaar")])
+aux <- tibble(UnitId=integer(), PasientGUID=character(), Inklusjonsaar=double(), Oppfolgingsaar=double())
+
+# For alle pasienter, lag en rad for hvert år pasienten har vært inkludert
+# som inneholder UnitId, pasientguid, inklusjonsår og år for potensiell oppfølging
+for (id in tmp$PasientGUID) {
+  for (aar in tmp$Inklusjonsaar[tmp$PasientGUID==id]:rap_aar) {
+    aux <- bind_rows(aux, bind_cols(tmp[tmp$PasientGUID==id, ],
+                                    Oppfolgingsaar=aar))
+  }
 }
-indikator_2oppf$Teller[is.na(indikator_2oppf$Teller)] <- 0
-Indikatorer <- indikator_2oppf %>%
-  rename(year = Aar,
-         var = Teller,
-         denominator = Nevner) %>%
-  mutate(ind_id = "norvas_minimum_2oppf") %>%
-  select(UnitId, year, var, denominator, ind_id)
+# Legg til en indikatorvariabel som sier om pasienten har vært følgt opp
+Oppfolging$FolgtOpp <- 1
+
+indikator_2oppf <- merge(
+  aux,
+  Oppfolging[, c("UnitId", "PasientGUID", "SkjemaGUID",
+                 "Oppfolgingsaar", "FolgtOpp")],
+  by = c("PasientGUID","Oppfolgingsaar"), all.x = T) |>
+  merge(Oppfolging |> dplyr::select(PasientGUID, EksklusjonsDato) |>
+          dplyr::filter(!is.na(EksklusjonsDato)),
+        by = "PasientGUID", all.x = TRUE) |>
+  dplyr::mutate(UnitId = ifelse(is.na(UnitId.y), UnitId.x, UnitId.y),
+                FolgtOpp = ifelse(is.na(FolgtOpp), 0, FolgtOpp),
+                Eksklusjonsaar = lubridate::year(EksklusjonsDato),
+                Eksklusjonsaar = ifelse(is.na(Eksklusjonsaar), 2050,
+                                        Eksklusjonsaar)) |>
+  dplyr::filter(Oppfolgingsaar > Inklusjonsaar,
+                Oppfolgingsaar <= Eksklusjonsaar) |>
+  dplyr::summarise(Antall_oppf = sum(FolgtOpp),
+                   .by = c(PasientGUID, UnitId, Oppfolgingsaar)) |>
+  dplyr::mutate(var = as.numeric(Antall_oppf>=2),
+                denominator = 1,
+                ind_id = "norvas_minimum_2oppf") |>
+  dplyr::rename(year = Oppfolgingsaar) |>
+  dplyr::select(UnitId, year, var, denominator, ind_id)
+
+Indikatorer <- indikator_2oppf
 
 figurdata <- indikator_2oppf %>%
-  select(UnitId, Teller, Nevner, Sykehusnavn, Aar) %>%
-  filter(Aar == rap_aar)
+  merge(kobl_unitid_shusnavn_norvas[, c("Sykehusnavn", "UnitId")],
+        by = "UnitId") |>
+  rename(Teller=var,
+         Nevner=denominator,
+         Aar=year) |>
+  select(UnitId, Teller, Nevner, Sykehusnavn, Aar)
 
-tabell <- indikator_2oppf %>%
-  filter(Aar == rap_aar) %>%
-  group_by(Sykehusnavn) %>%
-  summarise(Antall = sum(Teller),
-            N=n()) %>%
-  janitor::adorn_totals() %>%
+tabell <- indikator_2oppf |>
+  filter(year %in% (rap_aar-2):rap_aar) |>
+  merge(kobl_unitid_shusnavn_norvas[, c("Sykehusnavn", "UnitId")], by = "UnitId") |>
+  summarise(Antall = sum(var),
+            N=n(), .by = c(Sykehusnavn, year)) %>%
+  # janitor::adorn_totals(... = c(Antall, N)) %>%
   mutate(Andel = Antall/N*100) %>%
   arrange(-Andel) %>%
-  select(Sykehusnavn, Andel, N)
+  select(Sykehusnavn, year, Andel, N) |>
+  dplyr::mutate(val = paste0(round(Andel, 1), "% (", N, ")")) |>
+  dplyr::select(Sykehusnavn, year, val) |>
+  tidyr::pivot_wider(names_from = year, values_from = val)
 
-print(xtable::xtable(tabell, align= c('l','l','r','r'), digits=c(0, 0,1,0), caption=paste0('Andel aktuelle for oppfølging i ', rap_aar, ' med minimum 2 oppfølginger.')), include.rownames = F)
+print(xtable::xtable(tabell, align= c('l','l', rep('r', dim(tabell)[2]-1)), caption=paste0('Andel aktuelle for oppfølging i ', rap_aar, ' med minimum 2 oppfølginger.')), include.rownames = F)
 
 @
 
 <<'Fig. 2 oppf. pr år', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 outfile <- paste0(figfolder, "andel_2_oppf.", utformat)
-norvasIndikator(figurdata,
+norvasIndikator(figurdata |> filter(Aar == rap_aar),
                 tittel = c("Andelen med minimum 2 oppfølginger pr. år"), outfile = outfile,
                 maal = 80, minstekrav = 40, xmax = 100)
+
+outfile <- paste0(figfolder, "andel_2_oppf_aar.", utformat)
+norvasFigIndikatorAar(figurdata,
+                      tittel = c("Andelen med minimum 2 oppfølginger pr. år"), outfile = outfile,
+                      maal = 80, minstekrav = 40, xmax = 100)
+
+
+
+
 @
 
 
@@ -1018,12 +1121,16 @@ include.rownames = F)
 
 
 <<'Tab: BVAS/Kerr ved oppfølging', results='asis', echo=FALSE, warning=FALSE>>=
+terskel <- 5
+BVAS_unik <-
+  BVAS[!duplicated(BVAS[, c("PasientGUID", "BVAS_Dato")]), ]
 
 ########  BVAS ##############
-OppfolgingBVAS <- merge(Oppfolging,
-                        BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")],
-                        by.x = c('PasientGUID','OppfolgingsDato'),
-                        by.y = c('PasientGUID','BVAS_Dato'), all.x = T) %>%
+OppfolgingBVAS <- merge(
+  Oppfolging,
+  BVAS_unik[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")],
+  by.x = c('PasientGUID','OppfolgingsDato'),
+  by.y = c('PasientGUID','BVAS_Dato'), all.x = T) %>%
   filter(Diag_gr_nr %in% 2)
 
 Tabell_bvas_oppf <- OppfolgingBVAS %>%
@@ -1032,10 +1139,16 @@ Tabell_bvas_oppf <- OppfolgingBVAS %>%
   dplyr::summarise(
     Antall = sum(!is.na(SykdomsvurderingLabel)),
     N = dplyr::n()) %>%
+  dplyr::arrange(desc(Antall/N)) %>%
   janitor::adorn_totals() %>%
-  dplyr::mutate(Andel = Antall/N*100) %>%
-  dplyr::select(Sykehusnavn, Andel, N) %>%
-  dplyr::arrange(desc(Andel)) %>%
+  dplyr::mutate(Andel = sprintf("%.1f", Antall/N*100),
+                Andel = ifelse(N<terskel, paste0("N<", terskel), Andel)) %>%
+  dplyr::select(Sykehusnavn, Andel, N)
+
+Tabell_bvas_oppf <- bind_rows(
+  Tabell_bvas_oppf |> filter(Andel != paste0("N<", terskel) & Sykehusnavn != "Total"),
+  Tabell_bvas_oppf |> filter(Andel == paste0("N<", terskel)),
+  Tabell_bvas_oppf |> filter(Sykehusnavn == "Total")) |>
   dplyr::rename("Andel oppfølging" = "Andel")
 
 print(xtable::xtable(
@@ -1046,46 +1159,73 @@ print(xtable::xtable(
 
 ############# Resultatportalen  ##########################################################
 
-Ind3_AndelBVAS_NorVas <- OppfolgingBVAS[, c("UnitId", "Oppfolgingsaar", "SykdomsvurderingLabel")]
-Ind3_AndelBVAS_NorVas$Teller <- as.numeric(!is.na(Ind3_AndelBVAS_NorVas$SykdomsvurderingLabel))
+Ind3_AndelBVAS_NorVas <-
+  OppfolgingBVAS[, c("UnitId", "Oppfolgingsaar", "SykdomsvurderingLabel")]
+Ind3_AndelBVAS_NorVas$Teller <-
+  as.numeric(!is.na(Ind3_AndelBVAS_NorVas$SykdomsvurderingLabel))
 Ind3_AndelBVAS_NorVas$Nevner <- 1
 figurdata <- Ind3_AndelBVAS_NorVas
-figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
+figurdata$Sykehusnavn <-
+  kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 @
 
 <<'fig. utfylt bvas', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 # x11()
 outfile <- paste0(figfolder, "bvas_ved_oppf_anca.", utformat)
-norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
-                tittel = c("Andel oppfølginger med utfylt BVAS", "for ANCA-assosierte vaskulitter"), outfile = outfile,
-                maal = 95, minstekrav = 50)
+norvasIndikator(
+  figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
+  tittel = c("Andel oppfølginger med utfylt BVAS",
+             "for ANCA-assosierte vaskulitter"),
+  outfile = outfile,
+  maal = 95, minstekrav = 50)
+
+outfile <- paste0(figfolder, "bvas_ved_oppf_anca_aar.", utformat)
+norvasFigIndikatorAar(
+  figurdata |>
+    rename(Aar = Oppfolgingsaar) |>
+    filter(Aar <= rap_aar),
+  tittel = c("Andel oppfølginger med utfylt BVAS",
+             "for ANCA-assosierte vaskulitter"),
+  outfile = outfile,
+  maal = 95, minstekrav = 50)
+
 @
 
 
 <<'Tab: VDI ved oppfølging', results='asis', echo=FALSE, warning=FALSE>>=
+VDI_unik <-
+  VDI[!duplicated(VDI[, c("PasientGUID", "VDI_Dato")]), ]
 
-tmp2 <- merge(Oppfolging, VDI[, c("Cataract", "PasientGUID", "VDI_Dato")],
-              by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID','VDI_Dato'), all.x = T)
-tmp2 <- tmp2[tmp2$Diag_gr_nr %in% c(2), ]
+OppfolgingVDI <- merge(
+  Oppfolging, VDI_unik[, c("Cataract", "PasientGUID", "VDI_Dato")],
+  by.x = c('PasientGUID','OppfolgingsDato'),
+  by.y = c('PasientGUID','VDI_Dato'), all.x = T) %>%
+  filter(Diag_gr_nr %in% 2)
 
-Tabell_vdi_oppf <- tmp2[tmp2$Oppfolgingsaar==rap_aar, ] %>%
-  group_by(Sykehusnavn) %>%
-  summarise(andeloppf = sum(!is.na(Cataract))/length(Cataract)*100,
-            N = n())
+Tabell_vdi_oppf <- OppfolgingVDI %>%
+  dplyr::filter(Oppfolgingsaar==rap_aar) %>%
+  dplyr::group_by(Sykehusnavn) %>%
+  dplyr::summarise(
+    Antall = sum(!is.na(Cataract)),
+    N = dplyr::n()) %>%
+  dplyr::arrange(desc(Antall/N)) %>%
+  janitor::adorn_totals() %>%
+  dplyr::mutate(Andel = sprintf("%.1f", Antall/N*100),
+                Andel = ifelse(N<terskel, paste0("N<", terskel), Andel)) %>%
+  dplyr::select(Sykehusnavn, Andel, N)
 
-total <- tibble(Sykehusnavn= 'Totalt',
-                andeloppf = sum(Tabell_vdi_oppf$andeloppf*Tabell_vdi_oppf$N)/sum(Tabell_vdi_oppf$N),
-                N = sum(Tabell_vdi_oppf$N))
-Tabell_vdi_oppf <- bind_rows(Tabell_vdi_oppf, total)
+Tabell_vdi_oppf <- bind_rows(
+  Tabell_vdi_oppf |> filter(Andel != paste0("N<", terskel) & Sykehusnavn != "Total"),
+  Tabell_vdi_oppf |> filter(Andel == paste0("N<", terskel)),
+  Tabell_vdi_oppf |> filter(Sykehusnavn == "Total")) |>
+  dplyr::rename("Andel oppfølging" = "Andel")
 
-names(Tabell_vdi_oppf)[2] <- 'Andel oppfølging'
 
-print(xtable::xtable(Tabell_vdi_oppf, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel med utfylt VDI-skjema ved oppfølging i ', rap_aar, ', ANCA-assosierte vaskulitter')), include.rownames = F)
+print(xtable::xtable(Tabell_vdi_oppf, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel oppfølgingskjema med utfylt VDI-skjema i ', rap_aar, ', ANCA-assosierte vaskulitter')), include.rownames = F)
 
 ############# Resultatportalen  ##########################################################
 
-Ind3_AndelVDI_NorVas <- tmp2[, c("UnitId", "Oppfolgingsaar", "Cataract")]
+Ind3_AndelVDI_NorVas <- OppfolgingVDI[, c("UnitId", "Oppfolgingsaar", "Cataract")]
 Ind3_AndelVDI_NorVas$Teller <- as.numeric(!is.na(Ind3_AndelVDI_NorVas$Cataract))
 Ind3_AndelVDI_NorVas$Nevner <- 1
 figurdata <- Ind3_AndelVDI_NorVas
@@ -1096,13 +1236,18 @@ figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata
 # x11()
 outfile <- paste0(figfolder, "vdi_ved_oppf_anca.", utformat)
 norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
-                tittel = c("Andel oppfølginger med utfylt VDI", "for ANCA-assosierte vaskulitter"),
+                tittel = c("Andel oppfølginger med utfylt VDI",
+                           "for ANCA-assosierte vaskulitter"),
                 outfile = outfile, maal = 95, minstekrav = 50)
-############ AD HOC, fjerner St. Olavs ##############
-outfile <- paste0(figfolder, "vdi_ved_oppf_anca_u_stolav.", utformat)
-norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar & figurdata$Sykehusnavn != "St. Olavs"),],
-                tittel = c("Andel oppfølginger med utfylt VDI", "for ANCA-assosierte vaskulitter"), outfile = outfile,
-                maal = 95, minstekrav = 50)
+
+outfile <- paste0(figfolder, "vdi_ved_oppf_anca_aar.", utformat)
+norvasFigIndikatorAar(figurdata |>
+                        rename(Aar = Oppfolgingsaar) |>
+                        filter(Aar <= rap_aar),
+                      tittel = c("Andel oppfølginger med utfylt VDI",
+                                 "for ANCA-assosierte vaskulitter"),
+                      outfile = outfile, maal = 95, minstekrav = 50)
+
 @
 
 
@@ -1123,31 +1268,44 @@ Indikatorer <- Ind3_AndelBVAS_NorVas %>%
 
 ########  KERR ##############
 KERR$Sykdomsvurdering[KERR$Sykdomsvurdering==-1] <- NA
+KERR_unik <-
+  KERR[!duplicated(KERR[, c("PasientGUID", "KerrsKriterier_Dato")]), ]
 
-tmp3 <- merge(Oppfolging,
-              KERR[, c("KerrsKriterier_Dato", "PasientGUID", "Sykdomsvurdering")],
+OppfolgingKERR <- merge(Oppfolging,
+              KERR_unik[, c("KerrsKriterier_Dato", "PasientGUID", "Sykdomsvurdering")],
               by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID','KerrsKriterier_Dato'), all.x = T)
-tmp3 <- tmp3[which(tmp3$Diag_gr_nr == 1), ]
-
-Tabell_kerr_oppf <- tmp3[tmp3$Oppfolgingsaar==rap_aar, ] %>%
-  group_by(Sykehusnavn) %>%
-  summarise(andeloppf = sum(!is.na(Sykdomsvurdering))/length(Sykdomsvurdering)*100,
-            N = n())
-
-total <- tibble(Sykehusnavn= 'Totalt',
-                andeloppf = sum(Tabell_kerr_oppf$andeloppf*Tabell_kerr_oppf$N)/sum(Tabell_kerr_oppf$N),
-                N = sum(Tabell_kerr_oppf$N))
-Tabell_kerr_oppf <- bind_rows(Tabell_kerr_oppf, total)
+              by.y = c('PasientGUID','KerrsKriterier_Dato'), all.x = T) |>
+  dplyr::filter(Diag_gr_nr == 1)
 
 
-names(Tabell_kerr_oppf)[2] <- 'Andel oppfølging'
+Tabell_kerr_oppf <- OppfolgingKERR %>%
+  dplyr::filter(Oppfolgingsaar==rap_aar) %>%
+  dplyr::group_by(Sykehusnavn) %>%
+  dplyr::summarise(
+    Antall = sum(!is.na(Sykdomsvurdering)),
+    N = dplyr::n()) %>%
+  dplyr::arrange(desc(Antall/N)) %>%
+  janitor::adorn_totals() %>%
+  dplyr::mutate(Andel = sprintf("%.1f", Antall/N*100),
+                Andel = ifelse(N<terskel, paste0("N<", terskel), Andel)) %>%
+  dplyr::select(Sykehusnavn, Andel, N)
 
-print(xtable::xtable(Tabell_kerr_oppf, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel med utført Kerrs ved oppfølging i ', rap_aar, ', gr. 1')), include.rownames = F)
+Tabell_kerr_oppf <- bind_rows(
+  Tabell_kerr_oppf |> filter(Andel != paste0("N<", terskel) & Sykehusnavn != "Total"),
+  Tabell_kerr_oppf |> filter(Andel == paste0("N<", terskel)),
+  Tabell_kerr_oppf |> filter(Sykehusnavn == "Total")) |>
+  dplyr::rename("Andel oppfølging" = "Andel")
+
+
+print(xtable::xtable(
+  Tabell_kerr_oppf, align= c('l','l','r','r'),
+  digits=c(0,0,1,0),
+  caption=paste0('Andel med utført Kerrs ved oppfølging i ',
+                 rap_aar, ', gr. 1')), include.rownames = F)
 
 ############# Resultatportalen  ##########################################################
 
-ind4_AndelKerr_NorVas <- tmp3[, c("UnitId", "Oppfolgingsaar", "Sykdomsvurdering")]
+ind4_AndelKerr_NorVas <- OppfolgingKERR[, c("UnitId", "Oppfolgingsaar", "Sykdomsvurdering")]
 ind4_AndelKerr_NorVas$Teller <- as.numeric(!is.na(ind4_AndelKerr_NorVas$Sykdomsvurdering))
 ind4_AndelKerr_NorVas$Nevner <- 1
 figurdata <- ind4_AndelKerr_NorVas
@@ -1187,14 +1345,20 @@ Indikatorer <- ind4_AndelKerr_NorVas %>%
 
 \begin{figure}[ht]
 \centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}bvas_ved_oppf_anca_aar.pdf}
+\caption{}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca.pdf}
 \caption{}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca_u_stolav.pdf}
-\caption{Uten St. Olavs.}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}vdi_ved_oppf_anca_aar.pdf}
+\caption{}
 \end{figure}
 
 \begin{figure}[ht]
@@ -1252,8 +1416,16 @@ Ind1_ANCAvdebut_NorVas <- anca_debut[, c("Sykehusnavn", "SkjemaGUID",
 Ind1_ANCAvdebut_NorVas$Teller <- as.numeric(Ind1_ANCAvdebut_NorVas$anca)
 figurdata <- Ind1_ANCAvdebut_NorVas[Ind1_ANCAvdebut_NorVas$Inklusjonsaar <=rap_aar, ]
 outfile <- paste0(figfolder, "anca_v_debut_ancaass_vas.", utformat)
-norvasIndikator(figurdata, tittel = c("Andel med utført ANCA-test ved debut", "for ANCA-assosierte vaskulitter"),
+norvasIndikator(figurdata,
+                tittel = c("Andel med utført ANCA-test ved debut",
+                           "for ANCA-assosierte vaskulitter"),
                 maal = 95, minstekrav = 50, outfile = outfile, xmax = 100)
+outfile <- paste0(figfolder, "anca_v_debut_ancaass_vas_aar.", utformat)
+norvasFigIndikatorAar(figurdata |> rename(Aar = Inklusjonsaar),
+                      tittel = c("Andel med utført ANCA-test ved debut",
+                                 "for ANCA-assosierte vaskulitter"),
+                      maal = 95, minstekrav = 50, outfile = outfile, xmax = 100)
+
 
 Ind1_ANCAvdebut_NorVas$Nevner <- 1
 Ind1_ANCAvdebut_NorVas <- Ind1_ANCAvdebut_NorVas[, c(4,5,6,7)]
@@ -1275,6 +1447,13 @@ Indikatorer <- Ind1_ANCAvdebut_NorVas %>%
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}anca_v_debut_ancaass_vas.pdf}
 \caption{Andel ANCA test ved debut av ANCA-assosiert vaskulitt.\\ Nevner: Pasienter med ANCA-assosiert vaskulitt. Teller: Pasienter som har et labskjema tilknyttet inklusjonsskjema som har utfylt enten PR3AncaPositiv eller MPO\_AncaPositiv. Gjelder for pasienter inkludert t.o.m. \Sexpr{rap_aar}.}
 \end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}anca_v_debut_ancaass_vas_aar.pdf}
+\caption{Andel ANCA test ved debut av ANCA-assosiert vaskulitt.\\ Nevner: Pasienter med ANCA-assosiert vaskulitt. Teller: Pasienter som har et labskjema tilknyttet inklusjonsskjema som har utfylt enten PR3AncaPositiv eller MPO\_AncaPositiv. Gjelder for pasienter inkludert fra \Sexpr{rap_aar-2} til \Sexpr{rap_aar}.}
+\end{figure}
+
 
 <<'Tab: andel på medikamenter ved debut', results='asis', echo=FALSE, warning=F>>=
 
@@ -2524,6 +2703,7 @@ mtext("ANCA", side = 1, line = 4.5, at = 5)
 mtext("Storkarsvaskulitt", side = 1, line = 4.5, at = 17)
 mtext(at=colMeans(pos), grtxt, side=1, las=3, cex=1, adj=1, line=0.1)
 mtext(N_txt, side = 1, line = -1, at = colMeans(pos), col = "white")
+if ( outfile != '') {dev.off()}
 @
 
 
@@ -2870,6 +3050,7 @@ legend('topleft', border=NA, c(paste0("Storkarsvaskulitt (LVV)"),
                                paste0("ANCA assosiert vaskulitt (AAV)")),
        bty='n', lty=c(1,1), ncol=1, cex=1,
        col=c(fargeHoved, fargeRest), lwd=c(3,3))
+if ( outfile != '') {dev.off()}
 @
 
 \begin{figure}[ht]

@@ -8,32 +8,149 @@ library(lubridate)
 library(dplyr)
 rm(list = ls())
 
+## Hans Kristian Skaug 24. mars 2025 #############################
+variabler <- read.table(
+  "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/Variabler_til_uttrekk_Liste.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'Latin1')
+
+var_1 <- variabler[variabler$Skjemanavn ==
+                     "1. Inklusjonskjema skjematypeve", "Variabelnavn"]
+var_2 <- variabler[variabler$Skjemanavn ==
+                     "2. OppfølgingSkjema skjematypev", "Variabelnavn"]
+var_3 <- variabler[variabler$Skjemanavn ==
+                     "3. MedisineringSkjema skjematyp", "Variabelnavn"]
+var_5 <- variabler[variabler$Skjemanavn ==
+                     "5. KomorbidTilstandSkjema skjem", "Variabelnavn"]
+var_6 <- variabler[variabler$Skjemanavn ==
+                     "6. VdiSkjema skjematypeversjon ", "Variabelnavn"]
+var_9 <- variabler[variabler$Skjemanavn ==
+                     "9. DiagnoseSkjema skjematypever", "Variabelnavn"]
+var_9[var_9=="Icd_IcdDataDump"] <- "Icd"
+var_10 <- variabler[variabler$Skjemanavn ==
+                      "10. BlodprøvesvarSkjema skjemat", "Variabelnavn"]
+var_13 <- variabler[variabler$Skjemanavn ==
+                      "13. KerrsKriterierSkjema skjema", "Variabelnavn"]
+var_16 <- variabler[variabler$Skjemanavn ==
+                      "16. Svar fra pasienten skjematy", "Variabelnavn"]
+var_17 <- variabler[variabler$Skjemanavn ==
+                      "17. Diagnosekriterierskjema skj", "Variabelnavn"]
+
+Inklusjon <- read.table(
+  "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Inklusjonskjema_2025-03-24_1014.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM',
+  colClasses = c('PasientId'='character')) |>
+  dplyr::rename(PasientGUID = Fødselsnummer,
+                Fnr = PasientId)
+Oppfolging <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_OppfølgingSkjema_2025-03-24_1018.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_DiagnoseSkjema_2025-03-24_1019.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Medisiner <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_MedisineringSkjema_2025-03-24_1018.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+KERR <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-03-24_1019.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+VDI <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_VdiSkjema_2025-03-24_1019.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Labskjema <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-03-24_1019.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Komorbid <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_KomorbidTilstandSkjema_2025-03-24_1018.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Pasientsvar <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Svar+fra+pasienten_2025-03-24_1019.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+DiagnoseKriterier <- read.table(
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2025-03-24_1019.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+Diagnoser <- norvasPreprosess(Diagnoser)
+Inklusjon <- Inklusjon |>
+  filter(as.Date(InklusjonDato, format="%d.%m.%Y") < "2024-12-11")
+
+Diagnoser <- Diagnoser[Diagnoser$DiagnoseNr %in% c(4,15) &
+                         Diagnoser$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_9]
+Inklusjon <- Inklusjon[Inklusjon$SkjemaGUID %in% Diagnoser$HovedskjemaGUID, var_1]
+Oppfolging <- Oppfolging[Oppfolging$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_2]
+Medisiner <- Medisiner[Medisiner$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_3]
+Komorbid <- Komorbid[Komorbid$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_5]
+VDI <- VDI[VDI$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_6]
+Labskjema <- Labskjema[Labskjema$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_10]
+KERR <- KERR[KERR$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_13]
+Pasientsvar <- Pasientsvar[Pasientsvar$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_16]
+DiagnoseKriterier <- DiagnoseKriterier[DiagnoseKriterier$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_17]
+
+
+
+write.csv2(
+  Inklusjon,
+  "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Inklusjonskjema.csv",
+  row.names = F, fileEncoding = "Latin1")
+write.csv2(Oppfolging, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Oppfolgingskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Diagnoser, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Diagnoseskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Medisiner, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Medisineringskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Komorbid, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Komorbidskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(VDI, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/VDIskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Labskjema, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Blodprovesvarskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(KERR, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/KERRskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Pasientsvar, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/Pasientsvarskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(DiagnoseKriterier, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/DiagnoseKriterierskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
+write.csv2(Inklusjon, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/nokkelfil.csv",
+           row.names = F, fileEncoding = "Latin1")
+
+
+
 ## Tall til dekningsgradsanalyse 2024 ####################
 
 Inklusjon_raa <- read.table(
-  "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/DataDump_MRS-PROD_Inklusjonskjema_2025-03-03_1300.csv",
+  "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Inklusjonskjema_2025-03-24_1014.csv",
   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM',
   colClasses = c('PasientId'='character'))
 Inklusjon_raa <- Inklusjon_raa |> dplyr::rename(PasientGUID = Fødselsnummer)
 Inklusjon <- Inklusjon_raa
 
 Diagnoser_raa <- read.table(
-  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/DataDump_MRS-PROD_DiagnoseSkjema_2025-03-03_1248.csv',
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_DiagnoseSkjema_2025-03-24_1019.csv',
   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 Diagnoser <- Diagnoser_raa
 
 Oppfolging_raa <- read.table(
-  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/DataDump_MRS-PROD_OppfolgingSkjema_2025-03-03_1247.csv',
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_OppfølgingSkjema_2025-03-24_1018.csv',
   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-Oppfolging <- Oppfolging_raa |> filter(EksklusjonsDato != "") |>
-  select(PasientGUID, EksklusjonsDato) |>
-  mutate(EksklusjonsDato = as.Date(EksklusjonsDato, format ="%d.%m.%Y")) |>
-  arrange(dplyr::desc(EksklusjonsDato)) |>
-  group_by(PasientGUID) |>
-  filter(EksklusjonsDato == min(EksklusjonsDato))
+Oppfolging <- Oppfolging_raa |> dplyr::filter(EksklusjonsDato != "") |>
+  dplyr::select(PasientGUID, EksklusjonsDato) |>
+  dplyr::mutate(EksklusjonsDato = as.Date(EksklusjonsDato, format ="%d.%m.%Y")) |>
+  dplyr::arrange(dplyr::desc(EksklusjonsDato)) |>
+  dplyr::group_by(PasientGUID) |>
+  dplyr::filter(EksklusjonsDato == min(EksklusjonsDato))
 
-Inklusjon <- norvasPreprosess(Inklusjon)
-Diagnoser <- norvasPreprosess(Diagnoser)
+Inklusjon <- norvas::norvasPreprosess(Inklusjon)
+Diagnoser <- norvas::norvasPreprosess(Diagnoser)
 
 Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
 Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUID), ]
@@ -54,39 +171,20 @@ Diagnoser <- Diagnoser[ , c("PasientGUID", "Diagnose", "ICD10",
                             "Diagnose_Klinisk_Dato",
                             "InklusjonDato", "UnitId", "Sykehusnavn",
                             "EksklusjonsDato"), ] |>
-  filter(!is.na(ICD10))
+  dplyr::filter(!is.na(ICD10))
 
-# write.csv2(
-#   Diagnoser,
-#   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/diagnoser_npr_2024.csv', row.names = F)
+write.csv2(
+  Diagnoser,
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aktivitetsdata_norvas_2024.csv',
+  row.names = F, fileEncoding = "Latin1")
 
 Kobling_norvas_pid_fn <- Inklusjon[Inklusjon$PasientGUID %in% Diagnoser$PasientGUID, c("PasientGUID", "PasientId")]
 names(Kobling_norvas_pid_fn)[2] <- 'Fodselsnummer'
 
-# write.csv2(
-#   Kobling_norvas_pid_fn,
-#   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/kobling_norvas_npr_2024.csv', row.names = F)
-
-#
-# # tmp1 <- Inklusjon[!(Inklusjon$PasientGUID %in% Diagnoser$PasientGUID), ]
-# tmp1 <- Inklusjon_raa[!(Inklusjon_raa$PasientGUID %in% Diagnoser_raa$PasientGUID), ]
-# tmp2 <- Diagnoser_raa[!(Diagnoser_raa$PasientGUID %in% Inklusjon_raa$PasientGUID), ]
-#
-# length(intersect(Inklusjon_raa$PasientGUID))
-#
-# Diagnoser |> group_by(Diagnose) |>
-#   summarise(icd10 = paste0(sort(unique(Icd)), collapse = ",")) |>
-#   arrange("icd10")
-#
-# Diagnoser |> group_by(Diagnose) |>
-#   summarise(icd10 = unique(DiagnoseNr)) |>
-#   arrange(icd10)
-
-Diagnoser |> group_by(Diagnose) |>
-  summarise(antall = n()) |>
-  arrange(-antall) |>
-  janitor::adorn_totals()
-# write.csv2("/media/kevin/KINGSTON/diag_norvas.csv", row.names = F, fileEncoding = "Latin1")
+write.csv2(
+  Kobling_norvas_pid_fn,
+  'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/kobling_norvas_2024.csv',
+  row.names = F, fileEncoding = "Latin1")
 
 
 
@@ -121,8 +219,8 @@ antall_pr_sh <- Aktuelle %>% dplyr::count(Sykehusnavn, ICD10) %>%
 
 medisinerte <- Aktuelle %>%
   merge(Medisiner %>% select("HovedskjemaGUID", "Med_StartDato",
-                                          "Med_SluttDato", "LegemiddelGenerisk", "Dose"),
-                     by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+                             "Med_SluttDato", "LegemiddelGenerisk", "Dose"),
+        by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
   dplyr::filter(abs(difftime(Diagnose_Klinisk_Dato, Med_StartDato, units = 'days')) <= 30,
                 LegemiddelGenerisk == "Prednisolon") %>%
   dplyr::filter(abs(difftime(Diagnose_Klinisk_Dato, Med_StartDato, units = 'days')) ==
@@ -145,8 +243,8 @@ medisinerte <- Aktuelle %>%
 
 doser <- medisinerte %>%
   dplyr::mutate(Dose_kat = cut(Dose_28uker, breaks = c(0, 7.5, 15, 100000),
-                                      labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
-                                      include.lowest = T)) %>%
+                               labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
+                               include.lowest = T)) %>%
   dplyr::summarise(N = n(), .by = c(Sykehusnavn, Dose_kat)) %>%
   tidyr::pivot_wider(names_from = Dose_kat, values_from = N, values_fill = 0) %>%
   dplyr::arrange(rowSums(across(c(-1))))
@@ -171,8 +269,8 @@ plotdata <- medisinerte %>%
                                labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
                                include.lowest = T),
                 Dose_28uker_kat = cut(Dose_28uker, breaks = c(0, 7.5, 15, 100000),
-                               labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
-                               include.lowest = T)) %>%
+                                      labels = c("\u2264 7.5 mg", "7.5-15 mg", "> 15 mg"),
+                                      include.lowest = T)) %>%
   # dplyr::count(Dose_kat, Dose_28uker_kat) %>%
   select(PasientGUID, Dose_kat, Dose_28uker_kat) %>%
   tidyr::pivot_longer(cols = c(Dose_kat, Dose_28uker_kat), names_to = "Tidspunkt", values_to = "Dose") %>%
