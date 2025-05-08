@@ -49,8 +49,9 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2024
+rap_aar <- 2025
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
+rap_aar <- 2024
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
 Diagnoser <- aarrappdata$Diagnoser
@@ -62,12 +63,6 @@ Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
 Utredning <- aarrappdata$Utredning
 Labskjema <- aarrappdata$Labskjema
 Pasientsvar <- aarrappdata$Pasientsvar
-
-######### AD-HOC : Flytt ous hf til rh ############
-Inklusjon$UnitId[Inklusjon$UnitId==4001031] <- 4210431
-Oppfolging$UnitId[Oppfolging$UnitId==4001031] <- 4210431
-Inklusjon$UnitId[Inklusjon$UnitId==103300] <- 103725
-Oppfolging$UnitId[Oppfolging$UnitId==103300] <- 103725
 
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <-
@@ -97,9 +92,6 @@ orgnr_table <-
   )
 kobl_unitid_shusnavn_norvas <- merge(kobl_unitid_shusnavn_norvas, orgnr_table,
                                      by = "UnitId", all.x = TRUE)
-# SykehusNavnStruktur <- read.csv2("~/GIT/hospital.csv")
-# tmp <- kobl_unitid_shusnavn_norvas %>%
-#   merge(SykehusNavnStruktur[,c("orgnr", "short_name", "full_name")], by="orgnr", all.x = T)
 
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
@@ -110,10 +102,6 @@ if (!dir.exists(figfolder)) {
 }
 # knitr::knit2pdf("ResultatTilAarsrappOffentliggjoring2024.Rnw")
 @
-
-
-% \section{Kvalitetsindikatorer}
-
 
 
 <<'Fig: bakgrunnsdata', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
@@ -222,7 +210,7 @@ reg3aar_shus <- Inklusjon |>
 
 print(xtable::xtable(
   reg3aar_shus, align= c('l','l',rep('r', dim(reg3aar_shus)[2]-1)),
-  caption = "Oversikt over antall nysyke pasienter med LVV. Nysyke er definert ved at pasienten enten er registrert som  Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). År angir diagnoseår."),
+  caption = "Oversikt over antall nysyke og pasienter med etablert diagnose med LVV. Nysyke er definert ved at pasienten enten er registrert som Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). År angir diagnoseår."),
   include.rownames = F)
 
 reg3aar_shus <- Inklusjon |>
@@ -239,7 +227,7 @@ reg3aar_shus <- Inklusjon |>
 
 print(xtable::xtable(
   reg3aar_shus, align= c('l','l',rep('r', dim(reg3aar_shus)[2]-1)),
-  caption = "Oversikt over antall nysyke pasienter med AAV. Nysyke er definert ved at pasienten enten er registrert som  Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). År angir diagnoseår."),
+  caption = "Oversikt over antall nysyke og pasienter med etablert diagnose med AAV. Nysyke er definert ved at pasienten enten er registrert som  Inkludert med ny diagnose eller at det er 30 dager eller mindre mellom inklusjonsdato og diagnosedato (så fremt pasienten ikke er registrert som inkludert med etablert diagnose). År angir diagnoseår."),
   include.rownames = F)
 
 @
@@ -250,53 +238,77 @@ aldervar='PatientAge'
 valgtVar='DiagnoseAlder'
 
 outfile <- paste0(figfolder, 'diagnosealder_gr1.', utformat)
-norvasFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
-                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=1,
-                 valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar)
+norvasFigAndeler(RegData=RegData, valgtVar=valgtVar,
+                 datoFra=datoFra, datoTil=datoTil,
+                 minald=minald, maxald=maxald, erMann=erMann,
+                 outfile=outfile, reshID=reshID,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess,
+                 diag_gruppe=1,
+                 valgtShus=valgtShus,hentData=hentData,
+                 datovar=datovar, aldervar=aldervar)
 
 outfile <- paste0(figfolder, 'diagnosealder_gr2.', utformat)
-norvasFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra=datoFra, datoTil=datoTil,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
-                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=2,
-                 valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar)
+norvasFigAndeler(RegData=RegData, valgtVar=valgtVar,
+                 datoFra=datoFra, datoTil=datoTil,
+                 minald=minald, maxald=maxald, erMann=erMann,
+                 outfile=outfile, reshID=reshID,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess,
+                 diag_gruppe=2,
+                 valgtShus=valgtShus,hentData=hentData,
+                 datovar=datovar, aldervar=aldervar)
 
 
 outfile <- paste0(figfolder, 'kjonn.', utformat)
-norvasFigFordelingGr(RegData=Inklusjon, valgtVar='ErMann', datoFra='2014-01-01', datoTil=datoTil,
-                     minald=0, maxald=130, erMann=99, outfile=outfile, reshID=0, enhetsUtvalg=0, preprosess=F,
-                     valgtShus=c(''),hentData=F, datovar='InklusjonDato', aldervar='PatientAge', diag_gruppe=99)
+norvasFigFordelingGr(RegData=Inklusjon, valgtVar='ErMann',
+                     datoFra='2014-01-01', datoTil=datoTil,
+                     minald=0, maxald=130, erMann=99, outfile=outfile,
+                     reshID=0, enhetsUtvalg=0, preprosess=F,
+                     valgtShus=c(''),hentData=F, datovar='InklusjonDato',
+                     aldervar='PatientAge', diag_gruppe=99)
 
 #### Figur på antall registreringer, stablet med siste år som egen farge.
 
 outfile <- paste0(figfolder, 'sykdomsvurdering.', utformat)
 valgtVar <- 'Sykdomsvurdering'
 datovar='BVAS_Dato'
-norvasFigAndeler(RegData=BVAS, valgtVar=valgtVar, datoFra=datoFra, datoTil=paste0(rap_aar-1, "-12-31"),
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
-                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=99,
-                 valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar, inkl_N = T)
+norvasFigAndeler(RegData=BVAS, valgtVar=valgtVar,
+                 datoFra=datoFra, datoTil=paste0(rap_aar-1, "-12-31"),
+                 minald=minald, maxald=maxald, erMann=erMann,
+                 outfile=outfile, reshID=reshID,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess,
+                 diag_gruppe=99,
+                 valgtShus=valgtShus,hentData=hentData,
+                 datovar=datovar, aldervar=aldervar, inkl_N = T)
 
 datoFra <- paste0(rap_aar, "-01-01")
 datoTil=paste0(rap_aar, "-12-31")
 
 outfile <- paste0(figfolder, 'sykdomsvurdering_rapaar_gr2.', utformat)
-norvasFigAndeler(RegData=BVAS[BVAS$BVAS_Dato >= datoFra & BVAS$BVAS_Dato <= datoTil, ], valgtVar=valgtVar,
+norvasFigAndeler(RegData=BVAS[BVAS$BVAS_Dato >=
+                                datoFra & BVAS$BVAS_Dato <= datoTil, ],
+                 valgtVar=valgtVar,
                  datoFra=datoFra, datoTil=datoTil,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
-                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=2,
-                 valgtShus=valgtShus,hentData=hentData, datovar=datovar, aldervar=aldervar, inkl_N = T)
+                 minald=minald, maxald=maxald, erMann=erMann,
+                 outfile=outfile, reshID=reshID,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess,
+                 diag_gruppe=2,
+                 valgtShus=valgtShus,hentData=hentData,
+                 datovar=datovar, aldervar=aldervar, inkl_N = T)
 
 outfile <- paste0(figfolder, 'sykdomsvurdering_rap_aar_gr1.', utformat)
 norvasFigAndeler(RegData=KERR, valgtVar="Sykdomsvurdering_kerr",
                  datoFra=datoFra, datoTil=datoTil,
-                 minald=minald, maxald=maxald, erMann=erMann, outfile=outfile, reshID=reshID,
-                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess, diag_gruppe=1,
-                 valgtShus=valgtShus,hentData=hentData, datovar="KerrsKriterier_Dato", aldervar=aldervar, inkl_N = T)
+                 minald=minald, maxald=maxald, erMann=erMann,
+                 outfile=outfile, reshID=reshID,
+                 enhetsUtvalg=enhetsUtvalg, preprosess=preprosess,
+                 diag_gruppe=1,
+                 valgtShus=valgtShus,hentData=hentData,
+                 datovar="KerrsKriterier_Dato", aldervar=aldervar, inkl_N = T)
 
 ## Ønske om å se over flere år
 
-## Se på mulighet for å sammenligne sykehus Stabel i Wenches årsrapport. Kun for HF med mer enn 50 registreringer i _rapaar.
+## Se på mulighet for å sammenligne sykehus Stabel i Wenches årsrapport.
+## Kun for HF med mer enn 50 registreringer i _rapaar.
 
 @
 
@@ -552,11 +564,13 @@ print(xtable::xtable(
 ##### Nytt forsøk med intervaller #################################
 Medisiner_raa <- Medisiner
 
+## For pasienter som mangler registrering av medisiner leeges det til en rad
+## med info om diagnose og inklusjonsdato, samt eksklusjonsstatus
 ekskluderte <- Oppfolging %>%
   dplyr::filter(!is.na(EksklusjonsDato)) %>%
   dplyr::select(EksklusjonsArsak, EksklusjonsDato,
                 HovedskjemaGUID)
-Medisiner <- Medisiner %>%
+Medisiner <- Medisiner_raa %>%
   select(-Diag_gr_nr) %>%
   merge(Inklusjon[, c("SkjemaGUID", "InklusjonDato", "Diagnose", "Diag_gr", "Diag_gr_nr")],
         by.x = "HovedskjemaGUID",
@@ -1039,7 +1053,7 @@ ant_oppf_pr_aar <- merge(
                 Eksklusjonsaar = ifelse(is.na(Eksklusjonsaar), 2050,
                                         Eksklusjonsaar)) |>
   dplyr::filter(Oppfolgingsaar > Inklusjonsaar,
-                Oppfolgingsaar <= Eksklusjonsaar) |>
+                Oppfolgingsaar < Eksklusjonsaar) |>
   dplyr::summarise(Antall_oppf = sum(FolgtOpp),
                    .by = c(PasientGUID, UnitId, Oppfolgingsaar))
 
@@ -1056,6 +1070,12 @@ gjsn_ant_oppf_pr_aar <- ant_oppf_pr_aar |>
   select(Sykehusnavn, Diag_gr, verdi) |>
   tidyr::pivot_wider(names_from = Diag_gr, values_from = verdi) |>
   arrange(Sykehusnavn) |> select(1,3,2)
+
+print(xtable::xtable(
+  gjsn_ant_oppf_pr_aar, align= c('l','l','r','r'),
+  caption=paste0('Gjennomsnittlig antall oppfølginger per pasient. Tallene i
+                 parantes angir antall pasienter aktuell for oppfølging, dvs.
+                 inkludert før ', rap_aar, ' og ikke ekskludert innen ', rap_aar)), include.rownames = F)
 
 
 indikator_2oppf <- ant_oppf_pr_aar |>
@@ -1125,6 +1145,15 @@ tabell <- Inklusjon %>% dplyr::filter(Diagnose_ny_30 == 1) %>%
   tidyr::pivot_wider(names_from = Inklusjonsaar, values_from = Antall) %>%
   dplyr::rename(Diagnosegruppe = Diag_gr)
 
+# Inklusjon %>% dplyr::filter(Diagnose_ny_30 == 1) %>%
+#   dplyr::mutate(DiagnoseAar = lubridate::year(Diagnose_Klinisk_Dato)) |>
+#   dplyr::filter(DiagnoseAar %in% (rap_aar-4):rap_aar) %>%
+#   dplyr::group_by(Diag_gr, DiagnoseAar) %>%
+#   dplyr::summarise(Antall = n()) %>%
+#   tidyr::pivot_wider(names_from = DiagnoseAar, values_from = Antall) %>%
+#   dplyr::rename(Diagnosegruppe = Diag_gr)
+
+
 print(xtable::xtable(
   tabell, align= c('l','l',rep("r", dim(tabell)[2]-1)),
   caption=paste0("Antall nysyke siste ", dim(tabell)[2]-1,
@@ -1178,12 +1207,12 @@ print(xtable::xtable(
 
 ############# Resultatportalen  ##########################################################
 
-Ind3_AndelBVAS_NorVas <-
+Ind2_AndelBVAS_NorVas <-
   OppfolgingBVAS[, c("UnitId", "Oppfolgingsaar", "SykdomsvurderingLabel")]
-Ind3_AndelBVAS_NorVas$Teller <-
-  as.numeric(!is.na(Ind3_AndelBVAS_NorVas$SykdomsvurderingLabel))
-Ind3_AndelBVAS_NorVas$Nevner <- 1
-figurdata <- Ind3_AndelBVAS_NorVas
+Ind2_AndelBVAS_NorVas$Teller <-
+  as.numeric(!is.na(Ind2_AndelBVAS_NorVas$SykdomsvurderingLabel))
+Ind2_AndelBVAS_NorVas$Nevner <- 1
+figurdata <- Ind2_AndelBVAS_NorVas
 figurdata$Sykehusnavn <-
   kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 @
@@ -1244,10 +1273,10 @@ print(xtable::xtable(Tabell_vdi_oppf, align= c('l','l','r','r'), digits=c(0,0,1,
 
 ############# Resultatportalen  ##########################################################
 
-Ind3_AndelVDI_NorVas <- OppfolgingVDI[, c("UnitId", "Oppfolgingsaar", "Cataract")]
-Ind3_AndelVDI_NorVas$Teller <- as.numeric(!is.na(Ind3_AndelVDI_NorVas$Cataract))
-Ind3_AndelVDI_NorVas$Nevner <- 1
-figurdata <- Ind3_AndelVDI_NorVas
+AndelVDI_NorVas <- OppfolgingVDI[, c("UnitId", "Oppfolgingsaar", "Cataract")]
+AndelVDI_NorVas$Teller <- as.numeric(!is.na(AndelVDI_NorVas$Cataract))
+AndelVDI_NorVas$Nevner <- 1
+figurdata <- AndelVDI_NorVas
 figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 @
 
@@ -1271,11 +1300,11 @@ norvasFigIndikatorAar(figurdata |>
 
 
 <<'tab. utført kerr', results='asis', echo=FALSE, warning=FALSE>>=
-Ind3_AndelBVAS_NorVas <- Ind3_AndelBVAS_NorVas[ , -3]
+Ind2_AndelBVAS_NorVas <- Ind2_AndelBVAS_NorVas[ , -3]
 
-Ind3_AndelBVAS_NorVas$ind_id <- "norvas_bvas"
+Ind2_AndelBVAS_NorVas$ind_id <- "norvas_bvas"
 
-Indikatorer <- Ind3_AndelBVAS_NorVas %>%
+Indikatorer <- Ind2_AndelBVAS_NorVas %>%
   rename(year = Oppfolgingsaar,
          var = Teller,
          denominator = Nevner) %>%
@@ -1290,10 +1319,11 @@ KERR$Sykdomsvurdering[KERR$Sykdomsvurdering==-1] <- NA
 KERR_unik <-
   KERR[!duplicated(KERR[, c("PasientGUID", "KerrsKriterier_Dato")]), ]
 
-OppfolgingKERR <- merge(Oppfolging,
-              KERR_unik[, c("KerrsKriterier_Dato", "PasientGUID", "Sykdomsvurdering")],
-              by.x = c('PasientGUID','OppfolgingsDato'),
-              by.y = c('PasientGUID','KerrsKriterier_Dato'), all.x = T) |>
+OppfolgingKERR <- merge(
+  Oppfolging,
+  KERR_unik[, c("KerrsKriterier_Dato", "PasientGUID", "Sykdomsvurdering")],
+  by.x = c('PasientGUID','OppfolgingsDato'),
+  by.y = c('PasientGUID','KerrsKriterier_Dato'), all.x = T) |>
   dplyr::filter(Diag_gr_nr == 1)
 
 
@@ -1310,7 +1340,8 @@ Tabell_kerr_oppf <- OppfolgingKERR %>%
   dplyr::select(Sykehusnavn, Andel, N)
 
 Tabell_kerr_oppf <- bind_rows(
-  Tabell_kerr_oppf |> filter(Andel != paste0("N<", terskel) & Sykehusnavn != "Total"),
+  Tabell_kerr_oppf |> filter(Andel != paste0("N<", terskel) &
+                               Sykehusnavn != "Total"),
   Tabell_kerr_oppf |> filter(Andel == paste0("N<", terskel)),
   Tabell_kerr_oppf |> filter(Sykehusnavn == "Total")) |>
   dplyr::rename("Andel oppfølging" = "Andel")
@@ -1322,28 +1353,43 @@ print(xtable::xtable(
   caption=paste0('Andel med utført Kerrs ved oppfølging i ',
                  rap_aar, ', gr. 1')), include.rownames = F)
 
-############# Resultatportalen  ##########################################################
+############# Resultatportalen  ################################################
 
-ind4_AndelKerr_NorVas <- OppfolgingKERR[, c("UnitId", "Oppfolgingsaar", "Sykdomsvurdering")]
-ind4_AndelKerr_NorVas$Teller <- as.numeric(!is.na(ind4_AndelKerr_NorVas$Sykdomsvurdering))
-ind4_AndelKerr_NorVas$Nevner <- 1
-figurdata <- ind4_AndelKerr_NorVas
-figurdata$Sykehusnavn <- kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
+ind3_AndelKerr_NorVas <-
+  OppfolgingKERR[, c("UnitId", "Oppfolgingsaar", "Sykdomsvurdering")]
+ind3_AndelKerr_NorVas$Teller <-
+  as.numeric(!is.na(ind3_AndelKerr_NorVas$Sykdomsvurdering))
+ind3_AndelKerr_NorVas$Nevner <- 1
+figurdata <- ind3_AndelKerr_NorVas
+figurdata$Sykehusnavn <-
+  kobl_unitid_shusnavn_norvas$Sykehusnavn[match(figurdata$UnitId, kobl_unitid_shusnavn_norvas$UnitId)]
 @
 
 <<'fig. utført kerr', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 # x11()
 outfile <- paste0(figfolder, "kerr_ved_oppf_gvv.", utformat)
-norvasIndikator(figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
-                tittel = c("Andel med utført Kerrs ved oppfølging", "for storkarsvaskulitter"),
-                maal = 80, minstekrav = 40, outfile = outfile)
+norvasIndikator(
+  figurdata[which(figurdata$Oppfolgingsaar==rap_aar),],
+  tittel = c("Andel med utført Kerrs ved oppfølging",
+             "for storkarsvaskulitter"),
+  maal = 80, minstekrav = 40, outfile = outfile)
+
+outfile <- paste0(figfolder, "kerr_ved_oppf_gvv_aar.", utformat)
+norvasFigIndikatorAar(figurdata |>
+                        rename(Aar = Oppfolgingsaar) |>
+                        filter(Aar <= rap_aar),
+                      tittel = c("Andel med utført Kerrs ved oppfølging",
+                                 "for storkarsvaskulitter"),
+                      maal = 80, minstekrav = 40, outfile = outfile)
 
 
-ind4_AndelKerr_NorVas <- ind4_AndelKerr_NorVas[ , -3]
 
-ind4_AndelKerr_NorVas$ind_id <- "norvas_kerr"
 
-Indikatorer <- ind4_AndelKerr_NorVas %>%
+ind3_AndelKerr_NorVas <- ind3_AndelKerr_NorVas[ , -3]
+
+ind3_AndelKerr_NorVas$ind_id <- "norvas_kerr"
+
+Indikatorer <- ind3_AndelKerr_NorVas %>%
   rename(year = Oppfolgingsaar,
          var = Teller,
          denominator = Nevner) %>%
@@ -1585,55 +1631,44 @@ med_debut_cyklofosfamid_anca_v2 <- BVAS %>%
 
 
 <<'Tab: andel remisjon 6mnd, ANCA', results='asis', echo=FALSE, warning=F>>=
-BVAS$tid_diag_bvas <- difftime(BVAS$BVAS_Dato, BVAS$Diagnose_Klinisk_Dato, units = 'days')
-InklusjonBVAS <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar",
-                                    "SkjemaGUID", "Diag_gr_nr", "Sykehusnavn",
-                                    "UnitId", "PasientGUID")],
-                       BVAS[, c("HovedskjemaGUID", "BVAS_Dato", "tid_diag_bvas", "Sykdomsvurdering")],
-                       by.x = c("InklusjonDato", "SkjemaGUID"),
-                       by.y = c("BVAS_Dato", "HovedskjemaGUID"))
+BVAS$tid_diag_bvas <- difftime(BVAS$BVAS_Dato,
+                               BVAS$Diagnose_Klinisk_Dato, units = 'days')
 
-nysyke <- InklusjonBVAS %>%
-  filter(Sykdomsvurdering == 1 &
-           Diagnose_ny_30 == 1 &
-           Diag_gr_nr==2 &
-           InklusjonDato <= datoTil)
-
-
-aux <- merge(nysyke[, c("SkjemaGUID", "InklusjonDato", "Inklusjonsaar", "Sykehusnavn", "UnitId", "PasientGUID")],
-             BVAS[, c("HovedskjemaGUID", "BVAS_Dato", "tid_diag_bvas", "Sykdomsvurdering")],
-             by.x = c("SkjemaGUID"),
-             by.y = c("HovedskjemaGUID"),
-             all.x = TRUE)
-
-oppsum <- aux %>% group_by(PasientGUID) %>%
-  summarise(ant_remisjon = sum(InklusjonDato != BVAS_Dato &
-                                 tid_diag_bvas > 0 &
-                                 tid_diag_bvas <= 210 &
-                                 Sykdomsvurdering == 5),
+InklusjonBVAS <- Inklusjon |>
+  select(Diagnose_ny_30,InklusjonDato,
+         SkjemaGUID, Diag_gr_nr, Sykehusnavn,
+         UnitId, PasientGUID, Diagnose_Klinisk_Dato) |>
+  filter(Diag_gr_nr==2) |>
+  merge(BVAS[, c("HovedskjemaGUID", "BVAS_Dato",
+                 "tid_diag_bvas", "Sykdomsvurdering")],
+        by.x = c("SkjemaGUID"),
+        by.y = c("HovedskjemaGUID"),
+        all.x = TRUE) |>
+  filter(BVAS_Dato >= Diagnose_Klinisk_Dato + months(6) -
+           lubridate::weeks(4),
+         BVAS_Dato <= Diagnose_Klinisk_Dato + months(6) +
+           lubridate::weeks(4)) |>
+  mutate(Aar = lubridate::year(Diagnose_Klinisk_Dato)) |>
+  summarise(Teller = as.numeric(5 %in% Sykdomsvurdering),
             N = n(),
-            Nevner = as.numeric(!is.na(intersect(tid_diag_bvas, 1:210)[1])),
             Sykehusnavn = first(Sykehusnavn),
-            UnitId = first(UnitId),
-            Inklusjonsaar = first(Inklusjonsaar)) %>%
-  mutate(remisjon = as.numeric(ant_remisjon > 0)) %>%
-  filter(Nevner == 1)
+            .by = c(PasientGUID, Aar, UnitId)) |>
+  mutate(Aar <= rap_aar) |>
+  mutate(Nevner = 1,
+         ind_id = "norvas_anca_remisjon")
+
+ind4_AndelAnCA_remisjon_NorVas <- InklusjonBVAS |>
+  select(UnitId, Aar, Teller, Sykehusnavn, Nevner, ind_id)
 
 
-ind5_AndelAnCA_remisjon_NorVas_v2 <- oppsum[, c("UnitId", "Inklusjonsaar", "remisjon", "Sykehusnavn")]
-ind5_AndelAnCA_remisjon_NorVas_v2$Nevner <- 1
-names(ind5_AndelAnCA_remisjon_NorVas_v2)[2:3] <- c("Aar", "Teller")
-
-ind5_AndelAnCA_remisjon_NorVas_v2$ind_id <- "norvas_anca_remisjon"
-
-Indikatorer <- ind5_AndelAnCA_remisjon_NorVas_v2 %>%
+Indikatorer <- ind4_AndelAnCA_remisjon_NorVas %>%
   rename(year = Aar,
          var = Teller,
          denominator = Nevner) %>%
   select(UnitId, year, var, denominator, ind_id) %>%
   bind_rows(Indikatorer)
 
-tabell_remisjon_6mnd <- ind5_AndelAnCA_remisjon_NorVas_v2 %>%
+tabell_remisjon_6mnd <- ind4_AndelAnCA_remisjon_NorVas %>%
   filter(Aar <= rap_aar) %>%
   group_by(Sykehusnavn) %>%
   summarise(Antall = sum(Teller),
@@ -1642,82 +1677,104 @@ tabell_remisjon_6mnd <- ind5_AndelAnCA_remisjon_NorVas_v2 %>%
   mutate(Andel = Antall/N*100) %>%
   select(Sykehusnavn, Andel, N)
 
-print(xtable::xtable(tabell_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel i remisjon innen 6 måneder fra diagnosedato ut fra BVAS for ANCA-assosiert vaskulitter t.o.m. ', rap_aar, '. Gjelder nysyke som definert ved at InkludertNyEtablertDiagnose = 1. Dersom InkludertNyEtablertDiagnose ikke er utfylt telles pasienter med Diagnose\\_Klinisk\\_Dato og InklusjonDato innenfor plussminus 30 dager som nysyke. Utvalget er videre innsnevret til at kun pasienter med Sykdomsvurdering = 1 ved inklusjon telles med.')), include.rownames = F)
+tabell_remisjon_6mnd_aar <- ind4_AndelAnCA_remisjon_NorVas %>%
+  filter(Aar <= rap_aar) %>%
+  summarise(Antall = sum(Teller),
+            N = n(),
+            .by = c(Sykehusnavn, Aar)) %>%
+  group_by(Aar) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  group_by(Sykehusnavn) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  mutate(Andel = Antall/N*100,
+         Andel = paste0(sprintf("%.1f", Andel), "% (", N, ")")) %>%
+  select(Sykehusnavn, Aar, Andel) |>
+  filter(Aar > rap_aar-5) |>
+  tidyr::pivot_wider(names_from = Aar, values_from = Andel, names_sort = TRUE) |>
+  arrange(Sykehusnavn)
+
+tabell_remisjon_6mnd_aar_raa <- ind4_AndelAnCA_remisjon_NorVas %>%
+  filter(Aar <= rap_aar) %>%
+  summarise(Antall = sum(Teller),
+            N = n(),
+            .by = c(Sykehusnavn, Aar)) %>%
+  group_by(Aar) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  group_by(Sykehusnavn) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  filter(Aar > rap_aar-3) |>
+  tidyr::pivot_wider(names_from = Aar, values_from = c(Antall, N), names_sort = TRUE)
+
+print(xtable::xtable(tabell_remisjon_6mnd, align= c('l','l','r','r'), digits=c(0,0,1,0), caption=paste0('Andel i remisjon innen 6 måneder fra diagnosedato ut fra BVAS for ANCA-assosiert vaskulitter t.o.m. ', rap_aar, '. Kun pasienter som har utfylt BVAS ved 6 mnd. plusminus 4 uker etter diagnosedato inngår.')), include.rownames = F)
 @
 
 <<'Fig. anca remisjon v2', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-figurdata <- ind5_AndelAnCA_remisjon_NorVas_v2
+figurdata <- ind4_AndelAnCA_remisjon_NorVas
 outfile <- paste0(figfolder, "remisjon_6mnd_anca.", utformat)
-norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
-                tittel = c("Andel i remisjon innen 6 måneder ut fra", "BVAS for ANCA-assosierte vaskulitter"),
-                maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
-############ AD HOC, fjerner St. Olavs ##############
-outfile <- paste0(figfolder, "remisjon_6mnd_anca_u_stolav.", utformat)
-norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar & figurdata$Sykehusnavn != "St. Olavs"),],
-                tittel = c("Andel i remisjon innen 6 måneder ut fra", "BVAS for ANCA-assosierte vaskulitter"),
-                maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
+norvasIndikator(
+  figurdata[which(figurdata$Aar<=rap_aar),],
+  tittel = c("Andel i remisjon innen 6 måneder ut fra",
+             "BVAS for ANCA-assosierte vaskulitter"),
+  maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
+
+outfile <- paste0(figfolder, "remisjon_6mnd_anca_aar.", utformat)
+norvasFigIndikatorAar(
+  figurdata[which(figurdata$Aar<=rap_aar),],
+  tittel = c("Andel i remisjon innen 6 måneder ut fra",
+             "BVAS for ANCA-assosierte vaskulitter"),
+  maal = 80, minstekrav = 40, outfile = outfile, xmax = 100)
 @
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}remisjon_6mnd_anca.pdf}
-\caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr etter debut}
+\caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr etter debut. Nevner: Alle med ANCA-assosiert vaskulitt som har et utfylt BVAS-skjema 6 mnd $\pm$ 4 uker etter diagnosedato. Gjelder alle med diagnosedato t.o.m. \Sexpr{rap_aar}}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}remisjon_6mnd_anca_u_stolav.pdf}
-\caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr etter debut. Uten St. Olavs.}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}remisjon_6mnd_anca_aar.pdf}
+\caption{Andel pasienter med ANCA-assosiert vaskulitt som er i remisjon 6 mndr, per år.}
 \end{figure}
 
 <<'Tab: andel remisjon 6mnd, GVV, V2', results='asis', echo=FALSE, warning=F>>=
-KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato, KERR$Diagnose_Klinisk_Dato, units = 'days')
+KERR$tid_diag_kerr <- difftime(KERR$KerrsKriterier_Dato,
+                               KERR$Diagnose_Klinisk_Dato, units = 'days')
 
-InklusjonKERR <- merge(Inklusjon[,c("Diagnose_ny_30","InklusjonDato", "Inklusjonsaar", "SkjemaGUID")],
-                       KERR, by.x = c("InklusjonDato", "SkjemaGUID"),
-                       by.y = c("KerrsKriterier_Dato", "HovedskjemaGUID"))
-
-nysyke <- InklusjonKERR %>%
-  filter(Sykdomsvurdering == 1 &
-           Diagnose_ny_30 == 1 &
-           Diag_gr_nr==1 &
-           InklusjonDato <= datoTil)
-
-
-aux <- merge(nysyke[, c("SkjemaGUID", "InklusjonDato", "Inklusjonsaar", "Sykehusnavn", "UnitId", "PasientGUID")],
-             KERR[, c("HovedskjemaGUID", "KerrsKriterier_Dato", "tid_diag_kerr", "Sykdomsvurdering")],
-             by.x = c("SkjemaGUID"),
-             by.y = c("HovedskjemaGUID"),
-             all.x = TRUE) %>%
-  dplyr::filter(!is.na(Sykdomsvurdering))
-
-oppsum <- aux %>% group_by(PasientGUID) %>%
-  summarise(ant_remisjon = sum(InklusjonDato != KerrsKriterier_Dato &
-                                 tid_diag_kerr > 0 &
-                                 tid_diag_kerr <= 210 &
-                                 Sykdomsvurdering == 2), # Antall remisjoner mellom 0 og 210 dager
+InklusjonKERR <- Inklusjon |>
+  select(Diagnose_ny_30,InklusjonDato,
+         SkjemaGUID, Diag_gr_nr, Sykehusnavn,
+         UnitId, PasientGUID, Diagnose_Klinisk_Dato) |>
+  filter(Diag_gr_nr==1) |>
+  merge(KERR[, c("HovedskjemaGUID", "KerrsKriterier_Dato",
+                 "tid_diag_kerr", "Sykdomsvurdering")],
+        by.x = c("SkjemaGUID"),
+        by.y = c("HovedskjemaGUID"),
+        all.x = TRUE) |>
+  filter(KerrsKriterier_Dato >= Diagnose_Klinisk_Dato + months(6) -
+           lubridate::weeks(4),
+         KerrsKriterier_Dato <= Diagnose_Klinisk_Dato + months(6) +
+           lubridate::weeks(4)) |>
+  mutate(Aar = lubridate::year(Diagnose_Klinisk_Dato)) |>
+  summarise(Teller = as.numeric(2 %in% Sykdomsvurdering),
             N = n(),
-            Nevner = as.numeric(!is.na(intersect(tid_diag_kerr, 1:210)[1])),
-            tid_diag_kerr_alle = paste0(sort(tid_diag_kerr), collapse = ","),
             Sykehusnavn = first(Sykehusnavn),
-            UnitId = first(UnitId),
-            Inklusjonsaar = first(Inklusjonsaar)) %>%
-  mutate(remisjon = as.numeric(ant_remisjon > 0)) %>%
-  filter(Nevner == 1)  ################## SPØR REGISTER OM HVA SOM INNGÅR I NEVNER ######################
+            .by = c(PasientGUID, Aar, UnitId)) |>
+  mutate(Aar <= rap_aar) |>
+  mutate(Nevner = 1,
+         ind_id = "norvas_storkar_remisjon")
 
-ind_AndelStorkar_remisjon_NorVas <- oppsum[, c("UnitId", "Inklusjonsaar", "remisjon", "Sykehusnavn")]
-ind_AndelStorkar_remisjon_NorVas$Nevner <- 1
-names(ind_AndelStorkar_remisjon_NorVas)[2:3] <- c("Aar", "Teller")
+ind6_AndelStorkar_remisjon_NorVas <- InklusjonKERR |>
+  select(UnitId, Aar, Teller, Sykehusnavn, Nevner, ind_id)
 
-ind_AndelStorkar_remisjon_NorVas$ind_id <- "norvas_storkar_remisjon"
-Indikatorer <- ind_AndelStorkar_remisjon_NorVas %>%
+Indikatorer <- ind6_AndelStorkar_remisjon_NorVas %>%
   rename(year = Aar,
          var = Teller,
          denominator = Nevner) %>%
   select(UnitId, year, var, denominator, ind_id) %>%
   bind_rows(Indikatorer)
 
-tabell_remisjon_6mnd <- ind_AndelStorkar_remisjon_NorVas %>%
+tabell_remisjon_6mnd <- ind6_AndelStorkar_remisjon_NorVas %>%
   filter(Aar <= rap_aar) %>%
   group_by(Sykehusnavn) %>%
   summarise(Antall = sum(Teller),
@@ -1726,156 +1783,390 @@ tabell_remisjon_6mnd <- ind_AndelStorkar_remisjon_NorVas %>%
   mutate(Andel = Antall/N*100) %>%
   select(Sykehusnavn, Andel, N)
 
+tabell_remisjon_6mnd_aar <- ind6_AndelStorkar_remisjon_NorVas %>%
+  filter(Aar <= rap_aar,
+         Aar > rap_aar-5) %>%
+  summarise(Antall = sum(Teller),
+            N = n(),
+            .by = c(Sykehusnavn, Aar)) %>%
+  group_by(Aar) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  group_by(Sykehusnavn) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  mutate(Andel = Antall/N*100,
+         Andel = paste0(sprintf("%.1f", Andel), "% (", N, ")")) %>%
+  select(Sykehusnavn, Aar, Andel) |>
+  tidyr::pivot_wider(names_from = Aar, values_from = Andel, names_sort = TRUE) |>
+  arrange(Sykehusnavn)
+
+tabell_remisjon_6mnd_aar_raa <- ind6_AndelStorkar_remisjon_NorVas %>%
+  filter(Aar <= rap_aar) %>%
+  summarise(Antall = sum(Teller),
+            N = n(),
+            .by = c(Sykehusnavn, Aar)) %>%
+  group_by(Aar) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  group_by(Sykehusnavn) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  filter(Aar > rap_aar-3) |>
+  tidyr::pivot_wider(names_from = Aar, values_from = c(Antall, N), names_sort = TRUE)
+
 print(xtable::xtable(
   tabell_remisjon_6mnd, align= c('l','l','r','r'),
   digits=c(0,0,1,0),
-  caption=paste0('Andel i remisjon innen 6 måneder fra diagnosedato ut fra KERR
-                 for storkarsvaskulitter t.o.m. ', rap_aar, '. Gjelder nysyke
-                 som definert ved at InkludertNyEtablertDiagnose = 1. Dersom
-                 InkludertNyEtablertDiagnose ikke er utfylt telles pasienter med
-                 Diagnose\\_Klinisk\\_Dato og InklusjonDato innenfor plussminus
-                 30 dager som nysyke. Utvalget er videre innsnevret til at kun
-                 pasienter med Sykdomsvurdering = 1 ved inklusjon og som har fylt
-                 ut KERR-skjema i tidsrommet 1 til 210 dager fra diagnose telles
-                 med.')), include.rownames = F)
+  caption=paste0(
+    'Andel i remisjon innen 6 måneder fra diagnosedato ut fra KERR
+     for storkarsvaskulitter t.o.m. ', rap_aar, '. Kun pasienter som har utfylt
+    KERR ved 6 mnd. plusminus 4 uker etter diagnosedato inngår.')), include.rownames = F)
+
+
 
 @
 
 <<'Fig: storkar remisjon.', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-figurdata <- ind_AndelStorkar_remisjon_NorVas
+figurdata <- ind6_AndelStorkar_remisjon_NorVas
 outfile <- paste0(figfolder, "remisjon_6mnd_storkar_v2.", utformat)
 norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
-                tittel = c("Andel i remisjon innen 6 måneder ut fra", "Kerrs for storkarsvaskulitter"),
+                tittel = c("Andel i remisjon innen 6 måneder ut fra",
+                           "Kerrs for storkarsvaskulitter"),
                 maal = 80, minstekrav = 40, outfile = outfile)
+outfile <- paste0(figfolder, "remisjon_6mnd_storkar_aar.", utformat)
+norvasFigIndikatorAar(figurdata[which(figurdata$Aar<=rap_aar),],
+                      tittel = c("Andel i remisjon innen 6 måneder ut fra",
+                                 "Kerrs for storkarsvaskulitter"),
+                      maal = 80, minstekrav = 40, outfile = outfile)
+
 @
 
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}remisjon_6mnd_storkar_v2.pdf}
-\caption{Andel pasienter med storkarsvaskulitt som er i remisjon 6 mndr etter debut, basert på Kerrs}
+\caption{Andel pasienter med storkarsvaskulitt som er i remisjon 6 mndr etter debut, basert på Kerrs. Gjelder alle diagnosedato t.o.m. \Sexpr{rap_aar}}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}remisjon_6mnd_storkar_aar.pdf}
+\caption{Andel pasienter med storkarsvaskulitt som er i remisjon 6 mndr, per år.}
 \end{figure}
 
 <<'Fig. andel pred.dose mindre enn x', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
 ############### Andel på prednisolondose mindre enn 5 etter 6 mnd  ######
 
-prednisolon_6mnd <- Inklusjon %>%
-  select(Diagnose_ny_30,InklusjonDato, Inklusjonsaar, SkjemaGUID,
+prednisolon_6mnd_v1 <- Inklusjon %>%
+  select(Diagnose_ny_30,InklusjonDato, SkjemaGUID,
          Diag_gr_nr, Sykehusnavn, UnitId, PasientGUID, Diagnose_Klinisk_Dato) %>%
-  filter(Diagnose_ny_30 == 1 &
-           Diag_gr_nr==2 &
-           InklusjonDato <= datoTil) %>%
-  mutate(Ved_6mnd_int = lubridate::interval(
-    Diagnose_Klinisk_Dato %m+% months(6),
-    Diagnose_Klinisk_Dato %m+% months(8))) %>%
+  filter(Diag_gr_nr==2) %>%
+  mutate(
+    Ved_start_int = lubridate::interval(
+      Diagnose_Klinisk_Dato - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato + lubridate::weeks(4)),
+    Ved_6mnd_int = lubridate::interval(
+      Diagnose_Klinisk_Dato %m+% months(6) - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato %m+% months(6) + lubridate::weeks(4))) %>%
   merge(Medisiner %>% filter(LegemiddelGenerisk == "Prednisolon") %>%
           select(HovedskjemaGUID, Med_StartDato,
                  Med_SluttDato, Dose),
         by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
-  filter(Med_StartDato %within% Ved_6mnd_int) %>%
-  filter(Dose == min(Dose), .by = PasientGUID) %>%
-  filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
-           min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
-         .by = PasientGUID)
+  filter(Med_StartDato %within% Ved_6mnd_int |
+           Med_StartDato %within% Ved_start_int)
 
-Tabell <- prednisolon_6mnd %>% dplyr::group_by(Sykehusnavn) %>%
-  summarise(ant_pred_under_5 = sum(Dose <= 5),
-            N = dplyr::n()) %>%
-  janitor::adorn_totals() %>%
-  dplyr::mutate(Andel = ant_pred_under_5/N*100) %>%
-  dplyr::mutate(Andel = ifelse(N < 5, NA, Andel)) %>%
-  dplyr::arrange(-Andel)
+start <- prednisolon_6mnd_v1 |>
+  filter(Med_StartDato %within% Ved_start_int) |>
+  dplyr::filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato)) ==
+                  min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato))),
+                .by = PasientGUID)
+v6mnd <- prednisolon_6mnd_v1 |>
+  filter(Med_StartDato %within% Ved_6mnd_int) |>
+  dplyr::filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
+                  min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
+                .by = PasientGUID)
 
+prednisolon_6mnd_v1 <- merge(
+  start |> select(PasientGUID, UnitId, Sykehusnavn, Diagnose_Klinisk_Dato, ),
+  v6mnd |> select(PasientGUID, Dose),
+  by = "PasientGUID") |>
+  mutate(Teller = as.numeric(Dose <= 5),
+         Nevner = 1,
+         Aar = lubridate::year(Diagnose_Klinisk_Dato),
+         ind_id = "norvas_anca_prednisolon")
+
+prednisolon_6mnd_v2 <- Inklusjon %>%
+  select(Diagnose_ny_30,InklusjonDato, SkjemaGUID,
+         Diag_gr_nr, Sykehusnavn, UnitId, PasientGUID, Diagnose_Klinisk_Dato) %>%
+  filter(Diag_gr_nr==2) %>%
+  mutate(
+    Ved_start_int = lubridate::interval(
+      Diagnose_Klinisk_Dato - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato + lubridate::weeks(4)),
+    Ved_6mnd_int = lubridate::interval(
+      Diagnose_Klinisk_Dato %m+% months(6) - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato %m+% months(6) + lubridate::weeks(4))) %>%
+  merge(Medisiner %>% filter(LegemiddelGenerisk == "Prednisolon") %>%
+          select(HovedskjemaGUID, Med_StartDato,
+                 Med_SluttDato, Dose),
+        by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+  filter(Med_StartDato %within% Ved_6mnd_int) |>
+  dplyr::filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
+                  min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
+                .by = PasientGUID)|>
+  mutate(Teller = as.numeric(Dose <= 5),
+         Nevner = 1,
+         Aar = lubridate::year(Diagnose_Klinisk_Dato),
+         ind_id = "norvas_anca_prednisolon")
+
+
+Tabell_v1 <- prednisolon_6mnd_v1 %>%
+  summarise(Antall = sum(Teller),
+            N = dplyr::n(),
+            .by = c(Sykehusnavn, Aar)) %>%
+  group_by(Aar) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  group_by(Sykehusnavn) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  # filter(Aar > rap_aar-3) |>
+  tidyr::pivot_wider(names_from = Aar, values_from = c(Antall, N), names_sort = TRUE)
+write.csv2(Tabell_v1, paste0(figfolder, "lav_prednisolon_anca_v1.csv"),
+           row.names = F, fileEncoding = "Latin1", na = "")
+
+Tabell_v2 <- prednisolon_6mnd_v2 %>%
+  summarise(Antall = sum(Teller),
+            N = dplyr::n(),
+            .by = c(Sykehusnavn, Aar)) %>%
+  group_by(Aar) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  group_by(Sykehusnavn) %>%
+  group_modify(~ .x %>% janitor::adorn_totals()) %>%
+  # filter(Aar > rap_aar-3) |>
+  tidyr::pivot_wider(names_from = Aar, values_from = c(Antall, N), names_sort = TRUE)
+write.csv2(Tabell_v2, paste0(figfolder, "lav_prednisolon_anca_v2.csv"),
+           row.names = F, fileEncoding = "Latin1", na = "")
 
 ################ Data til Resultatportalen ###################################
-ind6_AndelANCA_Prednisolon_NorVas <- prednisolon_6mnd %>%
-  dplyr::select(Sykehusnavn, UnitId, Inklusjonsaar, Dose) %>%
-  dplyr::rename(Aar = Inklusjonsaar) %>%
-  dplyr::mutate(Teller = as.numeric(Dose <= 5)) %>%
-  dplyr::mutate(Nevner = 1)
-ind6_AndelANCA_Prednisolon_NorVas$ind_id <- "norvas_anca_prednisolon"
-Indikatorer <- ind6_AndelANCA_Prednisolon_NorVas %>%
+
+Indikatorer <- prednisolon_6mnd_v1 %>%
   rename(year = Aar,
          var = Teller,
          denominator = Nevner) %>%
   select(UnitId, year, var, denominator, ind_id) %>%
   bind_rows(Indikatorer)
 
-figurdata <- ind6_AndelANCA_Prednisolon_NorVas %>% dplyr::filter(!is.na(Sykehusnavn))
-outfile <- paste0(figfolder, "lav_prednisolon_anca.", utformat)
-norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
+outfile <- paste0(figfolder, "lav_prednisolon_anca_v1.", utformat)
+norvasIndikator(prednisolon_6mnd_v1 |> filter(Aar<=rap_aar),
                 tittel = c("Andel pasienter med ANCA-assosiert vaskulitt",
                            "på Prednisolon <= 5mg 6 måneder etter debut"),
                 maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
+outfile <- paste0(figfolder, "lav_prednisolon_anca_v2.", utformat)
+norvasIndikator(prednisolon_6mnd_v2 |> filter(Aar<=rap_aar),
+                tittel = c("Andel pasienter med ANCA-assosiert vaskulitt",
+                           "på Prednisolon <= 5mg 6 måneder etter debut"),
+                maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
+# outfile <- paste0(figfolder, "lav_prednisolon_anca_aar_v1.", utformat)
+# norvasFigIndikatorAar(prednisolon_6mnd_v1 |> filter(Aar<=rap_aar),
+#                 tittel = c("Andel pasienter med ANCA-assosiert vaskulitt",
+#                            "på Prednisolon <= 5mg 6 måneder etter debut"),
+#                 maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
+# outfile <- paste0(figfolder, "lav_prednisolon_anca_aar_v2.", utformat)
+# norvasFigIndikatorAar(prednisolon_6mnd_v2 |> filter(Aar<=rap_aar),
+#                 tittel = c("Andel pasienter med ANCA-assosiert vaskulitt",
+#                            "på Prednisolon <= 5mg 6 måneder etter debut"),
+#                 maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
+
+
+
 @
 
 
 <<'Fig: andel pred.dose mindre enn 7.5, KERR:Storkarsvaskulitter', include=FALSE, echo=FALSE, eval=T, cache=FALSE, warning=F>>=
-prednisolon_6mnd <- Inklusjon %>%
-  select(Diagnose_ny_30,InklusjonDato, Inklusjonsaar, SkjemaGUID,
+prednisolon_6mnd_v1 <- Inklusjon %>%
+  select(Diagnose_ny_30,InklusjonDato, SkjemaGUID,
          Diag_gr_nr, Sykehusnavn, UnitId, PasientGUID, Diagnose_Klinisk_Dato) %>%
-  filter(Diagnose_ny_30 == 1 &
-           Diag_gr_nr==1 &
-           InklusjonDato <= datoTil) %>%
-  mutate(Ved_6mnd_int = lubridate::interval(
-    Diagnose_Klinisk_Dato %m+% months(6),
-    Diagnose_Klinisk_Dato %m+% months(8))) %>%
+  filter(Diag_gr_nr==1) %>%
+  mutate(
+    Ved_start_int = lubridate::interval(
+      Diagnose_Klinisk_Dato - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato + lubridate::weeks(4)),
+    Ved_6mnd_int = lubridate::interval(
+      Diagnose_Klinisk_Dato %m+% months(6) - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato %m+% months(6) + lubridate::weeks(4))) %>%
   merge(Medisiner %>% filter(LegemiddelGenerisk == "Prednisolon") %>%
           select(HovedskjemaGUID, Med_StartDato,
                  Med_SluttDato, Dose),
         by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
-  filter(Med_StartDato %within% Ved_6mnd_int) %>%
-  filter(Dose == min(Dose), .by = PasientGUID) %>%
-  filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
-           min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
-         .by = PasientGUID)
+  filter(Med_StartDato %within% Ved_6mnd_int |
+           Med_StartDato %within% Ved_start_int)
 
-Tabell <- prednisolon_6mnd %>%
-  dplyr::summarise(ant_pred_under_5 = sum(Dose <= 7.5),
-                   N = dplyr::n(),
-                   .by = Sykehusnavn) %>%
-  janitor::adorn_totals() %>%
-  dplyr::mutate(Andel = ant_pred_under_5/N*100) %>%
-  dplyr::mutate(Andel = ifelse(N < 5, NA, Andel)) %>%
-  dplyr::arrange(-Andel)
+start <- prednisolon_6mnd_v1 |>
+  filter(Med_StartDato %within% Ved_start_int) |>
+  dplyr::filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato)) ==
+                  min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato))),
+                .by = PasientGUID)
+v6mnd <- prednisolon_6mnd_v1 |>
+  filter(Med_StartDato %within% Ved_6mnd_int) |>
+  dplyr::filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
+                  min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
+                .by = PasientGUID)
 
+prednisolon_6mnd_v1 <- merge(
+  start |> select(PasientGUID, UnitId, Sykehusnavn, Diagnose_Klinisk_Dato, ),
+  v6mnd |> select(PasientGUID, Dose),
+  by = "PasientGUID") |>
+  mutate(Teller = as.numeric(Dose <= 7.5),
+         Nevner = 1,
+         Aar = lubridate::year(Diagnose_Klinisk_Dato),
+         ind_id = "norvas_anca_prednisolon")
+
+prednisolon_6mnd_v2 <- Inklusjon %>%
+  select(Diagnose_ny_30,InklusjonDato, SkjemaGUID,
+         Diag_gr_nr, Sykehusnavn, UnitId, PasientGUID, Diagnose_Klinisk_Dato) %>%
+  filter(Diag_gr_nr==1) %>%
+  mutate(
+    Ved_start_int = lubridate::interval(
+      Diagnose_Klinisk_Dato - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato + lubridate::weeks(4)),
+    Ved_6mnd_int = lubridate::interval(
+      Diagnose_Klinisk_Dato %m+% months(6) - lubridate::weeks(4),
+      Diagnose_Klinisk_Dato %m+% months(6) + lubridate::weeks(4))) %>%
+  merge(Medisiner %>% filter(LegemiddelGenerisk == "Prednisolon") %>%
+          select(HovedskjemaGUID, Med_StartDato,
+                 Med_SluttDato, Dose),
+        by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+  filter(Med_StartDato %within% Ved_6mnd_int) |>
+  dplyr::filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
+                  min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
+                .by = PasientGUID)|>
+  mutate(Teller = as.numeric(Dose <= 7.5),
+         Nevner = 1,
+         Aar = lubridate::year(Diagnose_Klinisk_Dato),
+         ind_id = "norvas_anca_prednisolon")
+
+
+# Tabell_v1 <- prednisolon_6mnd_v1 %>%
+#   summarise(Antall = sum(Teller),
+#             N = dplyr::n(),
+#             .by = c(Sykehusnavn, Aar)) %>%
+#   group_by(Aar) %>%
+#   group_modify(~ .x %>% janitor::adorn_totals()) %>%
+#   group_by(Sykehusnavn) %>%
+#   group_modify(~ .x %>% janitor::adorn_totals()) %>%
+#   # filter(Aar > rap_aar-3) |>
+#   tidyr::pivot_wider(names_from = Aar, values_from = c(Antall, N), names_sort = TRUE)
+# write.csv2(Tabell_v1, paste0(figfolder, "lav_prednisolon_anca_v1.csv"),
+#            row.names = F, fileEncoding = "Latin1", na = "")
+#
+# Tabell_v2 <- prednisolon_6mnd_v2 %>%
+#   summarise(Antall = sum(Teller),
+#             N = dplyr::n(),
+#             .by = c(Sykehusnavn, Aar)) %>%
+#   group_by(Aar) %>%
+#   group_modify(~ .x %>% janitor::adorn_totals()) %>%
+#   group_by(Sykehusnavn) %>%
+#   group_modify(~ .x %>% janitor::adorn_totals()) %>%
+#   # filter(Aar > rap_aar-3) |>
+#   tidyr::pivot_wider(names_from = Aar, values_from = c(Antall, N), names_sort = TRUE)
+# write.csv2(Tabell_v2, paste0(figfolder, "lav_prednisolon_anca_v2.csv"),
+#            row.names = F, fileEncoding = "Latin1", na = "")
 
 ################ Data til Resultatportalen ###################################
-ind_Andelstorvas_Prednisolon_NorVas_v2_kerr <- prednisolon_6mnd %>%
-  dplyr::select(Sykehusnavn, UnitId, Inklusjonsaar, Dose) %>%
-  dplyr::rename(Aar = Inklusjonsaar) %>%
-  dplyr::mutate(Teller = as.numeric(Dose <= 7.5)) %>%
-  dplyr::mutate(Nevner = 1)
-ind_Andelstorvas_Prednisolon_NorVas_v2_kerr$ind_id <- "norvas_storvas_prednisolon"
-Indikatorer <- ind_Andelstorvas_Prednisolon_NorVas_v2_kerr %>%
+
+Indikatorer <- prednisolon_6mnd_v1 %>%
   rename(year = Aar,
          var = Teller,
          denominator = Nevner) %>%
   select(UnitId, year, var, denominator, ind_id) %>%
   bind_rows(Indikatorer)
 
-
-figurdata <- ind_Andelstorvas_Prednisolon_NorVas_v2_kerr
-outfile <- paste0(figfolder, "lav_prednisolon_gvv_kerr.", utformat)
-norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
+outfile <- paste0(figfolder, "lav_prednisolon_gvv_v1.", utformat)
+norvasIndikator(prednisolon_6mnd_v1 |> filter(Aar<=rap_aar),
                 tittel = c("Andel pasienter med storkarsvaskulitt",
                            "på Prednisolon <= 7.5mg 6 måneder etter debut"),
                 maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
+outfile <- paste0(figfolder, "lav_prednisolon_gvv_v2.", utformat)
+norvasIndikator(prednisolon_6mnd_v2 |> filter(Aar<=rap_aar),
+                tittel = c("Andel pasienter med storkarsvaskulitt",
+                           "på Prednisolon <= 7.5mg 6 måneder etter debut"),
+                maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
+
+
+# prednisolon_6mnd <- Inklusjon %>%
+#   select(Diagnose_ny_30,InklusjonDato, Inklusjonsaar, SkjemaGUID,
+#          Diag_gr_nr, Sykehusnavn, UnitId, PasientGUID, Diagnose_Klinisk_Dato) %>%
+#   filter(Diagnose_ny_30 == 1 &
+#            Diag_gr_nr==1 &
+#            InklusjonDato <= datoTil) %>%
+#   mutate(Ved_6mnd_int = lubridate::interval(
+#     Diagnose_Klinisk_Dato %m+% months(6),
+#     Diagnose_Klinisk_Dato %m+% months(8))) %>%
+#   merge(Medisiner %>% filter(LegemiddelGenerisk == "Prednisolon") %>%
+#           select(HovedskjemaGUID, Med_StartDato,
+#                  Med_SluttDato, Dose),
+#         by.x = "SkjemaGUID", by.y = "HovedskjemaGUID") %>%
+#   filter(Med_StartDato %within% Ved_6mnd_int) %>%
+#   filter(Dose == min(Dose), .by = PasientGUID) %>%
+#   filter(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6))) ==
+#            min(abs(difftime(Med_StartDato, Diagnose_Klinisk_Dato %m+% months(6)))),
+#          .by = PasientGUID)
+#
+# Tabell <- prednisolon_6mnd %>%
+#   dplyr::summarise(ant_pred_under_5 = sum(Dose <= 7.5),
+#                    N = dplyr::n(),
+#                    .by = Sykehusnavn) %>%
+#   janitor::adorn_totals() %>%
+#   dplyr::mutate(Andel = ant_pred_under_5/N*100) %>%
+#   dplyr::mutate(Andel = ifelse(N < 5, NA, Andel)) %>%
+#   dplyr::arrange(-Andel)
+#
+#
+# ################ Data til Resultatportalen ###################################
+# ind7_Andelstorvas_Prednisolon_NorVas_kerr <- prednisolon_6mnd %>%
+#   dplyr::select(Sykehusnavn, UnitId, Inklusjonsaar, Dose) %>%
+#   dplyr::rename(Aar = Inklusjonsaar) %>%
+#   dplyr::mutate(Teller = as.numeric(Dose <= 7.5)) %>%
+#   dplyr::mutate(Nevner = 1)
+# ind7_Andelstorvas_Prednisolon_NorVas_kerr$ind_id <- "norvas_storvas_prednisolon"
+# Indikatorer <- ind7_Andelstorvas_Prednisolon_NorVas_kerr %>%
+#   rename(year = Aar,
+#          var = Teller,
+#          denominator = Nevner) %>%
+#   select(UnitId, year, var, denominator, ind_id) %>%
+#   bind_rows(Indikatorer)
+#
+#
+# figurdata <- ind7_Andelstorvas_Prednisolon_NorVas_kerr
+# outfile <- paste0(figfolder, "lav_prednisolon_gvv_kerr.", utformat)
+# norvasIndikator(figurdata[which(figurdata$Aar<=rap_aar),],
+                # tittel = c("Andel pasienter med storkarsvaskulitt",
+                #            "på Prednisolon <= 7.5mg 6 måneder etter debut"),
+                # maal = 60, minstekrav = 30, outfile = outfile, xmax = 100)
 @
 
 \clearpage
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_anca.pdf}
-\caption{Andel pasienter med ANCA-assosiert vaskulitt på Prednisolon $\leq$ 5mg 6 måneder etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}.  \\ Utvalg: Pasienter med ANCA-assosiert vaskulitt som enten er registrert inkludert som nysyk eller, hvis nysykvariabelen mangler, har diagnosedato innenfor $\pm$ 30 dager av inklusjonsdato samt har en registrering av prednisolon $\pm$ 2 måneder av 6 måneder etter diagnosedato. }
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_anca_v2.pdf}
+\caption{Andel pasienter med ANCA-assosiert vaskulitt på Prednisolon $\leq$ 5mg 6 måneder etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}.  \\ Utvalg: Pasienter med ANCA-assosiert vaskulitt som har en registrering av prednisolon 6 måneder $\pm$ 4 uker etter diagnosedato. }
 \end{figure}
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_gvv_kerr.pdf}
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_anca_v1.pdf}
+\caption{Andel pasienter med ANCA-assosiert vaskulitt på Prednisolon $\leq$ 5mg 6 måneder etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}.  \\ Utvalg: Pasienter med ANCA-assosiert vaskulitt som har en registrering av prednisolon ved diagnosedato $\pm$ 4 uker samt etter 6 måneder $\pm$ 4 uker etter diagnosedato.}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_gvv_v2.pdf}
 \caption{Andel pasienter med storkarsvaskulitt på Prednisolon $\leq$ 7.5mg 6 måneder
-etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}. \\ Utvalg: Pasienter med storkarsvaskulitt som enten er registrert inkludert som nysyk eller, hvis nysykvariabelen mangler, har diagnosedato innenfor $\pm$ 30 dager av inklusjonsdato samt har en registrering av prednisolon $\pm$ 2 måneder av 6 måneder etter diagnosedato. }
+etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}. \\ Utvalg: Pasienter som har en registrering av prednisolon $\pm$ 4 uker av 6 måneder etter diagnosedato. }
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}lav_prednisolon_gvv_v1.pdf}
+\caption{Andel pasienter med storkarsvaskulitt på Prednisolon $\leq$ 7.5mg 6 måneder
+etter debut. Gjelder alle år t.o.m. \Sexpr{rap_aar}. \\ Utvalg: Pasienter som har en registrering av prednisolon ved diagnosedato $\pm$ 4 uker samt registrering av prednisolon $\pm$ 4 uker av 6 måneder etter diagnosedato. }
 \end{figure}
 
 <<'Tab: Andel residiv', results='asis', echo=FALSE, warning=F>>=
@@ -2735,36 +3026,36 @@ if ( outfile != '') {dev.off()}
 
 <<'Nøkkeltall_norvas', results='asis', echo=FALSE, warning=F>>=
 
-nokkeltall <- Inklusjon %>%
-  group_by(Inklusjonsaar) %>%
-  summarise("Antall avdelinger" = length(unique(UnitId)),
-            "Antall inkluderte" = n(),
-            "Inklusjonsalder, gj.sn." = mean(Inklusjonsalder),
-            "Inklusjonsalder, median" = median(Inklusjonsalder),
-            "Andel kvinner" = sum(ErMann==0)/n()*100)
-
-# Diagnoser$Inklusjonsaar <- as.numeric(format(Diagnoser$InklusjonDato, "%Y"))
-# diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Diagnose) %>%
-#   summarise(Antall=n()) %>% spread(key = Inklusjonsaar, value = Antall, fill = NA)
-
-
-Indikatorer <- Indikatorer %>%
-  mutate(orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
-         context = "caregiver") %>%
-  select(-UnitId)
-
-dg_samlet <- read.csv2("~/norvas/doc/dg_norvas_tom2022_v2.csv")
-
-Indikatorer <- Indikatorer %>%
-  filter(ind_id %in% c("norvas_storvas_prednisolon", "norvas_anca_prednisolon",
-                       "norvas_storkar_remisjon", "norvas_anca_remisjon",
-                       "norvas_anca_ved_debut", "norvas_kerr", "norvas_bvas")) %>%
-  bind_rows(dg_samlet) %>%
-  dplyr::filter(year <= rap_aar)
-
-# write.csv2(Indikatorer, "~/GIT/norvas/doc/Indikatorer_tom2022.csv", row.names = F)
-
-write.csv2(Indikatorer, paste0("~/GIT/norvas/doc/Indikatorer_", Sys.Date(), ".csv"), row.names = F)
+# nokkeltall <- Inklusjon %>%
+#   group_by(Inklusjonsaar) %>%
+#   summarise("Antall avdelinger" = length(unique(UnitId)),
+#             "Antall inkluderte" = n(),
+#             "Inklusjonsalder, gj.sn." = mean(Inklusjonsalder),
+#             "Inklusjonsalder, median" = median(Inklusjonsalder),
+#             "Andel kvinner" = sum(ErMann==0)/n()*100)
+#
+# # Diagnoser$Inklusjonsaar <- as.numeric(format(Diagnoser$InklusjonDato, "%Y"))
+# # diag_tbl <- Diagnoser %>% group_by(Inklusjonsaar, Diagnose) %>%
+# #   summarise(Antall=n()) %>% spread(key = Inklusjonsaar, value = Antall, fill = NA)
+#
+#
+# Indikatorer <- Indikatorer %>%
+#   mutate(orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
+#          context = "caregiver") %>%
+#   select(-UnitId)
+#
+# dg_samlet <- read.csv2("~/norvas/doc/dg_norvas_tom2022_v2.csv")
+#
+# Indikatorer <- Indikatorer %>%
+#   filter(ind_id %in% c("norvas_storvas_prednisolon", "norvas_anca_prednisolon",
+#                        "norvas_storkar_remisjon", "norvas_anca_remisjon",
+#                        "norvas_anca_ved_debut", "norvas_kerr", "norvas_bvas")) %>%
+#   bind_rows(dg_samlet) %>%
+#   dplyr::filter(year <= rap_aar)
+#
+# # write.csv2(Indikatorer, "~/GIT/norvas/doc/Indikatorer_tom2022.csv", row.names = F)
+#
+# write.csv2(Indikatorer, paste0("~/GIT/norvas/doc/Indikatorer_", Sys.Date(), ".csv"), row.names = F)
 @
 
 

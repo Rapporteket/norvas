@@ -158,12 +158,16 @@ Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUI
 Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
 Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
-Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                            "Diag_gr", "Diagnose")],
-                   by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
+Inklusjon <- merge(
+  Inklusjon,
+  Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                "Diag_gr_nr", "Diag_gr", "Diagnose")],
+  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
 
-Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
-                   by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID') |>
+Diagnoser <- merge(
+  Diagnoser,
+  Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+  by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID') |>
   merge(Oppfolging, by = "PasientGUID", all.x = T)
 Diagnoser <- Diagnoser[Diagnoser$Diagnose_Klinisk_Dato  <= '2024-12-31' |
                          Diagnoser$InklusjonDato <= '2024-12-31', ]
@@ -178,7 +182,9 @@ write.csv2(
   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aktivitetsdata_norvas_2024.csv',
   row.names = F, fileEncoding = "Latin1")
 
-Kobling_norvas_pid_fn <- Inklusjon[Inklusjon$PasientGUID %in% Diagnoser$PasientGUID, c("PasientGUID", "PasientId")]
+Kobling_norvas_pid_fn <-
+  Inklusjon[Inklusjon$PasientGUID %in% Diagnoser$PasientGUID,
+            c("PasientGUID", "PasientId")]
 names(Kobling_norvas_pid_fn)[2] <- 'Fodselsnummer'
 
 write.csv2(

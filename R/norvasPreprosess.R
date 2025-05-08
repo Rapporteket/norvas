@@ -22,6 +22,9 @@ norvasPreprosess <- function(RegData) {
   RegData <- RegData %>% dplyr::mutate_at(flyttall, function(x){as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
   RegData <- RegData %>% dplyr::mutate_at(boolsk, function(x){as.logical(x)}) # Gjør booske variabler til logicals
 
+  ######### AD-HOC : Flytt ous hf til rh og konsolider drammen ############
+  RegData$UnitId[RegData$UnitId==4001031] <- 4210431
+  RegData$UnitId[RegData$UnitId==103300] <- 103725
   mapEnhet <- data.frame(
     UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
                103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
@@ -30,7 +33,7 @@ norvasPreprosess <- function(RegData) {
                     'Nordlandsykehuset', 'Levanger', 'Rikshospitalet',
                     'Drammen', 'Kristiansand', 'Betanien', 'Lillehammer',
                     'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
-                    'Moss', 'Stavanger', 'Drammen', 'OUS HF'))
+                    'Moss', 'Stavanger', 'Drammen', 'Rikshospitalet'))
   RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
   RegData$ErMann <- RegData$PatientGender
   RegData$ErMann[RegData$PatientGender==2] <- 0
