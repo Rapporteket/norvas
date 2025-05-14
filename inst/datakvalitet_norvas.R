@@ -123,31 +123,42 @@ Oppfolging3siste <- Oppfolging %>%
     Andel_Smerte_utfylt_2024 =
       ifelse(Sykehusnavn=="Total", Smerte_utfylt_2024/N_2024*100, Andel_Smerte_utfylt_2024))
 
-write.csv2(Oppfolging3siste, "~/GIT/norvas/doc/KompletthetProm3sisteaar.csv", row.names = F, fileEncoding = "Latin1")
+write.csv2(Oppfolging3siste,
+           "~/regdata/norvas/aarsrapp2024/KompletthetProm3sisteaar.csv",
+           row.names = F, fileEncoding = "Latin1")
 
-Kompletthet <- bind_rows(Kompletthet, data.frame(Variabel = c("Tretthet", "PasientGlobalSykdomsaktivitet", "Pasientsmerter"),
-                                                 Antall_utfylt = as.numeric(prom_utfylt[1:3]), N = rep(prom_utfylt[[4]], 3)))
+Kompletthet <- bind_rows(
+  Kompletthet,
+  data.frame(Variabel = c("Tretthet", "PasientGlobalSykdomsaktivitet",
+                          "Pasientsmerter"),
+             Antall_utfylt = as.numeric(prom_utfylt[1:3]),
+             N = rep(prom_utfylt[[4]], 3)))
 
 # Alvorlig_infeksjonrap_aar <- Alvorlig_infeksjon[which(format(Alvorlig_infeksjon$SelvrapportertAlvorligInfeksjon_Registrert_Dato, format="%Y") == rap_aar), ]
 
-nevner <- Inklusjon$SkjemaGUID[Inklusjon$Inklusjonsaar ==rap_aar & Inklusjon$Diag_gr_nr %in% 2:3]
+nevner <- Inklusjon$SkjemaGUID[Inklusjon$Inklusjonsaar ==
+                                 rap_aar & Inklusjon$Diag_gr_nr %in% 2:3]
 
 bp_v_inkl  <- Labskjemarap_aar[which(Labskjemarap_aar$HovedskjemaGUID %in% nevner), ]
 
-bp_v_inkl$hepatitt_samlet <-  rowSums(bp_v_inkl[, c("HepatittBCoreAntistoffpositiv", "HepatittBSurfaceAntistoffpositiv",
-                                                    "HepatittBSurfaceAntigenpositiv", "HepatittCAntistoffpositiv")] != -1)
+bp_v_inkl$hepatitt_samlet <-
+  rowSums(bp_v_inkl[, c("HepatittBCoreAntistoffpositiv", "HepatittBSurfaceAntistoffpositiv",
+                        "HepatittBSurfaceAntigenpositiv", "HepatittCAntistoffpositiv")] != -1)
 
 bp_v_inkl$hepatitt_samlet[bp_v_inkl$hepatitt_samlet>0] <- 1
 
-bp_v_inkl <- bp_v_inkl %>% group_by(PasientGUID) %>% summarise(hepatitt_test = max(hepatitt_samlet),
-                                                               N=n())
+bp_v_inkl <- bp_v_inkl %>% group_by(PasientGUID) %>%
+  summarise(hepatitt_test = max(hepatitt_samlet),
+            N=n())
 
 table(bp_v_inkl$hepatitt_test, useNA = 'ifany')
 
 andel_hepatestrap_aar <- sum(bp_v_inkl$hepatitt_test)/length(unique(nevner))*100
-Kompletthet <- bind_rows(Kompletthet, data.frame(Variabel = "Hepatitt_test",
-                                                 Antall_utfylt = sum(bp_v_inkl$hepatitt_test),
-                                                 N = length(unique(nevner))))
+Kompletthet <- bind_rows(
+  Kompletthet,
+  data.frame(Variabel = "Hepatitt_test",
+             Antall_utfylt = sum(bp_v_inkl$hepatitt_test),
+             N = length(unique(nevner))))
 
 
 tbquant <- Labskjemarap_aar[which(Labskjemarap_aar$HovedskjemaGUID %in% nevner), ]
@@ -232,7 +243,7 @@ vdi <- merge(Oppfolging, VDI[, c("Cataract", "PasientGUID", "VDI_Dato")],
 
 vdi_v2 <-
 
-Kompletthet <- bind_rows(Kompletthet, vdi)
+  Kompletthet <- bind_rows(Kompletthet, vdi)
 
 
 ########## Selvrapportert infeksjon ############################################
@@ -263,6 +274,6 @@ Kompletthet$Kompletthet <- Kompletthet$Antall_utfylt/Kompletthet$N*100
 
 
 
-write.csv2(Kompletthet, "~/GIT/norvas/doc/Kompletthet2023.csv", row.names = F,
+write.csv2(Kompletthet, "~/regdata/norvas/aarsrapp2024/Kompletthet2024.csv", row.names = F,
            fileEncoding = "Latin1")
 
