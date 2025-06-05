@@ -20,7 +20,8 @@ norvasFigFordelingGr(
   hentData = F,
   datovar = "InklusjonDato",
   aldervar = "PatientAge",
-  diag_gruppe = 99
+  diag_gruppe = 99,
+  grvar = NA
 )
 }
 \arguments{

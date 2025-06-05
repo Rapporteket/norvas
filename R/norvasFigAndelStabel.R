@@ -29,9 +29,23 @@
 #' @export
 #'
 
-norvasFigFordelingGr  <- function(RegData=0, valgtVar='ErMann', datoFra='2014-01-01', datoTil='2050-12-31',
-                              minald=0, maxald=130, erMann=99, outfile='', reshID, enhetsUtvalg=0, preprosess=F,
-                              valgtShus=c(''),hentData=F, datovar='InklusjonDato', aldervar='PatientAge', diag_gruppe=99)
+norvasFigFordelingGr  <- function(RegData=0,
+                                  valgtVar='ErMann',
+                                  datoFra='2014-01-01',
+                                  datoTil='2050-12-31',
+                                  minald=0,
+                                  maxald=130,
+                                  erMann=99,
+                                  outfile='',
+                                  reshID,
+                                  enhetsUtvalg=0,
+                                  preprosess=F,
+                                  valgtShus=c(''),
+                                  hentData=F,
+                                  datovar='InklusjonDato',
+                                  aldervar='PatientAge',
+                                  diag_gruppe=99,
+                                  grvar = NA)
 {
 
   ## Hvis spørring skjer fra R på server. ######################
@@ -46,8 +60,15 @@ norvasFigFordelingGr  <- function(RegData=0, valgtVar='ErMann', datoFra='2014-01
 
 
   ## Gjør utvalg basert på brukervalg (LibUtvalg)
-  norvasUtvalg <- norvasUtvalg(RegData=RegData, datoFra=datoFra, datoTil=datoTil, datovar=datovar, minald=minald,
-                               maxald=maxald, erMann=erMann, valgtShus=valgtShus, aldervar=aldervar,
+  norvasUtvalg <- norvasUtvalg(RegData=RegData,
+                               datoFra=datoFra,
+                               datoTil=datoTil,
+                               datovar=datovar,
+                               minald=minald,
+                               maxald=maxald,
+                               erMann=erMann,
+                               valgtShus=valgtShus,
+                               aldervar=aldervar,
                                diag_gruppe=diag_gruppe)
   RegData <- norvasUtvalg$RegData
   utvalgTxt <- norvasUtvalg$utvalgTxt
@@ -76,6 +97,7 @@ norvasFigFordelingGr  <- function(RegData=0, valgtVar='ErMann', datoFra='2014-01
   ## Preparer variabler for fremstilling i figur
   PlotParams <- norvasPrepvar(RegData=RegData, valgtVar=valgtVar)
   RegData <- PlotParams$RegData
+  if (!is.na(grvar)) {RegData$Gr <- RegData[, grvar]}
   PlotParams$RegData <- NA
 
   #-------------------------Beregninger-----------------------------------------

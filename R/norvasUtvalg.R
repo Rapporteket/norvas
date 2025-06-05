@@ -33,16 +33,25 @@ norvasUtvalg <- function(RegData,
   indMed <- indVarMed %i% indAld %i% indDato %i% indKj %i% indDiaggr
   RegData <- RegData[indMed,]
 
-  utvalgTxt <- c(paste0(datovar, ': ', min(RegData[, datovar], na.rm=T), ' til ', max(RegData[, datovar], na.rm=T)),
-                 if ((minald>0) | (maxald<130)) {
-                   paste0('Pasienter fra ', min(RegData$Alder, na.rm=T), ' til ', max(RegData$Alder, na.rm=T), ' år')},
-                 if (erMann %in% 0:1) {paste('Kjønn: ', c('Kvinner', 'Menn')[erMann+1], sep='')},
-                 if (diag_gruppe %in% 1:3) {paste0('Diagnosegruppe: ', c('Storkarsvaskulitt (LVV)',
-                                                                         'ANCA assosiert vaskulitt (AAV)', 'Andre')[diag_gruppe])},
-                 if (length(valgtShus)>1) {paste0('Valgte RESH: ', paste(as.character(valgtShus), collapse=', '))}
+  utvalgTxt <- c(
+    paste0(datovar, ': ', min(RegData[, datovar], na.rm=T), ' til ',
+           max(RegData[, datovar], na.rm=T)),
+    if ((minald>0) | (maxald<130)) {
+      paste0('Pasienter fra ', min(RegData$Alder, na.rm=T), ' til ',
+             max(RegData$Alder, na.rm=T), ' år')},
+    if (erMann %in% 0:1) {paste('Kjønn: ',
+                                c('Kvinner', 'Menn')[erMann+1], sep='')},
+    if (diag_gruppe %in% 1:3) {
+      paste0('Diagnosegruppe: ',
+             c('Storkarsvaskulitt (LVV)',
+               'ANCA assosiert vaskulitt (AAV)', 'Andre')[diag_gruppe])},
+    if (length(valgtShus)>1) {paste0('Valgte RESH: ',
+                                     paste(as.character(valgtShus), collapse=', '))}
   )
 
-  UtData <- list(RegData=RegData, utvalgTxt=utvalgTxt, fargepalett=fargepalett) #GronnHNpms624,
+  UtData <- list(RegData=RegData,
+                 utvalgTxt=utvalgTxt,
+                 fargepalett=fargepalett)
   return(invisible(UtData))
 }
 
