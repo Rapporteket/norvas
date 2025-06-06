@@ -123,7 +123,7 @@ enhetsUtvalg <- 0
 aldervar='DiagnoseAlder'
 diag_gruppe=99
 inkl_N=T
-utformat <- 'pdf'
+utformat <- 'svg'
 
 # outfile <- paste0(figfolder, 'diagnoser.', utformat)
 # norvasFigAndeler(RegData=RegData, valgtVar=valgtVar, datoFra = datoFra,
