@@ -535,25 +535,25 @@ norvarStabelGrvar(plotMatrise=plotMatrise,
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}registreringer.pdf}
-\caption{Antall inklusjoner per HF.}
+\caption{Antall inklusjoner per HF. \\ Filnavn: registreringer.pdf}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diaggr.pdf}
-\caption{Antall inklusjoner per HF og per diagnosegruppe. T.o.m. \Sexpr{rap_aar}}
+\caption{Antall inklusjoner per HF og per diagnosegruppe. T.o.m. \Sexpr{rap_aar}. \\ Filnavn: reg\_pr\_diaggr.pdf}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diaggr_nysyk.pdf}
-\caption{Antall inklusjoner per HF og per diagnosegruppe splittet på nysyke og de som er inkludert med etablert diagnose. T.o.m. \Sexpr{rap_aar}}
+\caption{Antall inklusjoner per HF og per diagnosegruppe splittet på nysyke og de som er inkludert med etablert diagnose. T.o.m. \Sexpr{rap_aar}. \\ Filnavn: reg\_pr\_diaggr\_nysyk.pdf}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\Sexpr{figstr}\textwidth]{\Sexpr{figfolder}reg_pr_diagnose.pdf}
-\caption{Antall inklusjoner per HF og per diagnose. T.o.m. \Sexpr{rap_aar}}
+\caption{Antall inklusjoner per HF og per diagnose. T.o.m. \Sexpr{rap_aar}. \\ Filnavn: reg\_pr\_diagnose.pdf}
 \end{figure}
 
 \begin{landscape}

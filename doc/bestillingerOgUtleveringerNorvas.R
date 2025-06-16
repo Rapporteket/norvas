@@ -84,6 +84,9 @@ Diagnoser <- norvasPreprosess(Diagnoser)
 Inklusjon <- Inklusjon |>
   filter(as.Date(InklusjonDato, format="%d.%m.%Y") < "2024-12-11")
 
+ettersend <- Medisiner[Medisiner$HovedskjemaGUID %in% Inklusjon$SkjemaGUID,
+                       c("SkjemaGUID", "FormDate")]
+
 Diagnoser <- Diagnoser[Diagnoser$DiagnoseNr %in% c(4,15) &
                          Diagnoser$HovedskjemaGUID %in% Inklusjon$SkjemaGUID, var_9]
 Inklusjon <- Inklusjon[Inklusjon$SkjemaGUID %in% Diagnoser$HovedskjemaGUID, var_1]
@@ -122,7 +125,8 @@ write.csv2(DiagnoseKriterier, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumen
            row.names = F, fileEncoding = "Latin1")
 write.csv2(Inklusjon, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/nokkelfil.csv",
            row.names = F, fileEncoding = "Latin1")
-
+write.csv2(Inklusjon, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/formdate_medisinskjema.csv",
+           row.names = F, fileEncoding = "Latin1")
 
 
 ## Tall til dekningsgradsanalyse 2024 ####################
