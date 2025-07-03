@@ -91,8 +91,33 @@ orgnr_table <-
     105776, 974754118,
     102977, 974557746
   )
+
+
 kobl_unitid_shusnavn_norvas <- merge(kobl_unitid_shusnavn_norvas, orgnr_table,
                                      by = "UnitId", all.x = TRUE)
+# orgnr_shus <-
+#   tibble::tribble(
+#     ~Sykehusnavn,   ~orgnr,
+#     "Drammen" , 974631326,
+#     "Haukeland" ,  974557746,
+#     "Lillehammer" , 985773238,
+#     "UNN" , 983974899,
+#     "Ålesund" , 974747138,
+#     "Ullevål sykehus" , 974589095,
+#     'Rikshospitalet' , 874716782,
+#     "Kristiansand" , 974733013,
+#     "Nordlandsykehuset" , 974795361,
+#     "Førde" , 974744570,
+#     "Betanien" , 981275721,
+#     "St. Olavs" , 974749025,
+#     "Haugesund" , 973156829,
+#     "Levanger" , 974754118,
+#     "Helgelandssykehuset" , 974795515,
+#     "Martina Hansen" , 985962170,
+#     'Moss' , 974633698,
+#     'Stavanger' , 974703300,
+#     'OUS HF' , 993467049
+#   )
 
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
@@ -3133,13 +3158,65 @@ if ( outfile != '') {dev.off()}
 # #   summarise(Antall=n()) |> spread(key = Inklusjonsaar, value = Antall, fill = NA)
 #
 #
-# Indikatorer <- Indikatorer |>
-#   mutate(orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
-#          context = "caregiver") |>
-#   select(-UnitId)
-#
-# dg_samlet <- read.csv2("~/norvas/doc/dg_norvas_tom2022_v2.csv")
-#
+Indikatorer <- Indikatorer |>
+  mutate(orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
+         context = "caregiver") |>
+  select(-UnitId)
+
+dg_gml <- read.csv2("~/regdata/norvas/beh_kval_2024.csv") |>
+  dplyr::filter(substr(ind_id, 1, 9) == "norvas_dg")
+
+kobling <- read.csv2("~/regdata/norvas/koblingsfil_2024.csv",
+                     fileEncoding = "Latin1") |>
+  dplyr::filter(UnitId %in% intersect(UnitId, Inklusjon$UnitId))
+dg_ny <- read.csv2(
+  "~/regdata/norvas/DGA_resultat_2025-05-20/DGA_resultat_landet_hf_diag_2025-05-20.csv",
+  fileEncoding = "Latin1") |>
+  dplyr::bind_rows(read.csv2(
+    "~/regdata/norvas/DGA_resultat_2025-05-20/DGA_resultat_hf_2025-05-20.csv",
+    fileEncoding = "Latin1") |> mutate(kode = "alle",
+                                       hf_nr = 0)) |>
+  dplyr::filter(!is.na(hf_nr)) |>
+  dplyr::mutate(
+    var = Begge + Kun_NorVas,
+    diag_gr = case_when(kode %in% c("I776", "M314", "M315_M316") ~ "LVV",
+                        kode %in% c("M301", "M313", "M317") ~ "ANCA",
+                        kode == "alle" ~ "Total")) |>
+  dplyr::summarise(var = sum(var),
+                   denominator = sum(Total),
+                   .by = c(diag_gr, hf_standard)) |>
+  merge(kobling[, c("hf_standard", "UnitId")], by = "hf_standard", all.x = T) |>
+  dplyr::select(-hf_standard) |>
+  dplyr::filter(!is.na(UnitId)) |>
+  # group_by(UnitId) |>
+  # group_modify(~ .x |> janitor::adorn_totals()) |>
+  # dplyr::ungroup() |>
+  dplyr::mutate(
+    ind_id = case_when(diag_gr == "ANCA" ~ "norvas_dg_anca",
+                       diag_gr == "LVV" ~ "norvas_dg_storkar",
+                       diag_gr == "Total" ~ "norvas_dg_alle"),
+    year = 2023,
+    orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
+    context = "caregiver") |>
+  dplyr::select(context, orgnr, year, var, denominator, ind_id)
+
+dg_ny <- dplyr::bind_rows(dg_ny,
+                          dg_ny |> mutate(year = 2024)) |>
+  dplyr::bind_rows(dg_gml)
+
+Indikatorer <- dplyr::bind_rows(Indikatorer, dg_ny) |>
+  dplyr::filter(!(ind_id %in% c('norvas_andel_utredet_GCA',
+                                'norvas_andel_ulctmr_storkar',
+                                'norvas_andel_ctmr_bihuler_anca',
+                                'norvas_andel_ct_thorax_anca',
+                                'norvas_minimum_2oppf')))
+write.csv2(Indikatorer,
+           paste0("~/regdata/norvas/behandlingskvalitet/Indikatorer_", Sys.Date(), ".csv"),
+           row.names = F)
+
+# tmp <- dg_ny |> filter(year==2024,
+#                        ind_id == "norvas_dg_alle")
+
 # Indikatorer <- Indikatorer |>
 #   filter(ind_id %in% c("norvas_storvas_prednisolon", "norvas_anca_prednisolon",
 #                        "norvas_storkar_remisjon", "norvas_anca_remisjon",

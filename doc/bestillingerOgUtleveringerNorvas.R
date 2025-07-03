@@ -123,9 +123,7 @@ write.csv2(Pasientsvar, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/re
            row.names = F, fileEncoding = "Latin1")
 write.csv2(DiagnoseKriterier, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/DiagnoseKriterierskjema.csv",
            row.names = F, fileEncoding = "Latin1")
-write.csv2(Inklusjon, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/nokkelfil.csv",
-           row.names = F, fileEncoding = "Latin1")
-write.csv2(Inklusjon, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/formdate_medisinskjema.csv",
+write.csv2(ettersend, "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/utlevering_skaug_mars_2025/formdate_medisinskjema.csv",
            row.names = F, fileEncoding = "Latin1")
 
 
