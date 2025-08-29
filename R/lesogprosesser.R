@@ -9,59 +9,110 @@
 lesogprosesser <- function(rap_aar = 2024,
                            fjern_andre_diagnoser = TRUE) {
 
+  # Inklusjon <- read.table(
+  #   "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Inklusjonskjema_2025-03-24_1014_anonym.csv",
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Oppfolging <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_OppfølgingSkjema_2025-03-24_1018.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Diagnoser <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_DiagnoseSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Medisiner <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_MedisineringSkjema_2025-03-24_1018.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # BVAS <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_BvasSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # KERR <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # VDI <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_VdiSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Labskjema <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Komorbid <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_KomorbidTilstandSkjema_2025-03-24_1018.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Pasientsvar <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Svar+fra+pasienten_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # DiagnoseKriterier <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";",
+  #   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Alvorlig_infeksjon <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # Utredning <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Utredning_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  # VaskulittIntervensjon <- read.table(
+  #   'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2025-03-24_1019.csv',
+  #   header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Inklusjon <- read.table(
-    "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Inklusjonskjema_2025-03-24_1014_anonym.csv",
+    "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-08-29_0950.csv",
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Oppfolging <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_OppfølgingSkjema_2025-03-24_1018.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Diagnoser <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_DiagnoseSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Medisiner <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_MedisineringSkjema_2025-03-24_1018.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   BVAS <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_BvasSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   KERR <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-08-29_0951.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   VDI <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_VdiSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_VdiSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Labskjema <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Komorbid <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_KomorbidTilstandSkjema_2025-03-24_1018.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_KomorbidTilstandSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Pasientsvar <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Svar+fra+pasienten_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_Svar+fra+pasienten_2025-08-29_0951.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   DiagnoseKriterier <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2025-08-29_0951.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Alvorlig_infeksjon <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   Utredning <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_Utredning_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_Utredning_2025-08-29_0950.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   VaskulittIntervensjon <- read.table(
-    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2025-03-24_1019.csv',
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
   Oppfolging <- norvas::norvasPreprosess(Oppfolging)
