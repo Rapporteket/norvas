@@ -77,6 +77,14 @@ lesogprosesser <- function(rap_aar = 2024,
     'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";",
     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  MedisinerHistorisk <- read.table(
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringHistoriskDoseSkjema_2025-08-29_0951.csv',
+    header=TRUE, sep=";",
+    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  MedisinerInfusjonslogg <- read.table(
+    'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2025-08-29_0951.csv',
+    header=TRUE, sep=";",
+    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
   BVAS <- read.table(
     'C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2025-08-29_0950.csv',
     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')

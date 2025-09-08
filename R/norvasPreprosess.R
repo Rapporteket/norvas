@@ -168,8 +168,10 @@ norvasPreprosess <- function(RegData) {
     RegData <- RegData[RegData$LegemiddelNr != 17, ] ## Folsyre fjernes
     RegData <- RegData[!is.na(RegData$Med_StartDato), ]
     #
-    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType2022' & kodebok_norvas$skjema == 'MedisineringSkjema'):
-      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2022' & varnavn$skjema == 'MedisineringSkjema')+1])-1)
+    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType2022' &
+                                kodebok_norvas$skjema == 'MedisineringSkjema'):
+      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2022' &
+                                                                         varnavn$skjema == 'MedisineringSkjema')+1])-1)
     kobl_generisknavn_kode <- data.frame(kode=as.numeric(kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
                                          label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
     kobl_generisknavn_kode_2022 <- kobl_generisknavn_kode #
