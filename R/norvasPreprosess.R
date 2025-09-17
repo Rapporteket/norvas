@@ -168,37 +168,31 @@ norvasPreprosess <- function(RegData) {
     RegData <- RegData[RegData$LegemiddelNr != 17, ] ## Folsyre fjernes
     RegData <- RegData[!is.na(RegData$Med_StartDato), ]
     #
-    indekser_kodebok <- which(kodebok_norvas$Variabelnavn == 'LegemiddelType2022' &
-                                kodebok_norvas$skjema == 'MedisineringSkjema'):
-      (which(kodebok_norvas$Variabelnavn == varnavn$Variabelnavn[which(varnavn$Variabelnavn=='LegemiddelType2022' &
-                                                                         varnavn$skjema == 'MedisineringSkjema')+1])-1)
-    kobl_generisknavn_kode <- data.frame(kode=as.numeric(kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
-                                         label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
-    kobl_generisknavn_kode_2022 <- kobl_generisknavn_kode #
-    kobl_generisknavn_kode <- kobl_generisknavn_kode %>%
-      dplyr::mutate(label = dplyr::case_when(
-        kode == 18 ~ "Azatioprin",
-        kode == 20 ~ "Metotreksat",
-        kode == 32 ~ "Mykofenolsyre",
-        kode == 5 ~ "Infliksimab",
-        kode == 40 ~ "Rituksimab",
-        kode == 26 ~ "Syklofosfamid",
-        kode == 36 ~ "Immunglobulin",
-        .default = label
-      ))
+    indekser_kodebok <- which(
+      kodebok_norvas$Variabelnavn == 'LegemiddelType2023' &
+        kodebok_norvas$skjema == 'MedisineringSkjema'):
+      (which(kodebok_norvas$Variabelnavn ==
+               varnavn$Variabelnavn[
+                 which(varnavn$Variabelnavn=='LegemiddelType2023' &
+                         varnavn$skjema == 'MedisineringSkjema')+1])-1)
+    kobl_generisknavn_kode <- data.frame(kode=as.numeric(
+      kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
+      label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
+
     gml_medisinnr <- which(RegData$LegemiddelType2019 != "")
-    RegData$LegemiddelNr[gml_medisinnr] <- as.numeric(norvas::mapping_med$ny_nr[match(RegData$LegemiddelNr[gml_medisinnr],
-                                                                                      norvas::mapping_med$gml_nr)])
-    ny_medisinnr <- which(RegData$LegemiddelType2022 != "")
-    RegData$LegemiddelType2022[RegData$LegemiddelType2022 %in% "MycofenolatMofetil"] <- "Mycofenolat mofetil"
-    RegData$LegemiddelNr[ny_medisinnr] <- kobl_generisknavn_kode_2022$kode[match(RegData$LegemiddelType2022[ny_medisinnr],
-                                                                                 kobl_generisknavn_kode_2022$label)]
+    RegData$LegemiddelNr[gml_medisinnr] <- as.numeric(
+      norvas::mapping_med$ny_nr[match(RegData$LegemiddelNr[gml_medisinnr],
+                                      norvas::mapping_med$gml_nr)])
     RegData$LegemiddelGenerisk <- NA
-    RegData$LegemiddelGenerisk<- kobl_generisknavn_kode$label[match(RegData$LegemiddelNr, kobl_generisknavn_kode$kode)]
-    RegData$LegemiddelTypeLabel <- factor(RegData$LegemiddelNr, levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
-                                          labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
+    RegData$LegemiddelGenerisk<- kobl_generisknavn_kode$label[
+      match(RegData$LegemiddelNr, kobl_generisknavn_kode$kode)]
+    RegData$LegemiddelTypeLabel <- factor(
+      RegData$LegemiddelNr,
+      levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
+      labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
     RegData$Medikamentgruppe[RegData$Medikamentgruppe == ""] <- "Andre"
-    RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
+    RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[
+      match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
 
     tmp <- RegData %>%
       dplyr::group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
@@ -207,8 +201,8 @@ norvasPreprosess <- function(RegData) {
                          min(Med_SluttDato, na.rm = T)} else {NA},
                        SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {SkjemaGUID[1]}
                        else {SkjemaGUID[which(Med_SluttDato == Med_SluttDato_min)[1]]})
-
-    RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")], by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
+    RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")],
+                     by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
   }
 
   if ('BvasPersistentTotal' %in% names(RegData)){

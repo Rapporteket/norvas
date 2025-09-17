@@ -18,11 +18,11 @@ norvasskjemanavn <- c('Inklusjonskjema', 'OppfølgingSkjema', 'MedisineringSkjem
                       'SelvrapportertAlvorligInfek', 'KerrsKriterierSkjema', 'MedisineringHistoriskDoseSk',
                       'MedisineringInfusjonsLoggSk', 'Svar fra pasienten', 'Diagnosekriterierskjema')
 
-kodebok_norvas <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_norvas_11042023v2.xlsx'), package = 'norvas'), sheet = 1)
+kodebok_norvas <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_norvas_15092025v2.xlsx'), package = 'norvas'), sheet = 1)
 kodebok_norvas$skjema <- norvasskjemanavn[1]
 
 for (p in 2:length(norvasskjemanavn)) {
-  aux <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_norvas_11042023v2.xlsx'), package = 'norvas'), sheet = p)
+  aux <- readxl::read_excel(system.file(file.path('extdata', 'kodebok_norvas_15092025v2.xlsx'), package = 'norvas'), sheet = p)
   aux$skjema <- norvasskjemanavn[p]
   kodebok_norvas <- dplyr::bind_rows(kodebok_norvas, aux)
 }

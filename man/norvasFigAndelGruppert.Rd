@@ -10,11 +10,17 @@ norvasFigAndelGruppert(
   grvar = NA,
   tittel = "",
   skriftStr = 1.3,
-  pktStr = 1.4,
   decreasing = F,
   outfile = "",
   width = 800,
-  height = 700
+  height = 700,
+  mrom = 0.3,
+  datoFra = "2000-01-01",
+  datoTil = "2050-01-01",
+  datovar = "InklusjonDato",
+  minald = 0,
+  maxald = 130,
+  aldervar = "PatientAge"
 )
 }
 \arguments{
@@ -22,6 +28,14 @@ norvasFigAndelGruppert(
 
 \item{outfile}{Navn på fil figuren skrives til. Default: '' (Figur skrives
 til systemets default output device (som regel skjerm))}
+
+\item{datoFra}{Tidligste dato i utvalget (vises alltid i figuren).}
+
+\item{datoTil}{Seneste dato i utvalget (vises alltid i figuren).}
+
+\item{minald}{Alder, fra og med (Default: 0)}
+
+\item{maxald}{Alder, til og med (Default: 130)}
 }
 \value{
 En figur med søylediagram over valgt variabel
