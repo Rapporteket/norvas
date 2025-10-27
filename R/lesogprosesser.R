@@ -186,7 +186,7 @@ lesogprosesser <- function(rap_aar = 2024,
                                               "Diag_gr", "Diagnose", "ICD10")],
                      by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
   if (fjern_andre_diagnoser) {
-    Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr != 3)
+    Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr %in% 1:2)
   }
 
   BVAS <- merge(BVAS, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],

@@ -8,6 +8,26 @@ library(lubridate)
 library(dplyr)
 rm(list = ls())
 
+## Uttrekk pasienter til validering Helseplattformen ######################
+
+Inklusjon <- read.table(
+  "C:/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-10-02_1411.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Oppfolging <- read.table(
+  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-10-02_1411.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Diagnoser <- read.table(
+  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-02_1412.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+
+
+
+
+
 ## Hans Kristian Skaug 24. mars 2025 #############################
 variabler <- read.table(
   "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/Variabler_til_uttrekk_Liste.csv",
