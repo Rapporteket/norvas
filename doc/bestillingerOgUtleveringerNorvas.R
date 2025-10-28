@@ -11,21 +11,360 @@ rm(list = ls())
 ## Uttrekk pasienter til validering Helseplattformen ######################
 
 Inklusjon <- read.table(
-  "C:/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-10-02_1411.csv",
+  "C:/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-10-23_1539.csv",
   header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) #|>
+# norvas::norvasPreprosess()
+Inklusjon_fnr <- read.table(
+  "C:/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-10-27_0906.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM',
+  colClasses = c('PasientId'='character')) |>
+  dplyr::rename(PasientGUID = Fødselsnummer,
+                Fnr = PasientId) |>
+  dplyr::filter(UnitId == 104579) |>
+  dplyr::select(PasientGUID, Fnr)
 Oppfolging <- read.table(
-  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-10-02_1411.csv',
+  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-10-23_1540.csv',
   header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) |>
+  norvas::norvasPreprosess()
 Diagnoser <- read.table(
-  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-02_1412.csv',
+  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-23_1539.csv',
   header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) #|>
+
+
+Inklusjon |>
+  filter(!(SkjemaGUID %in% Diagnoser$HovedskjemaGUID)) |>
+  openxlsx::write.xlsx(
+    "C:/regdata/norvas/validering_helseplattform/mangler_diagnose.xlsx"
+  )
+Inklusjon |>
+  filter(SkjemaGUID %in% Diagnoser$HovedskjemaGUID) |>
+  openxlsx::write.xlsx(
+    "C:/regdata/norvas/validering_helseplattform/har_diagnose.xlsx"
+  )
+Diagnoser|>
+  openxlsx::write.xlsx(
+    "C:/regdata/norvas/validering_helseplattform/diagnoser_alle.xlsx"
+  )
+
+
+Inklusjon <- norvas::norvasPreprosess(Inklusjon)
+Diagnoser <- Diagnoser |>
+  dplyr::mutate(Diagnose_gml = Diagnose) |>
+  norvas::norvasPreprosess()
+
+
+oppf_oppsum <- Oppfolging |>
+  summarise(
+    ant_oppf = n(),
+    ekskl_arsak = max(EksklusjonsArsak, na.rm = T),
+    ekskl_dato = ifelse(ekskl_arsak==-1, NA, max(EksklusjonsDato, na.rm = T)) |> as.Date(),
+    nyeste_oppf = max(OppfolgingsDato),
+    .by = PasientGUID
+  )
+
+
+Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
+Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
+
+Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+                   by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
+Inklusjon <- merge(
+  Inklusjon,
+  Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
+                "Diag_gr", "Diagnose", "Diagnose_gml", "DiagnoseNr", "ICD10", "Icd")],
+  by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T
+) |>
+  merge(oppf_oppsum, by = "PasientGUID", all.x = TRUE) |>
+  filter(ekskl_dato >= "2022-11-12" | ekskl_arsak == -1)
 
 
 
+ant_sample <- 10
+set.seed(66)
 
+sample_storkar_menn_foer_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 1,
+                PatientGender == 1,
+                InklusjonDato < "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_storkar_menn_etter_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 1,
+                PatientGender == 1,
+                InklusjonDato >= "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_storkar_kvinner_foer_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 1,
+                PatientGender == 2,
+                InklusjonDato < "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_storkar_kvinner_etter_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 1,
+                PatientGender == 2,
+                InklusjonDato >= "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_anca_menn_foer_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 2,
+                PatientGender == 1,
+                InklusjonDato < "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_anca_menn_etter_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 2,
+                PatientGender == 1,
+                InklusjonDato >= "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_anca_kvinner_foer_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 2,
+                PatientGender == 2,
+                InklusjonDato < "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_anca_kvinner_etter_hp <- Inklusjon |>
+  dplyr::filter(Diag_gr_nr == 2,
+                PatientGender == 2,
+                InklusjonDato >= "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample))
+sample_udiag_menn_foer_hp <- Inklusjon |>
+  dplyr::filter(!(Diag_gr_nr %in% 1:2),
+                PatientGender == 1,
+                InklusjonDato < "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample/2))
+sample_udiag_menn_etter_hp <- Inklusjon |>
+  dplyr::filter(!(Diag_gr_nr %in% 1:2),
+                PatientGender == 1,
+                InklusjonDato >= "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample/2))
+sample_udiag_kvinner_foer_hp <- Inklusjon |>
+  dplyr::filter(!(Diag_gr_nr %in% 1:2),
+                PatientGender == 2,
+                InklusjonDato < "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample/2))
+sample_udiag_kvinner_etter_hp <- Inklusjon |>
+  dplyr::filter(!(Diag_gr_nr %in% 1:2),
+                PatientGender == 2,
+                InklusjonDato >= "2022-11-12") |>
+  dplyr::select(PasientGUID) |> unlist() %>%
+  sample(min(length(.), ant_sample/2))
+
+
+inkluderte <- c(sample_storkar_menn_foer_hp,
+                sample_storkar_menn_etter_hp,
+                sample_storkar_kvinner_foer_hp,
+                sample_storkar_kvinner_etter_hp,
+                sample_anca_menn_foer_hp,
+                sample_anca_menn_etter_hp,
+                sample_anca_kvinner_foer_hp,
+                sample_anca_kvinner_etter_hp,
+                sample_udiag_menn_foer_hp,
+                sample_udiag_menn_etter_hp,
+                sample_udiag_kvinner_foer_hp,
+                sample_udiag_kvinner_etter_hp)
+
+til_validering <- Inklusjon |>
+  merge(Inklusjon_fnr, by = "PasientGUID") |>
+  dplyr::filter(PasientGUID %in% inkluderte) |>
+  select(PasientGUID, Fnr, PatientGender, PatientAge,
+         Diag_gr, Diagnose, DiagnoseNr,
+         ICD10, InklusjonDato, ant_oppf, nyeste_oppf,
+         ekskl_arsak, ekskl_dato)
+
+openxlsx::write.xlsx(
+  til_validering,
+  "C:/regdata/norvas/validering_helseplattform/til_validering.xlsx"
+)
+
+hjelpenr_mann_u_alder <- dplyr::tibble(
+  hjelpenr = c(80000700952, 80001811081, 80001362813, 80001892715, 80001609959,
+    80001463113, 80001786753, 80000288822, 80001174693, 80000447262,
+    80000340506, 80001352265, 80002289753, 80001320509, 80001914654,
+    80000085158, 80001869039, 80001594773, 80002068145, 80002386546,
+    80001986795, 80001400170, 80002291944, 80001815184, 80000654543,
+    80002287742, 80001088304, 80001113813, 80001809648, 80000599550,
+    80000386913, 80000261223, 80001535319, 80000350064, 80002103374,
+    80000052012, 80001130025, 80001136139, 80002282341, 80000111108,
+    80001178605, 80002361381, 80001709031, 80001722836, 80000112406,
+    80001330733, 80000331256, 80002363716, 80001843838, 80001704811),
+  alder = NA, kjonn = "M")
+
+hjelpenr_hodepine <- tribble(
+  ~rad1, ~rad2, ~hjelpenr, ~alder, ~kjonn,
+  "Test", "Person20",	80166579078,	56,	"k",
+  "Test", "Person21",	80165035082,	51,	"k",
+  "Test", "Person22",	80165407664,	63,	"m",
+  "Test", "Person23",	80165494915,	49,	"m",
+  "Test", "Person24",	80165747910,	61,	"M",
+  "Test", "Person25",	80164959817,	71,	"M",
+  "Test", "Person26",	80165011892,	63,	"M",
+  "Test", "Person27",	80165697832,	48,	"K",
+  "Test", "Person28",	80166423868,	43,	"K",
+  "Test", "Person29",	80166922473,	50,	"m") |>
+  dplyr::select(hjelpenr, alder, kjonn)
+
+hjelpenr_als <- tribble(
+  ~rad1, ~rad2, ~hjelpenr, ~alder, ~kjonn,
+"Test", "Person1	",80166425011,	71,	"k",
+"Test", "Person2	",80166503691,	53,	"M",
+"Test", "Person3	",80166128459,	65,	"M",
+"Test", "Person4	",80166938035,	50,	"K",
+"Test", "Person5	",80165282152,	60,	"M",
+"Test", "Person11",	80165032601,	70,	"k",
+"Test", "Person7	",80164717651,	69,	"M",
+"Test", "Person8	",80164653327,	54,	"M",
+"Test", "Person9	",80165798647,	63,	"K",
+"Test", "Person10",	80164719824,	61,	"K") |>
+  dplyr::select(hjelpenr, alder, kjonn)
+
+hjelpenr_traume <- tribble(
+  ~rad1, ~hjelpenr, ~alder, ~kjonn,
+"Testpasient,01,Traume", 80165483301, 51, "m",
+"Testpasient,02,Traume", 80166939171, 4,  "m",
+"Testpasient,03,Traume", 80165357233, 66, "k",
+"Testpasient,04,Traume", 80166424309, 27, "m",
+"Testpasient,05,Traume", 80166313450, 87, "k",
+"Testpasient,06,Traume", 80166511562, 35, "m",
+"Testpasient,07,Traume", 80165162963, 20, "m",
+"Testpasient,08,Traume", 80165265517, 70, "m",
+"Testpasient,09,Traume", 80166795285, 86, "m",
+"Testpasient,10,Traume", 80166501338, 24, "m",
+"Testpasient,11,Traume", 80166694632, 61, "m",
+"Testpasient,12,Traume", 80164959221, 63, "m",
+"Testpasient,13,Traume", 80165774004, 81, "m",
+"Testpasient,14,Traume", 80165058902, 19, "k",
+"Testpasient,15,Traume", 80166031099, 58, "k",
+"Testpasient,16,Traume", 80165039851, 32, "m",
+"Testpasient,17,Traume", 80166121209, 81, "m",
+"Testpasient,18,Traume", 80165588480, 86, "k",
+"Testpasient,19,Traume", 80165599660, 83, "m",
+"Testpasient,20,Traume", 80166677320, 95, "k") |>
+  dplyr::select(hjelpenr, alder, kjonn)
+
+hjelpenr <- dplyr::bind_rows(
+  hjelpenr_als, hjelpenr_hodepine, hjelpenr_mann_u_alder, hjelpenr_traume
+) |> dplyr::mutate(kjonn = toupper(kjonn))
+
+hjelpenr_vasket <- bind_rows(
+  hjelpenr[which(hjelpenr$kjonn == "M")[1:45], ],
+  hjelpenr |> filter(kjonn == "K")
+)
+
+til_validering <- til_validering |>
+  arrange(PatientGender)
+
+
+til_validering_utvalg <- bind_cols(
+  til_validering[1:60, ],
+  hjelpenr_vasket
+  ) |>
+  relocate(hjelpenr)
+
+resten_kvinner <- til_validering[61:94, ]
+ubrukte_hjelpenr <- hjelpenr[which(hjelpenr$kjonn == "M")[46:75], ]
+
+openxlsx::write.xlsx(
+  til_validering_utvalg,
+  "C:/regdata/norvas/validering_helseplattform/til_validering_m_hjelpenr.xlsx"
+)
+openxlsx::write.xlsx(
+  resten_kvinner,
+  "C:/regdata/norvas/validering_helseplattform/resterende_kvinner.xlsx"
+)
+openxlsx::write.xlsx(
+  ubrukte_hjelpenr,
+  "C:/regdata/norvas/validering_helseplattform/ubrukte_hjelpenr.xlsx"
+)
+
+
+
+# til_validering <- til_validering |>
+#   dplyr::mutate(kjonn = ifelse(PatientGender == 1, "M", "F")) |>
+#   dplyr::rename(alder = PatientAge,
+#                 id = PasientGUID)
+#
+# closest_match <- function(row, df2) {
+#   df2_filtered <- df2 %>% filter(kjonn == row$kjonn)
+#   df2_filtered %>%
+#     mutate(age_diff = abs(alder - row$alder)) %>%
+#     slice_min(age_diff, n = 1) %>%
+#     mutate(hjelpenr = row$hjelpenr)  # retain original id
+# }
+# matched_df <- til_validering %>%
+#   split(.$id) %>%
+#   purrr::map_dfr(~ closest_match(.x, hjelpenr))
+#
+# flere_diagnoser <- Diagnoser |>
+#   dplyr::mutate(Diagnose_Klinisk_Dato = as.Date(Diagnose_Klinisk_Dato, format="%d.%m.%Y")) |>
+#   dplyr::arrange(Diagnose_Klinisk_Dato) |>
+#   dplyr::summarise(
+#     N = n(),
+#     diagnose = paste0(Diagnose, collapse = ";"),
+#     icd10 = paste0(Icd, collapse = ";"),
+#     diag_dato = paste0(Diagnose_Klinisk_Dato, collapse = ";"),
+#     diag_nr = paste0(DiagnoseNr, collapse = ";"),
+#     .by = PasientGUID) |>
+#   dplyr::filter(N>1) |>
+#   arrange(desc(N)) |>
+#   tidyr::separate(diagnose, into = c("Diagnose1", "Diagnose2", "Diagnose3"), sep = ";") |>
+#   tidyr::separate(icd10, into = c("icd10_1", "icd10_2", "icd10_3"), sep = ";") |>
+#   tidyr::separate(diag_dato, into = c("diag_dato1", "diag_dato2", "diag_dato3"), sep = ";") |>
+#   tidyr::separate(diag_nr, into = c("diag_nr1", "diag_nr2", "diag_nr3"), sep = ";")
+#
+# tmp1 <- Diagnoser |> summarise(N = length(unique(Icd)),
+#                                icd10 = paste0(unique(Icd), collapse = ";"),
+#                                .by = Diagnose)
+# tmp2 <- Diagnoser |> summarise(N = length(unique(Diagnose)),
+#                                diagnose = paste0(unique(Diagnose), collapse = ";"),
+#                                .by = Icd) |>
+#   tidyr::separate(diagnose, into = paste0("Diagnose", 1:5), sep = ";") |>
+#   arrange(desc(N)) |>
+#   select(-N)
+#
+# tmp3 <- Diagnoser_prosessert |>
+#   summarise(N = length(unique(Icd)),
+#             ICD = paste0(unique(Icd), collapse = ";"),
+#             .by = ICD10) |>
+#   tidyr::separate(ICD, into = paste0("ICD", 1:9), sep = ";") |>
+#   arrange(desc(N))
+#
+# tmp <-Diagnoser_prosessert |> filter(is.na(ICD10) & Icd == "M316")
+#
+#
+# nye_diagnoser <- Diagnoser_prosessert |>
+#   dplyr::mutate(Diagnose_Klinisk_Dato = as.Date(Diagnose_Klinisk_Dato, format="%d.%m.%Y")) |>
+#   dplyr::arrange(Diagnose_Klinisk_Dato) |>
+#   dplyr::summarise(
+#     N = length(unique(Diagnose)),
+#     diagnose = paste0(unique(Diagnose), collapse = ";"),
+#     icd10 = paste0(unique(ICD10), collapse = ";"),
+#     diag_dato = paste0(Diagnose_Klinisk_Dato, collapse = ";"),
+#     diag_nr = paste0(unique(DiagnoseNr), collapse = ";"),
+#     .by = PasientGUID) |>
+#   dplyr::filter(N>1) |>
+#   arrange(desc(N)) |>
+#   tidyr::separate(diagnose, into = c("Diagnose1", "Diagnose2", "Diagnose3"), sep = ";") |>
+#   tidyr::separate(icd10, into = c("icd10_1", "icd10_2", "icd10_3"), sep = ";") |>
+#   tidyr::separate(diag_dato, into = c("diag_dato1", "diag_dato2", "diag_dato3"), sep = ";") |>
+#   tidyr::separate(diag_nr, into = c("diag_nr1", "diag_nr2", "diag_nr3"), sep = ";")
+#
+# openxlsx::write.xlsx(
+#   flere_diagnoser,
+#   "C:/regdata/norvas/validering_helseplattform/flere_diagnoser.xlsx"
+# )
 
 
 ## Hans Kristian Skaug 24. mars 2025 #############################
