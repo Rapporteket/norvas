@@ -1,6 +1,7 @@
 ---
 title: "Variabelkompletthet Norvas"
-format: html
+format: html:
+  embed-resources: true
 ---
 
 ```{r "Last data", echo=FALSE, warning=FALSE, echo=FALSE, message=FALSE}
