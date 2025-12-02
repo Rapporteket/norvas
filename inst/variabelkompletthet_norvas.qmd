@@ -58,15 +58,29 @@ kompletthet_blodprove <- Labskjema |>
 
 ```{r "PROM ved oppfølging", echo=FALSE}
 Oppfolging3siste <- Oppfolging %>%
-  mutate(Aar = Oppfolgingsaar) %>%
-  select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, 
-         Pasientsmerter) %>%
+  mutate(Aar = Oppfolgingsaar,
+         Dato = OppfolgingsDato) %>%
+  select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
+         PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
   filter(Aar %in% (rap_aar-2):rap_aar) %>%
   bind_rows(
     Inklusjon %>%
-      mutate(Aar = Inklusjonsaar) %>%
-      select(Sykehusnavn, Aar, Tretthet, PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
+      mutate(Aar = Inklusjonsaar,
+             Dato = InklusjonDato) %>%
+      select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
+             PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
       filter(Aar %in% (rap_aar-2):rap_aar)) %>%
+  merge(Pasientsvar |> select(PasientGUID, FormDate, Prom_Tretthet,
+                              Prom_PasientGlobalSykdomsaktivitet,
+                              Prom_PasientSmerter),
+        by.x = c("PasientGUID", "Dato"),
+        by.y = c("PasientGUID", "FormDate"), all.x = TRUE) |> 
+  mutate(Tretthet = ifelse(is.na(Tretthet), Prom_Tretthet, Tretthet),
+         PasientGlobalSykdomsaktivitet = ifelse(
+           is.na(PasientGlobalSykdomsaktivitet), 
+           Prom_PasientGlobalSykdomsaktivitet, PasientGlobalSykdomsaktivitet),
+         Pasientsmerter = ifelse(
+           is.na(Pasientsmerter), Prom_PasientSmerter, Pasientsmerter)) |> 
   summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
             Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
             Smerte_utfylt = sum(!is.na(Pasientsmerter)),
@@ -91,16 +105,29 @@ Oppfolging3siste <- Oppfolging %>%
   arrange(Sykehusnavn)
 
 Oppfolging3siste_pr_pas <- Oppfolging %>%
-  mutate(Aar = Oppfolgingsaar) %>%
-  select(PasientGUID, Sykehusnavn, Aar, Tretthet,
+  mutate(Aar = Oppfolgingsaar,
+         Dato = OppfolgingsDato) %>%
+  select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
          PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
   filter(Aar %in% (rap_aar-2):rap_aar) %>%
   bind_rows(
     Inklusjon %>%
-      mutate(Aar = Inklusjonsaar) %>%
-      select(PasientGUID, Sykehusnavn, Aar, Tretthet,
+      mutate(Aar = Inklusjonsaar,
+             Dato = InklusjonDato) %>%
+      select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
              PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
       filter(Aar %in% (rap_aar-2):rap_aar)) %>%
+  merge(Pasientsvar |> select(PasientGUID, FormDate, Prom_Tretthet,
+                              Prom_PasientGlobalSykdomsaktivitet,
+                              Prom_PasientSmerter),
+        by.x = c("PasientGUID", "Dato"),
+        by.y = c("PasientGUID", "FormDate"), all.x = TRUE) |> 
+  mutate(Tretthet = ifelse(is.na(Tretthet), Prom_Tretthet, Tretthet),
+         PasientGlobalSykdomsaktivitet = ifelse(
+           is.na(PasientGlobalSykdomsaktivitet), 
+           Prom_PasientGlobalSykdomsaktivitet, PasientGlobalSykdomsaktivitet),
+         Pasientsmerter = ifelse(
+           is.na(Pasientsmerter), Prom_PasientSmerter, Pasientsmerter)) |> 
   summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
             Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
             Smerte_utfylt = sum(!is.na(Pasientsmerter)),
