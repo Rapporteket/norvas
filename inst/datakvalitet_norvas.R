@@ -284,7 +284,7 @@ vdi <- merge(Oppfolging, VDI[, c("Cataract", "PasientGUID", "VDI_Dato")],
 
 
 
-vdi_v2 <-
+# vdi_v2 <-
 
   Kompletthet <- bind_rows(Kompletthet, vdi)
 

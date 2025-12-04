@@ -249,7 +249,8 @@ lesogprosesser <- function(rap_aar = 2024,
   return(list(Oppfolging=Oppfolging, Diagnoser=Diagnoser, Medisiner=Medisiner,
               BVAS=BVAS, VDI=VDI, Alvorlig_infeksjon=Alvorlig_infeksjon, KERR=KERR,
               Utredning=Utredning, Labskjema=Labskjema, Inklusjon=Inklusjon,
-              Pasientsvar=Pasientsvar, VaskulittIntervensjon=VaskulittIntervensjon))
+              Pasientsvar=Pasientsvar, VaskulittIntervensjon=VaskulittIntervensjon,
+              DiagnoseKriterier=DiagnoseKriterier))
 
 }
 

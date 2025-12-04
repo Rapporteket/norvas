@@ -10,6 +10,7 @@ library(norvas)
 library(lubridate)
 library(dplyr)
 library(tidyr)
+library(DT)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
@@ -18,7 +19,13 @@ aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
 Diagnoser <- aarrappdata$Diagnoser
+DiagnoseKriterier <- aarrappdata$DiagnoseKriterier
+VaskulittIntervensjon <- aarrappdata$VaskulittIntervensjon
 Medisiner <- aarrappdata$Medisiner
+Medisiner2 <- read.table(
+  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 BVAS <- aarrappdata$BVAS
 KERR <- aarrappdata$KERR
 VDI <- aarrappdata$VDI
@@ -26,199 +33,126 @@ Alvorlig_infeksjon <- aarrappdata$Alvorlig_infeksjon
 Utredning <- aarrappdata$Utredning
 Labskjema <- aarrappdata$Labskjema
 Pasientsvar <- aarrappdata$Pasientsvar
-```
-
-## Variabelkompletthet
-
-```{r "Utfylt blodprøve ved inklusjon", echo=FALSE}
-
 Labskjema$BT_utfort <- rowSums(
   !is.na(Labskjema[, c("BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre",
                        "BlodtrykkDiastolisk", "BlodtrykkSystolisk",
                        "BlodtrykkSystoliskHoyre", "BlodtrykkSystoliskVenstre")]))
-
 Labskjema$BT_utfort[Labskjema$BT_utfort > 0] <- 1
-
-kompletthet_blodprove <- Labskjema |> 
-  mutate(Aar = as.numeric(format(Blodprover_Dato, format="%Y"))) |> 
-  filter(Aar %in% (rap_aar-2):rap_aar) |> 
-  summarise(Antall_utfylt = sum(BT_utfort==1),
-            N = n(),
-            .by = c(Sykehusnavn, Aar)) |> 
-  arrange(Aar) |>
-  group_by(Aar) |>
-  group_modify(~ .x |> janitor::adorn_totals()) |>
-  mutate(Andel_utfylt = Antall_utfylt/N*100) |>
-  pivot_wider(
-    names_from = Aar,
-    values_from = c(Antall_utfylt, Andel_utfylt, N)) |>
-  arrange(Sykehusnavn)
-
 ```
+
+## Variabelkompletthet PROM
+
 
 ```{r "PROM ved oppfølging", echo=FALSE}
-Oppfolging3siste <- Oppfolging %>%
+prom_v_kontroll <- Oppfolging %>%
   mutate(Aar = Oppfolgingsaar,
          Dato = OppfolgingsDato) %>%
+  rowwise() %>%
+  mutate(rand_sum = sum(c_across(contains("Rand12Q")), na.rm = TRUE),
+         rand_sum = ifelse(rand_sum > 0, 1, rand_sum)) %>%
+  ungroup() |>
   select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
-         PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
+         PasientGlobalSykdomsaktivitet, Pasientsmerter, rand_sum) %>%
   filter(Aar %in% (rap_aar-2):rap_aar) %>%
   bind_rows(
     Inklusjon %>%
       mutate(Aar = Inklusjonsaar,
              Dato = InklusjonDato) %>%
+      rowwise() %>%
+      mutate(rand_sum = sum(c_across(contains("Rand12Q")), na.rm = TRUE),
+             rand_sum = ifelse(rand_sum > 0, 1, rand_sum)) %>%
+      ungroup() |>
       select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
-             PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
+             PasientGlobalSykdomsaktivitet, Pasientsmerter, rand_sum) %>%
       filter(Aar %in% (rap_aar-2):rap_aar)) %>%
-  merge(Pasientsvar |> select(PasientGUID, FormDate, Prom_Tretthet,
-                              Prom_PasientGlobalSykdomsaktivitet,
-                              Prom_PasientSmerter),
+  merge(Pasientsvar |> 
+          rowwise() %>%
+          mutate(Prom_rand_sum = sum(c_across(contains("Rand12Q")), na.rm = TRUE),
+                 Prom_rand_sum = ifelse(Prom_rand_sum > 0, 1, Prom_rand_sum)) %>%
+          ungroup() |> 
+          select(PasientGUID, FormDate, Prom_Tretthet,
+                 Prom_PasientGlobalSykdomsaktivitet,
+                 Prom_PasientSmerter, Prom_AntallInfeksjoner, Prom_rand_sum),
         by.x = c("PasientGUID", "Dato"),
         by.y = c("PasientGUID", "FormDate"), all.x = TRUE) |> 
+  merge(Alvorlig_infeksjon |> 
+          select(PasientGUID, SelvrapportertAlvorligInfeksjon_Registrert_Dato,
+                 AntallInfeksjoner),
+        by.x = c("PasientGUID", "Dato"),
+        by.y = c("PasientGUID", "SelvrapportertAlvorligInfeksjon_Registrert_Dato"),
+        all.x = TRUE) |> 
   mutate(Tretthet = ifelse(is.na(Tretthet), Prom_Tretthet, Tretthet),
          PasientGlobalSykdomsaktivitet = ifelse(
            is.na(PasientGlobalSykdomsaktivitet), 
            Prom_PasientGlobalSykdomsaktivitet, PasientGlobalSykdomsaktivitet),
          Pasientsmerter = ifelse(
-           is.na(Pasientsmerter), Prom_PasientSmerter, Pasientsmerter)) |> 
-  summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
-            Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
-            Smerte_utfylt = sum(!is.na(Pasientsmerter)),
+           is.na(Pasientsmerter), Prom_PasientSmerter, Pasientsmerter),
+         rand12 = ifelse(
+           is.na(Prom_rand_sum), rand_sum, Prom_rand_sum),
+         AntallInfeksjoner = if_else(
+           is.na(AntallInfeksjoner), Prom_AntallInfeksjoner, AntallInfeksjoner)
+  ) |> 
+  summarise(Tretthet = sum(!is.na(Tretthet)),
+            Sykdomsaktivitet = sum(!is.na(PasientGlobalSykdomsaktivitet)),
+            Smerte = sum(!is.na(Pasientsmerter)),
+            rand12 = sum(rand12),
+            AlvorligInfeksjon = sum(!is.na(AntallInfeksjoner)),
             N = n(),
             .by = c(Sykehusnavn, Aar)) |>
   arrange(Aar) |>
   group_by(Aar) |>
   group_modify(~ .x |> janitor::adorn_totals()) |>
-  mutate(Andel_Tretthet_utfylt = Tretthet_utfylt/N*100,
-         Andel_Sykdomsaktivitet_utfylt = Sykdomsaktivitet_utfylt/N*100,
-         Andel_Smerte_utfylt = Smerte_utfylt/N*100) |>
+  mutate(Tretthet = Tretthet/N,
+         Sykdomsaktivitet = Sykdomsaktivitet/N,
+         Smerte = Smerte/N,
+         rand12 = rand12/N,
+         AlvorligInfeksjon = AlvorligInfeksjon/N) |>
   mutate(
-    Tretthet = paste0(sprintf("%.1f", Andel_Tretthet_utfylt), " (N=", N, ")"),
-    Tretthet = ifelse(N<5, "N<5", Tretthet),
-    Sykdomsaktivitet = paste0(sprintf("%.1f", Andel_Sykdomsaktivitet_utfylt), " (N=", N, ")"),
-    Sykdomsaktivitet = ifelse(N<5, "N<5", Sykdomsaktivitet),
-    Smerte = paste0(sprintf("%.1f", Andel_Smerte_utfylt), " (N=", N, ")"),
-    Smerte = ifelse(N<5, "N<5", Smerte)) |>
-  select(Sykehusnavn, Aar, Tretthet, Sykdomsaktivitet, Smerte ) |>
+    # Tretthet = paste0(sprintf("%.1f", Tretthet), " (N=", N, ")"),
+    Tretthet = ifelse(N<5, NA, Tretthet),
+    # Sykdomsaktivitet = paste0(sprintf("%.1f", Sykdomsaktivitet), " (N=", N, ")"),
+    Sykdomsaktivitet = ifelse(N<5, NA, Sykdomsaktivitet),
+    # Smerte = paste0(sprintf("%.1f", Smerte), " (N=", N, ")"),
+    Smerte = ifelse(N<5, NA, Smerte),
+    # rand12 = paste0(sprintf("%.1f", rand12), " (N=", N, ")"),
+    rand12 = ifelse(N<5, NA, rand12),
+    # AlvorligInfeksjon = paste0(sprintf("%.1f", AlvorligInfeksjon), " (N=", N, ")"),
+    AlvorligInfeksjon = ifelse(N<5, NA, AlvorligInfeksjon)) |>
+  select(Sykehusnavn, Aar, Tretthet, Sykdomsaktivitet, Smerte, rand12,
+         AlvorligInfeksjon, N) |>
   tidyr::pivot_wider(names_from = Aar,
-                     values_from = c(Tretthet, Sykdomsaktivitet, Smerte), names_sort = TRUE) |> 
+                     values_from = c(Tretthet, Sykdomsaktivitet, Smerte, rand12,
+                                     AlvorligInfeksjon, N), names_sort = TRUE) |> 
   arrange(Sykehusnavn)
 
-Oppfolging3siste_pr_pas <- Oppfolging %>%
-  mutate(Aar = Oppfolgingsaar,
-         Dato = OppfolgingsDato) %>%
-  select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
-         PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
-  filter(Aar %in% (rap_aar-2):rap_aar) %>%
-  bind_rows(
-    Inklusjon %>%
-      mutate(Aar = Inklusjonsaar,
-             Dato = InklusjonDato) %>%
-      select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
-             PasientGlobalSykdomsaktivitet, Pasientsmerter) %>%
-      filter(Aar %in% (rap_aar-2):rap_aar)) %>%
-  merge(Pasientsvar |> select(PasientGUID, FormDate, Prom_Tretthet,
-                              Prom_PasientGlobalSykdomsaktivitet,
-                              Prom_PasientSmerter),
-        by.x = c("PasientGUID", "Dato"),
-        by.y = c("PasientGUID", "FormDate"), all.x = TRUE) |> 
-  mutate(Tretthet = ifelse(is.na(Tretthet), Prom_Tretthet, Tretthet),
-         PasientGlobalSykdomsaktivitet = ifelse(
-           is.na(PasientGlobalSykdomsaktivitet), 
-           Prom_PasientGlobalSykdomsaktivitet, PasientGlobalSykdomsaktivitet),
-         Pasientsmerter = ifelse(
-           is.na(Pasientsmerter), Prom_PasientSmerter, Pasientsmerter)) |> 
-  summarise(Tretthet_utfylt = sum(!is.na(Tretthet)),
-            Sykdomsaktivitet_utfylt = sum(!is.na(PasientGlobalSykdomsaktivitet)),
-            Smerte_utfylt = sum(!is.na(Pasientsmerter)),
-            N = n(),
-            tretthet_hver_oppf = Tretthet_utfylt == N,
-            sykdomsaktivitet_hver_oppf = Sykdomsaktivitet_utfylt == N,
-            smerte_hver_oppf = Smerte_utfylt == N,
-            .by = c(PasientGUID, Sykehusnavn, Aar)) |>
-  summarise(Tretthet_utfylt = sum(tretthet_hver_oppf),
-            Sykdomsaktivitet_utfylt = sum(sykdomsaktivitet_hver_oppf),
-            Smerte_utfylt = sum(smerte_hver_oppf),
-            N = n(),
-            .by = c(Sykehusnavn, Aar)) |>
-  arrange(Aar) |>
-  group_by(Aar) |>
-  group_modify(~ .x |> janitor::adorn_totals()) |>
-  mutate(Andel_Tretthet_utfylt = Tretthet_utfylt/N*100,
-         Andel_Sykdomsaktivitet_utfylt = Sykdomsaktivitet_utfylt/N*100,
-         Andel_Smerte_utfylt = Smerte_utfylt/N*100) |>
-  mutate(
-    Tretthet = paste0(sprintf("%.1f", Andel_Tretthet_utfylt), " (N=", N, ")"),
-    Tretthet = ifelse(N<5, "N<5", Tretthet),
-    Sykdomsaktivitet = paste0(sprintf("%.1f", Andel_Sykdomsaktivitet_utfylt), " (N=", N, ")"),
-    Sykdomsaktivitet = ifelse(N<5, "N<5", Sykdomsaktivitet),
-    Smerte = paste0(sprintf("%.1f", Andel_Smerte_utfylt), " (N=", N, ")"),
-    Smerte = ifelse(N<5, "N<5", Smerte)) |>
-  select(Sykehusnavn, Aar, Tretthet, Sykdomsaktivitet, Smerte ) |>
-  tidyr::pivot_wider(names_from = Aar,
-                     values_from = c(Tretthet, Sykdomsaktivitet, Smerte), names_sort = TRUE) |> 
-  arrange(Sykehusnavn)
-
-# pivot_wider(
-#   names_from = Aar,
-#   values_from = c(Tretthet_utfylt, Sykdomsaktivitet_utfylt, Smerte_utfylt,
-#                   Andel_Tretthet_utfylt, Andel_Sykdomsaktivitet_utfylt,
-#                   Andel_Smerte_utfylt, N)) |>
-# arrange(Sykehusnavn)
-
-# write.csv2(Oppfolging3siste,
-#            "C:/regdata/norvas/KompletthetProm3sisteaar.csv",
-#            row.names = F, fileEncoding = "Latin1")
-# write.csv2(Oppfolging3siste_pr_pas,
-#            "C:/regdata/norvas/UtfyltProm_v_alle_oppf_3sisteaar.csv",
-#            row.names = F, fileEncoding = "Latin1")
-
-knitr::kable(Oppfolging3siste, 
-             caption = "Andel utfylt PROM per inklusjon og oppfølging")
-knitr::kable(Oppfolging3siste_pr_pas, 
-             caption = "Andel pasienter med utfylt PROM på hver inklusjon og oppfølging")
+datatable(prom_v_kontroll,
+          caption = "Andel utfylt PROM per inklusjon og oppfølging",
+          rownames = FALSE,
+          extensions = 'Buttons',
+          options = list(
+            dom = 'Bfrtip',
+            buttons = list(
+              list(extend = 'copy'), 
+              list(extend = 'csv', filename = 'PROM_kompletthet_export'), 
+              list(extend = 'excel', filename = 'PROM_kompletthet_export'), 
+              list(extend = 'print')
+            ),
+            pageLength = 20),
+          filter = "none") |> 
+  formatPercentage(
+    columns = names(prom_v_kontroll)[2:(dim(prom_v_kontroll)[2]-3)],
+    digits = 1) |> 
+  formatRound(
+    columns = names(prom_v_kontroll)[
+      (dim(prom_v_kontroll)[2]-2):dim(prom_v_kontroll)[2]], 
+    digits = 0) 
 
 ```
 
+## Variabelkompletthet/utfyllingsgrad for ANCA assosierte vaskulitter
 
-```{r "Hepatittest ved inklusjon", echo=FALSE}
-
-Inklusjon_anca <- Inklusjon |> filter(Diag_gr_nr == 2) |> 
-  rename(Aar = Inklusjonsaar) |> 
-  filter(Aar %in% (rap_aar-2):rap_aar)
-
-bp_v_inkl_alle <- merge(
-  Inklusjon_anca,
-  Labskjema |> select(-Sykehusnavn),
-  by.x = c("SkjemaGUID", "InklusjonDato"), 
-  by.y = c("HovedskjemaGUID", "Blodprover_Dato"),
-  all.x = TRUE) |> 
-  mutate(across(all_of(c(
-    "HepatittBCoreAntistoffpositiv", "HepatittBSurfaceAntistoffpositiv",
-    "HepatittBSurfaceAntigenpositiv", "HepatittCAntistoffpositiv")), 
-    ~ if_else(.x == -1 | is.na(.x), 0, 1))) |> 
-  mutate(hepatitt_samlet = rowSums(across(all_of(c(
-    "HepatittBCoreAntistoffpositiv", "HepatittBSurfaceAntistoffpositiv",
-    "HepatittBSurfaceAntigenpositiv", "HepatittCAntistoffpositiv"))))) |> 
-  mutate(hepatitt_samlet = ifelse(hepatitt_samlet>0, 1, 0)) |> 
-  summarise(hepatitt_utfylt = sum(hepatitt_samlet),
-            N = n(),
-            .by = c(Sykehusnavn, Aar)) |>
-  arrange(Aar) |>
-  group_by(Aar) |>
-  group_modify(~ .x |> janitor::adorn_totals()) |>
-  mutate(Andel_hepatitt_utfylt = hepatitt_utfylt/N*100) |>
-  pivot_wider(
-    names_from = Aar,
-    values_from = c(hepatitt_utfylt,
-                    Andel_hepatitt_utfylt, N)) |>
-  arrange(Sykehusnavn)
-
-```
-
-
-```{r "ANCA-test ved inklusjon og oppfølging ", echo=FALSE}
-anca_debut <- bind_rows(
+```{r "Utfylte skjemaer ved inklusjon og oppfølging, ANCA", echo=FALSE}
+div_v_kontroll <- bind_rows(
   Inklusjon |>
     select(SkjemaGUID, PasientGUID, InklusjonDato, Inklusjonsaar,
            Diag_gr_nr, Sykehusnavn, UnitId) |>
@@ -233,113 +167,309 @@ anca_debut <- bind_rows(
 ) |> filter(Aar %in% (rap_aar-2):rap_aar) |>
   filter(Diag_gr_nr == 2) |>
   merge(Labskjema |> select(HovedskjemaGUID, Blodprover_Dato,
-                            PR3AncaPositiv, MPO_AncaPositiv),
+                            PR3AncaPositiv, MPO_AncaPositiv, IgGVerdi,
+                            BT_utfort),
         by.x = c('SkjemaGUID', "Dato"),
         by.y = c('HovedskjemaGUID', "Blodprover_Dato"),
         all.x = TRUE) |>
   mutate(anca = ((PR3AncaPositiv %in% c(0,1))  |
-                   (MPO_AncaPositiv %in% c(0,1))))
-
-Tabell <- anca_debut |>
-  summarise(antall = sum(anca),
-            N=n(),
-            .by = c(Sykehusnavn, Aar)) |>
-  group_by(Aar) |>
-  group_modify(~ .x |> janitor::adorn_totals()) |>
-  mutate(andel = antall/N*100) |>
-  mutate(verdi = paste0(sprintf("%.1f", andel), " (N=", N, ")"),
-         verdi = ifelse(N<5, "N<5", verdi)) |>
-  arrange(-Aar, -andel) |>
-  select(Sykehusnavn, Aar, verdi) |>
-  tidyr::pivot_wider(names_from = Aar,
-                     values_from = verdi, names_sort = TRUE) |>
-  arrange(Sykehusnavn)
-
-Tabell_allekonsultatsjoner <- anca_debut |>
-  summarise(ant_utfort = sum(anca),
-            N1=n(),
-            .by = c(PasientGUID, Sykehusnavn, Aar)) |>
-  summarise(antall = sum(ant_utfort == N1),
-            N=n(),
-            .by = c(Sykehusnavn, Aar)) |>
-  group_by(Aar) |>
-  group_modify(~ .x |> janitor::adorn_totals()) |>
-  mutate(andel = antall/N*100) |>
-  mutate(verdi = paste0(sprintf("%.1f", andel), " (N=", N, ")"),
-         verdi = ifelse(N<5, "N<5", verdi)) |>
-  arrange(-Aar, -andel) |>
-  select(Sykehusnavn, Aar, verdi) |>
-  tidyr::pivot_wider(names_from = Aar,
-                     values_from = verdi, names_sort = TRUE) |>
-  arrange(Sykehusnavn)
-
-
-knitr::kable(Tabell, 
-             caption = "Andel ANCA-test ved inklusjon og oppfølging")
-knitr::kable(Tabell_allekonsultatsjoner, 
-             caption = "Andel pasienter med ANCA-test på hver inklusjon og oppfølging")
-
-
-```
-
-```{r "BVAS ved inklusjon og oppfølging ", echo=FALSE}
-OppfolgingBVAS <- bind_rows(
-  Inklusjon |> select(Sykehusnavn, PasientGUID, InklusjonDato, Diag_gr_nr) |> 
-    rename(OppfolgingsDato = InklusjonDato),
-  Oppfolging |> select(Sykehusnavn, PasientGUID, OppfolgingsDato, Diag_gr_nr)
-) |> 
-  mutate(Aar = as.numeric(format(OppfolgingsDato, format="%Y"))) |> 
+                   (MPO_AncaPositiv %in% c(0,1)))) |> 
   merge(
-    BVAS[, c("SykdomsvurderingLabel", "PasientGUID", "BVAS_Dato")],
-    by.x = c('PasientGUID','OppfolgingsDato'),
-    by.y = c('PasientGUID','BVAS_Dato'), all.x = T) |>
-  filter(Diag_gr_nr %in% 2)
+    BVAS[, c("SykdomsvurderingLabel", "HovedskjemaGUID", "BVAS_Dato")],
+    by.x = c('SkjemaGUID', "Dato"),
+    by.y = c('HovedskjemaGUID','BVAS_Dato'), all.x = T) |> 
+  merge(
+    VaskulittIntervensjon[, c("Skjematype", "HovedskjemaGUID",
+                              "VaskulittIntervensjon_Dato")],
+    by.x = c('SkjemaGUID', "Dato"),
+    by.y = c('HovedskjemaGUID','VaskulittIntervensjon_Dato'), all.x = T) |> 
+  merge(
+    Medisiner2[, c("HovedskjemaGUID", "FormDate")] |> 
+      mutate(FormDate = as.Date(FormDate, format="%d.%m.%Y")) |> 
+      summarise(ant_skjema = n(), .by = c(HovedskjemaGUID, FormDate)),
+    by.x = c('SkjemaGUID', "Dato"),
+    by.y = c('HovedskjemaGUID','FormDate'), all.x = T) |> 
+  merge(VDI[ , c("HovedskjemaGUID", "VDI_Dato", "DeformingErosiveArthritis")],
+        by.x = c('SkjemaGUID', "Dato"),
+        by.y = c('HovedskjemaGUID','VDI_Dato'), all.x = T)
 
-terskel <- 5
 
-Tabell_bvas_oppf_aar <- OppfolgingBVAS |>
-  dplyr::filter(Aar %in% (rap_aar-2):rap_aar) |>
-  dplyr::summarise(
-    Antall = sum(!is.na(SykdomsvurderingLabel)),
-    N = dplyr::n(),
-    .by = c(Aar, Sykehusnavn)) |>
+
+Tabell <- div_v_kontroll |>
+  summarise(anca = sum(anca),
+            bvas = sum(!is.na(SykdomsvurderingLabel)),
+            igG = sum(!is.na(IgGVerdi)),
+            BT_utfort = sum(BT_utfort, na.rm = TRUE),
+            Stottebeh = sum(!is.na(Skjematype)),
+            medisin = sum(!is.na(ant_skjema)),
+            vdi = sum(!is.na(DeformingErosiveArthritis)),
+            N=n(),
+            .by = c(Sykehusnavn, Aar)) |>
   group_by(Aar) |>
   group_modify(~ .x |> janitor::adorn_totals()) |>
-  dplyr::mutate(Andel = Antall/N*100) |>
-  mutate(verdi = paste0(sprintf("%.1f", Andel), "% (", N, ")"),
-         verdi = ifelse(N<5, paste0("N<", terskel), verdi)) |>
-  select(Sykehusnavn, Aar, verdi) |>
-  tidyr::pivot_wider(names_from = Aar, values_from = verdi)
+  mutate(anca = anca/N,
+         bvas = bvas/N,
+         igG = igG/N,
+         BT_utfort = BT_utfort/N,
+         Stottebeh = Stottebeh/N,
+         medisin = medisin/N,
+         vdi = vdi/N) |>
+  mutate(anca = ifelse(N<5, NA, anca),
+         bvas = ifelse(N<5, NA, bvas),
+         igG = ifelse(N<5, NA, igG),
+         BT_utfort = ifelse(N<5, NA, BT_utfort),
+         Stottebeh = ifelse(N<5, NA, Stottebeh),
+         medisin = ifelse(N<5, NA, medisin),
+         vdi = ifelse(N<5, NA, vdi)) |>
+  select(Sykehusnavn, Aar, anca, bvas, igG, BT_utfort, Stottebeh, medisin, 
+         vdi, N) |>
+  tidyr::pivot_wider(names_from = Aar,
+                     values_from = c(anca, bvas, igG, BT_utfort, Stottebeh, 
+                                     medisin, vdi, N), 
+                     names_sort = TRUE) |> 
+  arrange(Sykehusnavn)
 
-knitr::kable(Tabell_bvas_oppf_aar, 
-             caption='Andel med utført BVAS ved inklusjon/oppfølging')
 
-
-Tabell_bvas_oppf_aar_pr_pas <- OppfolgingBVAS |>
-  dplyr::filter(Aar %in% (rap_aar-2):rap_aar) |>
-  dplyr::summarise(
-    Antall = sum(!is.na(SykdomsvurderingLabel)),
-    N = dplyr::n(),
-    .by = c(PasientGUID,Aar, Sykehusnavn)) |>
-  dplyr::summarise(
-    Antall = sum(Antall == N),
-    N = dplyr::n(),
-    .by = c(Aar, Sykehusnavn)) |>
-  group_by(Aar) |>
-  group_modify(~ .x |> janitor::adorn_totals()) |>
-  dplyr::mutate(Andel = Antall/N*100) |>
-  mutate(verdi = paste0(sprintf("%.1f", Andel), "% (", N, ")"),
-         verdi = ifelse(N<5, paste0("N<", terskel), verdi)) |>
-  select(Sykehusnavn, Aar, verdi) |>
-  tidyr::pivot_wider(names_from = Aar, values_from = verdi)
-
-knitr::kable(Tabell_bvas_oppf_aar_pr_pas, 
-             caption='Andel pasienter med utført BVAS ved hver inklusjon/oppfølging')
+datatable(Tabell,
+          caption = "Andel utfylte variabler per kontroll (inklusjon og oppfølging) for ANCA assosierte vaskulitter",
+          rownames = FALSE,
+          extensions = 'Buttons',
+          options = list(
+            dom = 'Bfrtip',
+            buttons = list(
+              list(extend = 'copy'), 
+              list(extend = 'csv', filename = 'var_kompletthet_anca_export'), 
+              list(extend = 'excel', filename = 'var_kompletthet_anca_export'), 
+              list(extend = 'print')
+            ),
+            pageLength = 20),
+          filter = "none") |> 
+  formatPercentage(
+    columns = names(Tabell)[2:(dim(Tabell)[2]-3)],
+    digits = 1) |> 
+  formatRound(
+    columns = names(Tabell)[
+      (dim(Tabell)[2]-2):dim(Tabell)[2]], 
+    digits = 0) 
 
 ```
 
 
+## Variabelkompletthet/utfyllingsgrad for storkarsvaskulitter
 
+```{r "Utfylte skjemaer ved inklusjon og oppfølging, storkar", echo=FALSE}
+div_v_kontroll <- bind_rows(
+  Inklusjon |>
+    select(SkjemaGUID, PasientGUID, InklusjonDato, Inklusjonsaar,
+           Diag_gr_nr, Sykehusnavn, UnitId) |>
+    rename(Dato = InklusjonDato,
+           Aar = Inklusjonsaar),
+  Oppfolging |> 
+    select(HovedskjemaGUID, PasientGUID, OppfolgingsDato, Oppfolgingsaar,
+           Diag_gr_nr, Sykehusnavn, UnitId) |>
+    rename(SkjemaGUID = HovedskjemaGUID,
+           Dato = OppfolgingsDato,
+           Aar = Oppfolgingsaar)
+) |> filter(Aar %in% (rap_aar-2):rap_aar) |>
+  filter(Diag_gr_nr == 1) |>
+  merge(Labskjema |> select(HovedskjemaGUID, Blodprover_Dato,
+                            PR3AncaPositiv, MPO_AncaPositiv, IgGVerdi,
+                            BT_utfort, CrpVerdi),
+        by.x = c('SkjemaGUID', "Dato"),
+        by.y = c('HovedskjemaGUID', "Blodprover_Dato"),
+        all.x = TRUE) |>
+  mutate(anca = ((PR3AncaPositiv %in% c(0,1))  |
+                   (MPO_AncaPositiv %in% c(0,1)))) |> 
+  merge(
+    KERR[, c("SykdomsvurderingLabel", "HovedskjemaGUID", "KerrsKriterier_Dato")],
+    by.x = c('SkjemaGUID', "Dato"),
+    by.y = c('HovedskjemaGUID','KerrsKriterier_Dato'), all.x = T) |> 
+  merge(
+    VaskulittIntervensjon[, c("Skjematype", "HovedskjemaGUID",
+                              "VaskulittIntervensjon_Dato")],
+    by.x = c('SkjemaGUID', "Dato"),
+    by.y = c('HovedskjemaGUID','VaskulittIntervensjon_Dato'), all.x = T) |> 
+  merge(
+    Medisiner2[, c("HovedskjemaGUID", "FormDate")] |> 
+      mutate(FormDate = as.Date(FormDate, format="%d.%m.%Y")) |> 
+      summarise(ant_skjema = n(), .by = c(HovedskjemaGUID, FormDate)),
+    by.x = c('SkjemaGUID', "Dato"),
+    by.y = c('HovedskjemaGUID','FormDate'), all.x = T) |> 
+  merge(VDI[ , c("HovedskjemaGUID", "VDI_Dato", "DeformingErosiveArthritis")],
+        by.x = c('SkjemaGUID', "Dato"),
+        by.y = c('HovedskjemaGUID','VDI_Dato'), all.x = T)
+
+
+
+Tabell_storkar <- div_v_kontroll |>
+  summarise(kerr = sum(!is.na(SykdomsvurderingLabel)),
+            crp = sum(!is.na(CrpVerdi)),
+            BT_utfort = sum(BT_utfort, na.rm = TRUE),
+            Stottebeh = sum(!is.na(Skjematype)),
+            medisin = sum(!is.na(ant_skjema)),
+            vdi = sum(!is.na(DeformingErosiveArthritis)),
+            N=n(),
+            .by = c(Sykehusnavn, Aar)) |>
+  group_by(Aar) |>
+  group_modify(~ .x |> janitor::adorn_totals()) |>
+  mutate(kerr = kerr/N,
+         crp = crp/N,
+         BT_utfort = BT_utfort/N,
+         Stottebeh = Stottebeh/N,
+         medisin = medisin/N,
+         vdi = vdi/N) |>
+  mutate(kerr = ifelse(N<5, NA, kerr),
+         crp = ifelse(N<5, NA, crp),
+         BT_utfort = ifelse(N<5, NA, BT_utfort),
+         Stottebeh = ifelse(N<5, NA, Stottebeh),
+         medisin = ifelse(N<5, NA, medisin),
+         vdi = ifelse(N<5, NA, vdi)) |>
+  select(Sykehusnavn, Aar, kerr, crp, BT_utfort, Stottebeh, medisin, 
+         vdi, N) |>
+  tidyr::pivot_wider(names_from = Aar,
+                     values_from = c(kerr, crp, BT_utfort, Stottebeh, 
+                                     medisin, vdi, N), 
+                     names_sort = TRUE) |> 
+  arrange(Sykehusnavn)
+
+
+datatable(Tabell_storkar,
+          caption = "Andel utfylte variabler per kontroll (inklusjon og oppfølging) for storkarsvaskulitter",
+          rownames = FALSE,
+          extensions = 'Buttons',
+          options = list(
+            dom = 'Bfrtip',
+            buttons = list(
+              list(extend = 'copy'), 
+              list(extend = 'csv', filename = 'var_kompletthet_storkar_export'), 
+              list(extend = 'excel', filename = 'var_kompletthet_storkar_export'), 
+              list(extend = 'print')
+            ),
+            pageLength = 20),
+          filter = "none") |> 
+  formatPercentage(
+    columns = names(Tabell_storkar)[2:(dim(Tabell_storkar)[2]-3)],
+    digits = 1) |> 
+  formatRound(
+    columns = names(Tabell_storkar)[
+      (dim(Tabell_storkar)[2]-2):dim(Tabell_storkar)[2]], 
+    digits = 0) 
+
+```
+
+
+### Klassifikasjonskriterier
+
+```{r "Klassifikasjonskriterier", echo=FALSE}
+Klassifikasjonskriterier <- Inklusjon |>
+    select(SkjemaGUID, PasientGUID, InklusjonDato, Inklusjonsaar,
+           Diag_gr_nr, Diag_gr, Sykehusnavn, UnitId) |>
+    rename(Dato = InklusjonDato,
+           Aar = Inklusjonsaar) |> 
+  filter(Aar %in% (rap_aar-2):rap_aar) |>
+  merge(DiagnoseKriterier |> summarise(N = n(), .by = PasientGUID),
+        by = "PasientGUID", all.x = TRUE) |> 
+  summarise(klass_krit = sum(!is.na(N)),
+            N = n(),
+            .by = c(Sykehusnavn, Aar, Diag_gr)) |> 
+  group_by(Aar, Diag_gr) |>
+  group_modify(~ .x |> janitor::adorn_totals()) |>
+  mutate(klass_krit = klass_krit/N,
+         klass_krit = ifelse(N<5, NA, klass_krit)) |> 
+  tidyr::pivot_wider(names_from = Aar,
+                     values_from = c(klass_krit, N), 
+                     names_sort = TRUE) |> 
+  arrange(Diag_gr, Sykehusnavn)
+
+datatable(Klassifikasjonskriterier,
+          caption = "Andel pasienter med utfylt klassifikasjonskriterierskjema. År angir inklusjonsår.",
+          rownames = FALSE,
+          extensions = 'Buttons',
+          options = list(
+            dom = 'Bfrtip',
+            buttons = list(
+              list(extend = 'copy'), 
+              list(extend = 'csv', filename = 'klassifikasjonskriterier_export'), 
+              list(extend = 'excel', filename = 'klassifikasjonskriterier_export'), 
+              list(extend = 'print')
+            ),
+            pageLength = 50),
+          filter = "none") |> 
+  formatPercentage(
+    columns = names(Klassifikasjonskriterier)[3:(dim(Klassifikasjonskriterier)[2]-3)],
+    digits = 1) |> 
+  formatRound(
+    columns = names(Klassifikasjonskriterier)[
+      (dim(Klassifikasjonskriterier)[2]-2):dim(Klassifikasjonskriterier)[2]], 
+    digits = 0) 
+
+
+```
+
+
+<!-- ```{r "Utfylt blodprøve ved inklusjon", echo=FALSE} -->
+
+<!-- Labskjema$BT_utfort <- rowSums( -->
+<!--   !is.na(Labskjema[, c("BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre", -->
+<!--                        "BlodtrykkDiastolisk", "BlodtrykkSystolisk", -->
+<!--                        "BlodtrykkSystoliskHoyre", "BlodtrykkSystoliskVenstre")])) -->
+
+<!-- Labskjema$BT_utfort[Labskjema$BT_utfort > 0] <- 1 -->
+
+<!-- Labskjema <- Labskjema |>  -->
+<!--   mutate(BT_utfort = ) -->
+
+<!-- kompletthet_blodprove <- Labskjema |>  -->
+<!--   mutate(Aar = as.numeric(format(Blodprover_Dato, format="%Y"))) |>  -->
+<!--   filter(Aar %in% (rap_aar-2):rap_aar) |>  -->
+<!--   summarise(Antall_utfylt = sum(BT_utfort==1), -->
+<!--             N = n(), -->
+<!--             .by = c(Sykehusnavn, Aar)) |>  -->
+<!--   arrange(Aar) |> -->
+<!--   group_by(Aar) |> -->
+<!--   group_modify(~ .x |> janitor::adorn_totals()) |> -->
+<!--   mutate(Andel_utfylt = Antall_utfylt/N*100) |> -->
+<!--   pivot_wider( -->
+<!--     names_from = Aar, -->
+<!--     values_from = c(Antall_utfylt, Andel_utfylt, N)) |> -->
+<!--   arrange(Sykehusnavn) -->
+
+<!-- ``` -->
+
+<!-- ```{r "Hepatittest ved inklusjon", echo=FALSE} -->
+
+<!-- Inklusjon_anca <- Inklusjon |> filter(Diag_gr_nr == 2) |>  -->
+<!--   rename(Aar = Inklusjonsaar) |>  -->
+<!--   filter(Aar %in% (rap_aar-2):rap_aar) -->
+
+<!-- bp_v_inkl_alle <- merge( -->
+<!--   Inklusjon_anca, -->
+<!--   Labskjema |> select(-Sykehusnavn), -->
+<!--   by.x = c("SkjemaGUID", "InklusjonDato"),  -->
+<!--   by.y = c("HovedskjemaGUID", "Blodprover_Dato"), -->
+<!--   all.x = TRUE) |>  -->
+<!--   mutate(across(all_of(c( -->
+<!--     "HepatittBCoreAntistoffpositiv", "HepatittBSurfaceAntistoffpositiv", -->
+<!--     "HepatittBSurfaceAntigenpositiv", "HepatittCAntistoffpositiv")),  -->
+<!--     ~ if_else(.x == -1 | is.na(.x), 0, 1))) |>  -->
+<!--   mutate(hepatitt_samlet = rowSums(across(all_of(c( -->
+<!--     "HepatittBCoreAntistoffpositiv", "HepatittBSurfaceAntistoffpositiv", -->
+<!--     "HepatittBSurfaceAntigenpositiv", "HepatittCAntistoffpositiv"))))) |>  -->
+<!--   mutate(hepatitt_samlet = ifelse(hepatitt_samlet>0, 1, 0)) |>  -->
+<!--   summarise(hepatitt_utfylt = sum(hepatitt_samlet), -->
+<!--             N = n(), -->
+<!--             .by = c(Sykehusnavn, Aar)) |> -->
+<!--   arrange(Aar) |> -->
+<!--   group_by(Aar) |> -->
+<!--   group_modify(~ .x |> janitor::adorn_totals()) |> -->
+<!--   mutate(Andel_hepatitt_utfylt = hepatitt_utfylt/N*100) |> -->
+<!--   pivot_wider( -->
+<!--     names_from = Aar, -->
+<!--     values_from = c(hepatitt_utfylt, -->
+<!--                     Andel_hepatitt_utfylt, N)) |> -->
+<!--   arrange(Sykehusnavn) -->
+
+<!-- ``` -->
 
 
 
