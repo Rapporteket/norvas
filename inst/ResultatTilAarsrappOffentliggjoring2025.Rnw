@@ -122,7 +122,7 @@ kobl_unitid_shusnavn_norvas <- merge(kobl_unitid_shusnavn_norvas, orgnr_table,
 figstr <- 0.61
 tmp <- Sys.setlocale(category = "LC_ALL", locale = "nb_NO.UTF-8")
 
-figfolder <- "C:/regdata/norvas/aarsrapp2025/figfolder/"
+figfolder <- "C:/Users/kth200/regdata/norvas/aarsrapp2025/figfolder/"
 if (!dir.exists(figfolder)) {
   dir.create(figfolder)
 }
@@ -3158,10 +3158,17 @@ if ( outfile != '') {dev.off()}
 # #   summarise(Antall=n()) |> spread(key = Inklusjonsaar, value = Antall, fill = NA)
 #
 #
-# Indikatorer <- Indikatorer |>
-#   mutate(orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
-#          context = "caregiver") |>
-#   select(-UnitId)
+Indikatorer <- Indikatorer |>
+  mutate(orgnr = kobl_unitid_shusnavn_norvas$orgnr[match(UnitId, kobl_unitid_shusnavn_norvas$UnitId)],
+         context = "caregiver") |>
+  select(-UnitId) |>
+  dplyr::filter(year >= 2014,
+                !is.na(orgnr)) |>
+  dplyr::filter(!(ind_id %in% c('norvas_andel_utredet_GCA',
+                                'norvas_andel_ulctmr_storkar',
+                                'norvas_andel_ctmr_bihuler_anca',
+                                'norvas_andel_ct_thorax_anca',
+                                'norvas_minimum_2oppf')))
 #
 # dg_gml <- read.csv2("~/regdata/norvas/beh_kval_2024.csv") |>
 #   dplyr::filter(substr(ind_id, 1, 9) == "norvas_dg")
@@ -3210,9 +3217,10 @@ if ( outfile != '') {dev.off()}
 #                                 'norvas_andel_ctmr_bihuler_anca',
 #                                 'norvas_andel_ct_thorax_anca',
 #                                 'norvas_minimum_2oppf')))
-# write.csv2(Indikatorer,
-#            paste0("~/regdata/norvas/behandlingskvalitet/Indikatorer_", Sys.Date(), ".csv"),
-#            row.names = F)
+write.csv2(
+  Indikatorer,
+  paste0("C:/Users/kth200/regdata/norvas/behandlingskvalitet/Indikatorer_", Sys.Date(), ".csv"),
+  row.names = F)
 
 @
 
