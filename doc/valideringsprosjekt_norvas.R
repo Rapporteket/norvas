@@ -63,7 +63,7 @@ Diagnoser <- read.table(
   'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-23_1539.csv',
   header=TRUE, sep=";",
   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
-  dplyr::filter(UnitId == 104579) |>
+  # dplyr::filter(UnitId == 104579) |>
   dplyr::filter(HovedskjemaGUID %in% Inklusjon$SkjemaGUID) |>
   merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
   dplyr::relocate(hjelpenr) |>
@@ -71,12 +71,6 @@ Diagnoser <- read.table(
   mutate(Diagnose_Klinisk_Dato =
            as.Date(Diagnose_Klinisk_Dato, format = "%d.%m.%Y"))
 
-duplikat <- Oppfolging[
-  duplicated(Oppfolging[c("PasientId", "OppfolgingsDato")]) |
-    duplicated(Oppfolging[c("PasientId", "OppfolgingsDato")],
-               fromLast = TRUE), ]|>
-  dplyr::relocate(PasientId, OppfolgingsDato) |>
-  dplyr::arrange(PasientId, OppfolgingsDato)
 
 Oppfolging_unik <- Oppfolging |>
   mutate(na_count = rowSums(is.na(across(everything())))) |>
@@ -93,7 +87,7 @@ Oppfolging_unik <- Oppfolging |>
 inkl_og_oppf_samme_dato <- merge(
   Inklusjon, Oppfolging_unik,
   by.x = c("PasientId", "InklusjonDato"),
-  by.y = c("PasientId", "OppfolgingsDato"),
+  by.y = c("PasientId", "OppfolgingsDato")
 )
 
 Oppfolging_unik <- anti_join(
@@ -102,20 +96,57 @@ Oppfolging_unik <- anti_join(
   by = join_by("PasientId" == "PasientId",
                "OppfolgingsDato" == "InklusjonDato"))
 
-table(Inklusjon_validering$Diagnosegruppe)
-
-
-
+# Inklusjon |> select(PasientId, Diag)
+# table(Inklusjon$Diagnosegruppe)
 
 Diagnoser_alle <- read.table(
   'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-23_1539.csv',
   header=TRUE, sep=";",
   stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  mutate(na_count = rowSums(is.na(across(everything())))) |>
+  arrange(PasientGUID, Diagnose_Klinisk_Dato, na_count) |>      # choose grouping columns here
+  slice(1, .by = c(PasientGUID, Diagnose_Klinisk_Dato)) |>      # keep row with fewest NAs
+  select(-na_count) |>
   merge(hjelpenr[, c("PasientGUID", "hjelpenr")],
         by = "PasientGUID",
         all.x = TRUE) |>
   dplyr::relocate(hjelpenr) |>
   dplyr::rename(PasientId = hjelpenr)
+
+Inklusjon <- Inklusjon |>
+  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+        by = "PasientId")
+
+tmp <- Inklusjon |> select(PasientId, InklusjonDato, Diagnosegruppe) |>
+  merge(
+    Oppfolging_unik |>
+      mutate(Fulgt_opp = 1) |>
+      mutate(ant_oppf = sum(Fulgt_opp), .by = PasientId) |>
+      arrange(PasientId, OppfolgingsDato) |>      # choose grouping columns here
+      slice(1, .by = c(PasientId)) |>
+      select(PasientId, Fulgt_opp, ant_oppf),
+    by = "PasientId", all.x = TRUE
+  ) |>
+  mutate(Fulgt_opp = ifelse(is.na(Fulgt_opp), 0, Fulgt_opp),
+         ant_oppf = ifelse(is.na(ant_oppf), 0, ant_oppf)) |>
+  merge(
+    Oppfolging_validering |>
+      mutate(Fulgt_opp_val = 1) |>
+      mutate(ant_oppf_val = sum(Fulgt_opp_val), .by = PasientId) |>
+      arrange(PasientId, OppfolgingsDato) |>      # choose grouping columns here
+      slice(1, .by = c(PasientId)) |>
+      select(PasientId, Fulgt_opp_val, ant_oppf_val),
+    by = "PasientId", all.x = TRUE
+  ) |>
+  mutate(Fulgt_opp_val = ifelse(is.na(Fulgt_opp_val), 0, Fulgt_opp_val),
+         ant_oppf_val = ifelse(is.na(ant_oppf_val), 0, ant_oppf_val)) |>
+  summarise(ant_inkl = n(),
+            ant_ingen_oppf = sum(Fulgt_opp == 0),
+            ant_ingen_oppf_val = sum(Fulgt_opp_val == 0),
+            ant_oppf = sum(ant_oppf),
+            ant_oppf_val = sum(ant_oppf_val),
+            .by = Diagnosegruppe)
+
 
 
 Oppfolging_pr_pas <- Oppfolging |>
@@ -174,8 +205,6 @@ sammenlign_oppf <- merge(
   arrange(PasientId, OppfolgingsDato)
 
 
-
-
 #####
 
 KERR <- read.table(
@@ -187,11 +216,20 @@ KERR <- read.table(
   dplyr::relocate(PasientId) |>
   mutate(KerrsKriterier_Dato = as.Date(KerrsKriterier_Dato, format = "%d.%m.%Y"))
 
-tmp <- Oppfolging |> filter(PasientId == 80001174693, OppfolgingsDato == "2025-08-06")
-tmp2 <- KERR |> filter(PasientId == 80001174693, OppfolgingsDato == "2025-08-06")
+tmp <- Oppfolging |> filter(
+  PasientId == 80001174693,
+  OppfolgingsDato == "2025-08-06")
+tmp2 <- KERR |> filter(PasientId == 80001174693,
+                       OppfolgingsDato == "2025-08-06")
 
 
 
+# duplikat <- Oppfolging[
+#   duplicated(Oppfolging[c("PasientId", "OppfolgingsDato")]) |
+#     duplicated(Oppfolging[c("PasientId", "OppfolgingsDato")],
+#                fromLast = TRUE), ]|>
+#   dplyr::relocate(PasientId, OppfolgingsDato) |>
+#   dplyr::arrange(PasientId, OppfolgingsDato)
 
 # c("SvarDato",
 #   "Hoyde",

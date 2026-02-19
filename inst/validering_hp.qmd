@@ -1,0 +1,182 @@
+---
+title: "Validering Helseplattformen"
+author: "NORVAS"
+format: html
+---
+
+## Bakgrunn
+
+Julianne kan skrive noen ord her.
+
+## Protokoll
+
+Julianne kan skrive noen ord her.
+
+
+```{r}
+#| echo: false
+#| message: false
+#| warning: false
+library(norvas)
+library(dplyr)
+rm(list = ls())
+
+Inklusjon_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_Inklusjonskjema_2026-02-12_0914_sensitiv.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+Oppfolging_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_OppfølgingSkjema_2026-02-12_0916.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  merge(Inklusjon_validering[, c("SkjemaGUID", "PasientId")],
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  dplyr::relocate(PasientId) |>
+  mutate(OppfolgingsDato = as.Date(OppfolgingsDato, format = "%d.%m.%Y"))
+Diagnoser_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_DiagnoseSkjema_2026-02-12_0917.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  merge(Inklusjon_validering[, c("SkjemaGUID", "PasientId")],
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  dplyr::relocate(PasientId)|>
+  mutate(Diagnose_Klinisk_Dato =
+           as.Date(Diagnose_Klinisk_Dato, format = "%d.%m.%Y"))
+
+Inklusjon_validering <- merge(
+  Inklusjon_validering,
+  Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+  by = "PasientId"
+)
+Oppfolging_validering <- merge(
+  Oppfolging_validering,
+  Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+  by = "PasientId"
+)
+
+hjelpenr <- openxlsx::read.xlsx("C:/Users/kth200/regdata/norvas/validering_helseplattform/til_validering_m_hjelpenr.xlsx") |>
+  dplyr::filter(hjelpenr %in% Inklusjon_validering$PasientId)
+
+Inklusjon <- read.table(
+  "C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-10-23_1539.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) |>
+  dplyr::filter(PasientGUID %in% hjelpenr$PasientGUID) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr) |>
+  mutate(InklusjonDato =
+           as.Date(InklusjonDato, format = "%d.%m.%Y"))
+Oppfolging <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-10-23_1540.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) |>
+  norvas::norvasPreprosess() |>
+  dplyr::filter(HovedskjemaGUID %in% Inklusjon$SkjemaGUID) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr)
+Diagnoser <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-23_1539.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  # dplyr::filter(UnitId == 104579) |>
+  dplyr::filter(HovedskjemaGUID %in% Inklusjon$SkjemaGUID) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr)|>
+  mutate(Diagnose_Klinisk_Dato =
+           as.Date(Diagnose_Klinisk_Dato, format = "%d.%m.%Y"))
+
+
+Oppfolging_unik <- Oppfolging |>
+  mutate(na_count = rowSums(is.na(across(everything())))) |>
+  arrange(PasientId, OppfolgingsDato, na_count) |>      # choose grouping columns here
+  slice(1, .by = c(PasientId, OppfolgingsDato)) |>      # keep row with fewest NAs
+  select(-na_count) |>
+  merge(Inklusjon |> select(PasientId, InklusjonDato),
+        by = "PasientId", all.x = TRUE)|>
+  filter(OppfolgingsDato >= InklusjonDato,
+         OppfolgingsDato >= "2022-11-12",
+         OppfolgingsDato <= "2025-10-31")
+
+
+inkl_og_oppf_samme_dato <- merge(
+  Inklusjon, Oppfolging_unik,
+  by.x = c("PasientId", "InklusjonDato"),
+  by.y = c("PasientId", "OppfolgingsDato")
+)
+
+Oppfolging_unik <- anti_join(
+  Oppfolging_unik,
+  inkl_og_oppf_samme_dato[, c("PasientId", "InklusjonDato")],
+  by = join_by("PasientId" == "PasientId",
+               "OppfolgingsDato" == "InklusjonDato"))
+
+# Inklusjon |> select(PasientId, Diag)
+# table(Inklusjon$Diagnosegruppe)
+
+Diagnoser_alle <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-10-23_1539.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  mutate(na_count = rowSums(is.na(across(everything())))) |>
+  arrange(PasientGUID, Diagnose_Klinisk_Dato, na_count) |>      # choose grouping columns here
+  slice(1, .by = c(PasientGUID, Diagnose_Klinisk_Dato)) |>      # keep row with fewest NAs
+  select(-na_count) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")],
+        by = "PasientGUID",
+        all.x = TRUE) |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr)
+
+Inklusjon <- Inklusjon |> 
+  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+        by = "PasientId")
+
+tab_oppf <- Inklusjon |> select(PasientId, InklusjonDato, Diagnosegruppe) |> 
+  merge(
+    Oppfolging_unik |> 
+      mutate(Fulgt_opp = 1) |>
+      mutate(ant_oppf = sum(Fulgt_opp), .by = PasientId) |>
+      arrange(PasientId, OppfolgingsDato) |>      # choose grouping columns here
+      slice(1, .by = c(PasientId)) |>
+      select(PasientId, Fulgt_opp, ant_oppf),
+    by = "PasientId", all.x = TRUE
+  ) |> 
+  mutate(Fulgt_opp = ifelse(is.na(Fulgt_opp), 0, Fulgt_opp),
+         ant_oppf = ifelse(is.na(ant_oppf), 0, ant_oppf),
+         registrert = "norvas") |> 
+  bind_rows(
+    Inklusjon |> select(PasientId, InklusjonDato, Diagnosegruppe) |> 
+      merge(
+        Oppfolging_validering |> 
+          mutate(Fulgt_opp = 1) |>
+          mutate(ant_oppf = sum(Fulgt_opp), .by = PasientId) |> 
+          arrange(PasientId, OppfolgingsDato) |>  # choose grouping columns here
+          slice(1, .by = c(PasientId)) |>
+          select(PasientId, Fulgt_opp, ant_oppf),
+        by = "PasientId", all.x = TRUE
+      ) |>
+      mutate(Fulgt_opp = ifelse(is.na(Fulgt_opp), 0, Fulgt_opp),
+             ant_oppf = ifelse(is.na(ant_oppf), 0, ant_oppf),
+             registrert = "validering")
+  ) |> 
+  summarise(inkl = n(),
+            ingen_oppf = sum(Fulgt_opp == 0),
+            oppf = sum(ant_oppf),
+            .by = c(Diagnosegruppe, registrert))
+
+# knitr::kable(tab_oppf, caption = "Inklusjoner og oppfølginger i Norvas og i valideringsdatabase.")
+
+```
+
+## Utvalg
+
+
+
+## Funn
+
+Mer tekst her
