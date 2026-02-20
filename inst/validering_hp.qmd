@@ -1,7 +1,9 @@
 ---
 title: "Validering Helseplattformen"
 author: "NORVAS"
-format: html
+format:
+  html:
+    embed-resources: true
 editor: 
   markdown: 
     wrap: 72
@@ -364,7 +366,16 @@ oppf_samlet <- merge(
 Av de 32 gjenværende oppfølgingene i Norvas etter datavask, så matcher samtlige 
 en oppfølging fra valideringsdatabasen. Dvs. at det finnes en oppfølging med samme dato og PasientId. Av de 73 oppfølgingene som ble registrert i valideringsdatabasen, så er det `{r} sum(oppf_samlet$Fulgt_opp_norvas==0) ` som ikke finner en match i Norvas.
 
+```{r}
+#| echo: false
+knitr::kable(oppf_samlet |> 
+               filter(Fulgt_opp_norvas == 0) |> 
+               select(PasientId, OppfolgingsDato), 
+             caption = "Oppfølginger som mangler i Norvas", 
+             align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
 
+```
 
 
 \
@@ -375,6 +386,11 @@ en oppfølging fra valideringsdatabasen. Dvs. at det finnes en oppfølging med s
 
 
 ```
+
+## Blodprøver
+
+Tåler plussminus 2 uker avvik blodprøvedato og inkl/oppfdato.
+
 
 
 ## Vedlegg
