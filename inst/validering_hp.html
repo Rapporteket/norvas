@@ -1,0 +1,1380 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="NORVAS">
+
+<title>Validering Helseplattformen</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="validering_hp_files/libs/clipboard/clipboard.min.js"></script>
+<script src="validering_hp_files/libs/quarto-html/quarto.js"></script>
+<script src="validering_hp_files/libs/quarto-html/popper.min.js"></script>
+<script src="validering_hp_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="validering_hp_files/libs/quarto-html/anchor.min.js"></script>
+<link href="validering_hp_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="validering_hp_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="validering_hp_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="validering_hp_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="validering_hp_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="validering_hp_files/libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="validering_hp_files/libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Validering Helseplattformen</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>NORVAS </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="formål" class="level2">
+<h2 class="anchored" data-anchor-id="formål">Formål</h2>
+<p>Formålet med prosjektet å undersøke kvaliteten og korrektheten av data som overføres fra Helseplattformen (HP) til Norsk vaskulittregister (NorVas), som ledd i lovpålagt kontroll av datakvaliteten i henhold til §4-8 i forskrift om medisinske kvalitetsregistre.</p>
+</section>
+<section id="bakgrunn" class="level2">
+<h2 class="anchored" data-anchor-id="bakgrunn">Bakgrunn</h2>
+<p>NorVas er et nasjonalt medisinsk kvalitetsregister for systemiske vaskulittsykdommer. Alle pasienter over 16 år som behandles for ANCA-assosiert vaskulitt eller storkarsvaskulitt ved en revmatologisk avdeling i Norge, skal inkluderes i registeret. Formålet med registeret er å sikre kvalitet og enhetlig utredning, behandling og oppfølging av vaskulittpasienter i Norge. Registeret har syv kvalitetsindikatorer som samtlige er i tråd med den nasjonale veilederen utarbeidet i regi av Norsk revmatologisk forening. Pasienter som inkluderes i NorVas er kronikere som følges over år. Dette innebærer at data skal registreres ved sykdomsdebut og ved samtlige påfølgende kontroller. Innregistrering foregår av merkantilt personell med spesialoppgaver, sykepleiere, leger og pasienter. I hovedsak er det leger som følger og behandler denne pasientgruppen, da det dreier seg om relativt sjeldne og potensielt alvorlige sykdommer. All innsamling av data til NorVas skjer elektronisk via GoTreatIT (GTI), Medisinsk registreringssystem (MRS) eller Helseplattformen (HP). Universitetssykehuset Nord-Norge HF er dataansvarlig for registeret. Databasen er lagt til MRS som forvaltes av Hemit HF. Innlogging til databasen skjer via Norsk Helsenett SF (NHN) som eies av helse- og omsorgsdepartementet.</p>
+<p>Deltakelse i NorVas er frivillig for pasienten og har siden oppstarten i 2016 vært basert på skriftlig samtykke. I slutten av 2024 gikk NorVas over til reservasjonsrett. Det innebærer at pasientene nå blir inkludert i registeret så lenge de ikke velger å reservere seg. Løsning for reservasjonsrett ble etablert i MRS desember 2024 og i GTI mars 2025. Det foreligger per feburar 2026 enda ikke løsning for reservasjonsrett i HP og pasienter i Helse Midt-Norge må fremdeles samtykke skriftlig til inklusjon. Pasientene kan når som helst velge å trekke samtykket eller reservere seg mot deltakelse, og allerede innsamlede data til NorVas vil da bli slettet. For utfyllende detaljer vedrørende samtykke og reservasjonsrett, vises til norvas.no.</p>
+<p>HP ble innført ved St.&nbsp;Olavs Hospital HF november 2022, ved Helse Møre og Romsdal HF våren 2024 og ved Helse Nord-Trøndelag HF høsten 2024 og er den elektroniske pasientjournalen som nå benyttes av alle tre revmatologiske avdelinger i Helse Midt-Norge RHF. HP er det første og foreløpig eneste elektroniske pasientjournalsystemet som har automatisert datafangst til NorVas. Det betyr at variablene høstes direkte til registeret uten at behandler må gjøre noen form for dobbeltføring. I utgangspunktet vil dette være tidsbesparende for behandlerne, samt fjerne et mellomledd som kan medføre bias og inkompletthet i registrerte variabler, så fremst systemet fungerer etter intensjonen.</p>
+<p>Revmatologisk avdeling ved St.&nbsp;Olavs var frem til overgangen til HP gode til å inkludere pasienter og registrere inn data i NorVas via GTI. Etter overgangen har dessverre antall inkluderte falt betydelig, samtidig som kvaliteten på innkommende data har blitt dårligere. For eksempel inkluderte St.&nbsp;Olavs 32 pasienter i NorVas mellom november 2022 og juni 2024, mens de til sammenligning inkluderte 31 pasienter i 2021 alene.</p>
+<p>Birmingham vasculitis activity score (BVAS), et validert skåringsverktøy for å monitorere aktiv vaskulittsykdom hos pasienter med ANCA-assosiert vaskulitt, skal fylles ut hver gang en pasient med ANCA-assosiert vaskulitt er til kontroll. I 2021 ble dette gjort ved 81 % av kontrollene ved St.&nbsp;Olavs, mot kun 27 % av kontrollene i 2023. Generelt har registreringsaktiviteten i NorVas gått ned fra mellom 40-60 registerkontroller i måneden før HP til nå cirka 20 registerkontroller i måneden. Medisineringsdataene er tilsynelatende svært mangelfulle og responsraten på pasientrapporterte data (PROMs) er bare rundt 50 %. Vi ønsker å undersøke om nevnte forhold skyldes manglende innrapportering/lav kompletthet og/eller feil i dataløsningen, og avdekke eventuelle tiltak som kan forbedre datakvaliteten.</p>
+</section>
+<section id="protokoll" class="level2">
+<h2 class="anchored" data-anchor-id="protokoll">Protokoll</h2>
+<p>For å gjennomføre prosjektet, har man gått gjennom journalen til utvalgte pasienter ved revmatologisk avdeling ved St.&nbsp;Olavs som har samtykket til inklusjon i NorVas, og sammenlignet det som er registrert i HP mot det som er kommet over til NorVas.</p>
+<p>I forkant av gjennomgangen ble det søkt og innvilget dispensasjon fra taushetsplikten etter helsepersonelloven §29 og helseregisterloven §19 e slik at den registeransatte fikk lesetilgang til pasientjournalen sammen med en ansatt ved aktuelle avdeling.</p>
+<p>Hemit tilgjengeliggjorde en testdatabase i MRS for registrering av data til prosjektet, samt en liste over testpasienter med hjelpenummer som er benyttet til formålet.</p>
+<p>Statistiker identifiserte 50 pasienter med aktuell diagnose som følges ved revmatologisk avdeling ved St.&nbsp;Olavs og er inkludert i registeret. Utvalget er fordelt 50-50 på pasienter med ANCA-asossiert vaskulitt og storkarsvaskulitt, omtrent like mange kvinner som menn, inkludert før og etter overgangen til HP</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">ICD-10</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">M30.1</td>
+<td style="text-align: left;">Eosinofil granulomatose med polyangiitt (EGPA)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">M31.3</td>
+<td style="text-align: left;">Granulomatose med polyangiitt (GPA)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">M31.7</td>
+<td style="text-align: left;">Mikroskopisk polyangiitt (MPA)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">M31.4</td>
+<td style="text-align: left;">Takayasus arteritt (aortabuesyndrom) (TAK)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">M31.5 / M31.6</td>
+<td style="text-align: left;">Kjempecellearteritt med polymyalgia revmatika / Annen kjempecellearteritt (KCA)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">I77.6</td>
+<td style="text-align: left;">Uspesifisert aortitt</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p>Pasientene er koblet til unike hjelpenummer i MRS, denne koblingen er lagret kryptert. Faglig leder i registeret satt fysisk sammen med overlege ved St.&nbsp;Olavs i 3 dager (29-31.10.25) og gikk gjennom journalen til totalt 27 pasienter. Dette var det antallet man klarte på tilgjengelig tid. Rent praktisk har overlege ved St.&nbsp;Olavs navigert i HP, mens registeransatt har registrert alle tilgjengelige aktuelle variabler i testdatabasen i MRS.</p>
+<p>Av de 27 gjennomgåtte pasientene, ble 4 fjernet fra den endelige analysen av følgende årsaker:</p>
+<ul>
+<li>1 pasient har diagnose psoriasisartritt - ikke diagnose som kvalifiserer til NorVas, samtykket til NorArtritt (migrert fra GTI) 10.02.16, ikke samtykket til inklusjon i Norvas</li>
+<li>1 pasient har PAN – diagnose som ikke skal følges i registeret per nå, men skulle det tidligere. Nå ekskludert med oppfølging avsluttet</li>
+<li>1 pasient med GPA som ikke har registrert samtykke i HP (heller ikke migrert fra GTI), heller ikke at pasienten har trukket samtykke eller at oppfølging er avsluttet. Denne pasienten ble ikke tatt med i testdatabasen på bakgrunn av manglende samtykke.</li>
+<li>1 pasient med storkarsvaskulitt i NorVas inkludert i GTI i 2015. I HP er denne pasienten registrert med polyartrittdiagnose, dette kvalifiserer ikke til inklusjon i NorVas.</li>
+</ul>
+<p>Den endelige analysen er derfor basert på 23 pasienter hvorav 14 med storkarsvaskulitt og 9 med ANCA-assosiert vaskulitt.</p>
+<p>Oppfølginger/kontroller registrert i testdatabasen gjelder for tidsperioden etter «GO LIVE» 12.11.22 til og med 31.10.25.</p>
+<p>For pasientene som ble inkludert i NorVas etter «GO LIVE», er oppfølgingene/kontrollene i tidsrommet fra inklusjon til og med 31.10.25 som er registrert i testdatabasen.</p>
+<p>Etter at samtykke foreligger, har HP overført data til NorVas som er datert forut for samtykket. Disse oppfølgingene er utelatt fra analysen da de ikke er registrert i testdatabasen.</p>
+<p>For pasienter inkludert før «GO LIVE», er det registrert et inklusjonsskjema på aktuelle dato i testdatabasen og deretter alle oppfølginger/kontroller som foreligger etter «GO LIVE» 12.11.22 frem til og med 31.10.25.</p>
+<p>Flere pasienter har flere kontakter på samme dato i HP, f.eks. en legekontakt, en sykepleierkontakt og en pasientmelding/innsending av spørreskjema. Dette er registrert som en kontakt/oppfølging i testdatabasen.</p>
+<p>I perioden analysene ble utført, har det ikke vært mulig å registrere klassifikasjonskriterier i HP ved St.&nbsp;Olavs. Klassifikasjonskriteriene (kalt diagnostiske kriterier i MRS) er derfor utelatt fra analysen. For øvrig er alle variablene som skal rapporteres til NorVas registrert så fremst de gjenfinnes i HP (se vedlegg).</p>
+</section>
+<section id="utvalg" class="level2">
+<h2 class="anchored" data-anchor-id="utvalg">Utvalg</h2>
+<p>Per design er like mange inklusjoner i Norvas og i valderingsdatabasen, siden pasientene som er valgt ut er hentet fra Norvas. Det er dermed ikke mulig, basert på denne undersøkselsen, å si noe om alle pasientene med relevante diagnoser i HP faktisk blir overført til Norvas.</p>
+<p>Det er kjent at det i noen tilfeller overføres flere oppfølgingsskjema knyttet til samme konsutasjon. I noen tilfeller er det også generert oppfølgingsskjema samme besøk som inklusjonskjema opprettes.</p>
+<p>Klassifikasjonskriterier er ikke inkludert siden det ikke er mulig å registrere i HP ved St.&nbsp;Olavs.</p>
+<p>Forventer avvik på datoer for Blodprøvesvar, gitt datainnhentingen. Må se nærmere på hvilke datoer som overføres fra HP.</p>
+</section>
+<section id="funn" class="level2">
+<h2 class="anchored" data-anchor-id="funn">Funn</h2>
+<p>Skille på ANCA og LVV. Mulige fremstillinger:</p>
+<ul>
+<li>Overordnet</li>
+<li>antall inklusjoner og oppfølginger</li>
+<li>antall oppfølginger som finnes i hp men ikke i norvas</li>
+<li>liste med ID for skjema som ikke blir overført</li>
+<li>antall oppfølginger som finnes i norvas men ikke i hp</li>
+<li>liste med ID for skjema</li>
+<li>antall duplikate oppfølgingsskjema</li>
+<li>liste med ID for skjema</li>
+<li>antall duplikate diagnoser</li>
+<li>liste med ID for skjema</li>
+<li>Manglende diagnoser i Norvas</li>
+<li>liste med ID for skjema</li>
+<li>antall oppfølgingsskjema samme dag som inklusjon</li>
+<li>liste med ID for skjema</li>
+</ul>
+<p>Ved sammenligninger på variabelnivå sammenlignes kun skjema som matcher på pasientid og dato. Der det finnes flere skjema for samme pasient på samme dato brukes skjemaet med færrest tomme felter.</p>
+<ul>
+<li>Variabelnivå</li>
+<li>Skille mellom ANCA og LVV</li>
+<li>ANCA:</li>
+<li>BVAS, Trenger score og sykdomsvurdering</li>
+<li>Blodprøvesvar</li>
+<li>LVV:</li>
+<li>KERRS, Trenger score og sykdomsvurdering</li>
+<li>Blodprøvesvar: CRP og blodtrykk</li>
+<li>Felles:</li>
+<li>Diagnoser</li>
+<li>VDI</li>
+<li>Medisiner/infusjonslogg</li>
+<li>Vaskulittintervensjon</li>
+<li>Komorbiditet</li>
+<li>Ligger i Inklusjon og Oppfølging</li>
+<li>Rand 12</li>
+<li>VAS</li>
+<li>Høyde, vekt, jobb, år på skole, snus, røyk, graviditet</li>
+<li>Inkludert ny/etablert diagnose</li>
+<li>Inkludert annet sykehus</li>
+</ul>
+</section>
+<section id="inklusjoner-og-oppfølginger" class="level2">
+<h2 class="anchored" data-anchor-id="inklusjoner-og-oppfølginger">Inklusjoner og oppfølginger</h2>
+<p>For de 23 pasientene som er med i valideringsundersøkelsen finnes det 54 oppfølginger i Norvas som er registrert etter inklusjonssdato og etter «GO LIVE» for HP, dvs. 2022-11-12 og før . Av disse er det 11 skjemaer som er på samme dato som pasientens inklusjon og som dermed ikke skulle blitt generert/overført. Det finnes 8 tilfeller av at samme pasient har flere oppfølgingsskjema på samme dag, på det meste 3 skjemaer.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Duplikater i Norvas</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">PasientId</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">OppfolgingsDato</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">N</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">80000654543</td>
+<td style="text-align: left;">2025-02-28</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001174693</td>
+<td style="text-align: left;">2025-08-06</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">2024-02-29</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">2024-04-12</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165697832</td>
+<td style="text-align: left;">2024-03-15</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165697832</td>
+<td style="text-align: left;">2023-09-25</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166579078</td>
+<td style="text-align: left;">2025-08-06</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80166677320</td>
+<td style="text-align: left;">2025-02-14</td>
+<td style="text-align: left;">2</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Inklusjon og oppfølging samme dag</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">PasientId</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">InklusjonDato</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">80000340506</td>
+<td style="text-align: left;">2025-09-25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001113813</td>
+<td style="text-align: left;">2024-11-29</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001174693</td>
+<td style="text-align: left;">2025-08-06</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001362813</td>
+<td style="text-align: left;">2024-10-25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80002068145</td>
+<td style="text-align: left;">2025-05-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164653327</td>
+<td style="text-align: left;">2025-10-21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165032601</td>
+<td style="text-align: left;">2023-03-02</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165494915</td>
+<td style="text-align: left;">2024-11-08</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165588480</td>
+<td style="text-align: left;">2024-04-30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165697832</td>
+<td style="text-align: left;">2023-03-10</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166677320</td>
+<td style="text-align: left;">2024-05-02</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br>
+</p>
+<p>I den videre analysen er oppfølgingsskjema på samme dato som pasientens inklusjon fjernet. Der pasienten har flere skjema på samme dato er kun et skjema tatt med, nemlig den med med flest utfylte felter.</p>
+<p>Tabellen under oppsummerer antall inklusjoner og oppfølginger i Norvas (etter fjerning av skjemaer som beskrevet over) og i valideringsundersøkelsen.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Inklusjoner og oppfølginger i Norvas og i valideringsdatabase.</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Diagnosegruppe</th>
+<th style="text-align: left;">registrert</th>
+<th style="text-align: right;">inkl</th>
+<th style="text-align: right;">ingen_oppf</th>
+<th style="text-align: right;">oppf</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+<td style="text-align: left;">norvas</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+<td style="text-align: left;">norvas</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+<td style="text-align: left;">validering</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">39</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+<td style="text-align: left;">validering</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">34</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><br>
+Av de 32 gjenværende oppfølgingene i Norvas etter datavask, så matcher samtlige en oppfølging fra valideringsdatabasen. Dvs. at det finnes en oppfølging med samme dato og PasientId. Av de 73 oppfølgingene som ble registrert i valideringsdatabasen, så er det 41 som ikke finner en match i Norvas.</p>
+<p><br>
+<br>
+</p>
+</section>
+<section id="vedlegg" class="level2">
+<h2 class="anchored" data-anchor-id="vedlegg">Vedlegg</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="evfpnprkri" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#evfpnprkri table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#evfpnprkri thead, #evfpnprkri tbody, #evfpnprkri tfoot, #evfpnprkri tr, #evfpnprkri td, #evfpnprkri th {
+  border-style: none;
+}
+
+#evfpnprkri p {
+  margin: 0;
+  padding: 0;
+}
+
+#evfpnprkri .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#evfpnprkri .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#evfpnprkri .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#evfpnprkri .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#evfpnprkri .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#evfpnprkri .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#evfpnprkri .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#evfpnprkri .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#evfpnprkri .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#evfpnprkri .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#evfpnprkri .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#evfpnprkri .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#evfpnprkri .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#evfpnprkri .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#evfpnprkri .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfpnprkri .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#evfpnprkri .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#evfpnprkri .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#evfpnprkri .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfpnprkri .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#evfpnprkri .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfpnprkri .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#evfpnprkri .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfpnprkri .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#evfpnprkri .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#evfpnprkri .gt_left {
+  text-align: left;
+}
+
+#evfpnprkri .gt_center {
+  text-align: center;
+}
+
+#evfpnprkri .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#evfpnprkri .gt_font_normal {
+  font-weight: normal;
+}
+
+#evfpnprkri .gt_font_bold {
+  font-weight: bold;
+}
+
+#evfpnprkri .gt_font_italic {
+  font-style: italic;
+}
+
+#evfpnprkri .gt_super {
+  font-size: 65%;
+}
+
+#evfpnprkri .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#evfpnprkri .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#evfpnprkri .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#evfpnprkri .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#evfpnprkri .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#evfpnprkri .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#evfpnprkri .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#evfpnprkri .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#evfpnprkri div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<thead>
+<tr class="header gt_col_headings">
+<th id="Variabel" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd gt_group_heading_row">
+<td id="Registreres av helsepersonell ved inklusjon" class="gt_group_heading" data-quarto-table-cell-role="th" style="background-color: #C6D4EF; font-weight: bold" scope="col">Registreres av helsepersonell ved inklusjon</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Helsepersonell som registrerer</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Institusjon</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Pasient-ID</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Kommune</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Signert samtykke gitt</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Inklusjonsdato</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Diagnose, navn og kode</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Inklusjon ved ny eller etablert diagnose</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell ved inklusjon  Variabel">Klassifikasjonskriterier (diagnosespesifikke)</td>
+</tr>
+<tr class="odd gt_group_heading_row">
+<td id="Registrering av pasient" class="gt_group_heading" data-quarto-table-cell-role="th" style="background-color: #C6D4EF; font-weight: bold" scope="col">Registrering av pasient</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Alder</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Kjønn</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Høyde</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Vekt</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Utdanning (antall skoleår)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Aktuell jobbsituasjon</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Røykestatus</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Bruk av snus</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Ev. svangerskap/svangerskapsuke</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Komorbiditet</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Alvorlige infeksjoner siste konsultasjon</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registrering av pasient  Variabel">Type alvorlig infeksjon</td>
+</tr>
+<tr class="even gt_group_heading_row">
+<td id="Registreres av helsepersonell" class="gt_group_heading" data-quarto-table-cell-role="th" style="background-color: #C6D4EF; font-weight: bold" scope="col">Registreres av helsepersonell</td>
+</tr>
+<tr class="odd gt_row_group_first">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Tidspunkt for diagnose</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Tidspunkt for første symptom</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Sykdomsaktivitet målt ved BVAS/Kerr’s</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">BVAS vurdering (debut, lett residiv, alvorlig residiv, persisterende sykdom, remisjon)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Kerr’s vurdering (debut, residiv, remisjon)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Antall residiv – regnes automatisk</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Skadeutvikling (VDI)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Registreres av helsepersonell  Variabel">Blodtrykk</td>
+</tr>
+<tr class="odd gt_group_heading_row">
+<td id="Behandling" class="gt_group_heading" data-quarto-table-cell-role="th" style="background-color: #C6D4EF; font-weight: bold" scope="col">Behandling</td>
+</tr>
+<tr class="even gt_row_group_first">
+<td class="gt_row gt_left" headers="Behandling  Variabel">Tidligere legemidler (navn og doser)</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="Behandling  Variabel">Aktuelle legemidler (navn og doser)</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="Behandling  Variabel">Årsak til endring/stopp av legemiddel</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

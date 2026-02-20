@@ -2,15 +2,83 @@
 title: "Validering Helseplattformen"
 author: "NORVAS"
 format: html
+editor: 
+  markdown: 
+    wrap: 72
 ---
+
+## Formål
+Formålet med prosjektet å undersøke kvaliteten og korrektheten av data som overføres fra Helseplattformen (HP) til Norsk vaskulittregister (NorVas), som ledd i lovpålagt kontroll av datakvaliteten i henhold til §4-8 i forskrift om medisinske kvalitetsregistre. 
+
 
 ## Bakgrunn
 
-Julianne kan skrive noen ord her.
+NorVas er et nasjonalt medisinsk kvalitetsregister for systemiske vaskulittsykdommer. Alle pasienter over 16 år som behandles for ANCA-assosiert vaskulitt eller storkarsvaskulitt ved en revmatologisk avdeling i Norge, skal inkluderes i registeret. Formålet med registeret er å sikre kvalitet og enhetlig utredning, behandling og oppfølging av vaskulittpasienter i Norge. Registeret har syv kvalitetsindikatorer som samtlige er i tråd med den nasjonale veilederen utarbeidet i regi av Norsk revmatologisk forening. Pasienter som inkluderes i NorVas er kronikere som følges over år. Dette innebærer at data skal registreres ved sykdomsdebut og ved samtlige påfølgende kontroller. Innregistrering foregår av merkantilt personell med spesialoppgaver, sykepleiere, leger og pasienter. I hovedsak er det leger som følger og behandler denne pasientgruppen, da det dreier seg om relativt sjeldne og potensielt alvorlige sykdommer. All innsamling av data til NorVas skjer elektronisk via GoTreatIT (GTI), Medisinsk registreringssystem (MRS) eller Helseplattformen (HP). Universitetssykehuset Nord-Norge HF er dataansvarlig for registeret. Databasen er lagt til MRS som forvaltes av Hemit HF. Innlogging til databasen skjer via Norsk Helsenett SF (NHN) som eies av helse- og omsorgsdepartementet. 
+
+Deltakelse i NorVas er frivillig for pasienten og har siden oppstarten i 2016 vært basert på skriftlig samtykke. I slutten av 2024 gikk NorVas over til reservasjonsrett. Det innebærer at pasientene nå blir inkludert i registeret så lenge de ikke velger å reservere seg. Løsning for reservasjonsrett ble etablert i MRS desember 2024 og i GTI mars 2025. Det foreligger per feburar 2026 enda ikke løsning for reservasjonsrett i HP og pasienter i Helse Midt-Norge må fremdeles samtykke skriftlig til inklusjon. Pasientene kan når som helst velge å trekke samtykket eller reservere seg mot deltakelse, og allerede innsamlede data til NorVas vil da bli slettet. For utfyllende detaljer vedrørende samtykke og reservasjonsrett, vises til norvas.no. 
+
+HP ble innført ved St. Olavs Hospital HF november 2022, ved Helse Møre og Romsdal HF våren 2024 og ved Helse Nord-Trøndelag HF høsten 2024 og er den elektroniske pasientjournalen som nå benyttes av alle tre revmatologiske avdelinger i Helse Midt-Norge RHF. HP er det første og foreløpig eneste elektroniske pasientjournalsystemet som har automatisert datafangst til NorVas. Det betyr at variablene høstes direkte til registeret uten at behandler må gjøre noen form for dobbeltføring. I utgangspunktet vil dette være tidsbesparende for behandlerne, samt fjerne et mellomledd som kan medføre bias og inkompletthet i registrerte variabler, så fremst systemet fungerer etter intensjonen. 
+
+Revmatologisk avdeling ved St. Olavs var frem til overgangen til HP gode til å inkludere pasienter og registrere inn data i NorVas via GTI. Etter overgangen har dessverre antall inkluderte falt betydelig, samtidig som kvaliteten på innkommende data har blitt dårligere. For eksempel inkluderte St. Olavs 32 pasienter i NorVas mellom november 2022 og juni 2024, mens de til sammenligning inkluderte 31 pasienter i 2021 alene. 
+
+Birmingham vasculitis activity score (BVAS), et validert skåringsverktøy for å monitorere aktiv vaskulittsykdom hos pasienter med ANCA-assosiert vaskulitt, skal fylles ut hver gang en pasient med ANCA-assosiert vaskulitt er til kontroll. I 2021 ble dette gjort ved 81 % av kontrollene ved St. Olavs, mot kun 27 % av kontrollene i 2023. Generelt har registreringsaktiviteten i NorVas gått ned fra mellom 40-60 registerkontroller i måneden før HP til nå cirka 20 registerkontroller i måneden. Medisineringsdataene er tilsynelatende svært mangelfulle og responsraten på pasientrapporterte data (PROMs) er bare rundt 50 %. 
+Vi ønsker å undersøke om nevnte forhold skyldes manglende innrapportering/lav kompletthet og/eller feil i dataløsningen, og avdekke eventuelle tiltak som kan forbedre datakvaliteten. 
+
 
 ## Protokoll
 
-Julianne kan skrive noen ord her.
+For å gjennomføre prosjektet, har man gått gjennom journalen til utvalgte pasienter ved revmatologisk avdeling ved St. Olavs som har samtykket til inklusjon i NorVas, og sammenlignet det som er registrert i HP mot det som er kommet over til NorVas. 
+
+I forkant av gjennomgangen ble det søkt og innvilget dispensasjon fra taushetsplikten etter helsepersonelloven §29 og helseregisterloven §19 e slik at den registeransatte fikk lesetilgang til pasientjournalen sammen med en ansatt ved aktuelle avdeling.
+
+Hemit tilgjengeliggjorde en testdatabase i MRS for registrering av data til prosjektet, samt en liste over testpasienter med hjelpenummer som er benyttet til formålet. 
+
+Statistiker identifiserte 50 pasienter med aktuell diagnose som følges ved revmatologisk avdeling ved St. Olavs og er inkludert i registeret. Utvalget er fordelt 50-50 på pasienter med ANCA-asossiert vaskulitt og storkarsvaskulitt, omtrent like mange kvinner som menn, inkludert før og etter overgangen til HP
+
+```{r}
+#| echo: false
+
+data <- data.frame(
+  ICD10 = c("M30.1", "M31.3", "M31.7", "M31.4", "M31.5 / M31.6", "I77.6"),
+  Beskrivelse = c(
+    "Eosinofil granulomatose med polyangiitt (EGPA)",
+    "Granulomatose med polyangiitt (GPA)",
+    "Mikroskopisk polyangiitt (MPA)",
+    "Takayasus arteritt (aortabuesyndrom) (TAK)",
+    "Kjempecellearteritt med polymyalgia revmatika / Annen kjempecellearteritt (KCA)",
+    "Uspesifisert aortitt"
+  )
+)
+
+knitr::kable(data, col.names = c("ICD-10", " "), align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+
+Pasientene er koblet til unike hjelpenummer i MRS, denne koblingen er lagret kryptert.
+Faglig leder i registeret satt fysisk sammen med overlege ved St. Olavs i 3 dager (29-31.10.25) og gikk gjennom journalen til totalt 27 pasienter. Dette var det antallet man klarte på tilgjengelig tid. Rent praktisk har overlege ved St. Olavs navigert i HP, mens registeransatt har registrert alle tilgjengelige aktuelle variabler i testdatabasen i MRS. 
+
+Av de 27 gjennomgåtte pasientene, ble 4 fjernet fra den endelige analysen av følgende årsaker:
+
+* 1 pasient har diagnose psoriasisartritt - ikke diagnose som kvalifiserer til NorVas, samtykket til NorArtritt (migrert fra GTI) 10.02.16, ikke samtykket til inklusjon i Norvas
+* 1 pasient har PAN – diagnose som ikke skal følges i registeret per nå, men skulle det tidligere. Nå ekskludert med oppfølging avsluttet
+* 1 pasient med GPA som ikke har registrert samtykke i HP (heller ikke migrert fra GTI), heller ikke at pasienten har trukket samtykke eller at oppfølging er avsluttet. Denne pasienten ble ikke tatt med i testdatabasen på bakgrunn av manglende samtykke. 
+* 1 pasient med storkarsvaskulitt i NorVas inkludert i GTI i 2015. I HP er denne pasienten registrert med polyartrittdiagnose, dette kvalifiserer ikke til inklusjon i NorVas.
+
+
+Den endelige analysen er derfor basert på 23 pasienter hvorav 14 med storkarsvaskulitt og 9 med ANCA-assosiert vaskulitt. 
+
+Oppfølginger/kontroller registrert i testdatabasen gjelder for tidsperioden etter «GO LIVE» 12.11.22 til og med 31.10.25. 
+
+For pasientene som ble inkludert i NorVas etter «GO LIVE», er oppfølgingene/kontrollene i tidsrommet fra inklusjon til og med 31.10.25 som er registrert i testdatabasen. 
+
+Etter at samtykke foreligger, har HP overført data til NorVas som er datert forut for samtykket. Disse oppfølgingene er utelatt fra analysen da de ikke er registrert i testdatabasen.  
+
+For pasienter inkludert før «GO LIVE», er det registrert et inklusjonsskjema på aktuelle dato i testdatabasen og deretter alle oppfølginger/kontroller som foreligger etter «GO LIVE» 12.11.22 frem til og med 31.10.25. 
+
+Flere pasienter har flere kontakter på samme dato i HP, f.eks. en legekontakt, en sykepleierkontakt og en pasientmelding/innsending av spørreskjema. Dette er registrert som en kontakt/oppfølging i testdatabasen. 
+
+I perioden analysene ble utført, har det ikke vært mulig å registrere klassifikasjonskriterier i HP ved St. Olavs. Klassifikasjonskriteriene (kalt diagnostiske kriterier i MRS) er derfor utelatt fra analysen. For øvrig er alle variablene som skal rapporteres til NorVas registrert så fremst de gjenfinnes i HP (se vedlegg).
 
 
 ```{r}
@@ -175,8 +243,218 @@ tab_oppf <- Inklusjon |> select(PasientId, InklusjonDato, Diagnosegruppe) |>
 
 ## Utvalg
 
+Per design er like mange inklusjoner i Norvas og i valderingsdatabasen, siden 
+pasientene som er valgt ut er hentet fra Norvas. Det er dermed ikke mulig, basert 
+på denne undersøkselsen, å si noe om alle pasientene med relevante diagnoser i 
+HP faktisk blir overført til Norvas.
 
+Det er kjent at det i noen tilfeller overføres flere oppfølgingsskjema knyttet til samme konsutasjon. I noen tilfeller er det også generert oppfølgingsskjema samme 
+besøk som inklusjonskjema opprettes.
+
+Klassifikasjonskriterier er ikke inkludert siden det ikke er mulig å registrere i HP ved St. Olavs.
+
+Forventer avvik på datoer for Blodprøvesvar, gitt datainnhentingen. Må se nærmere på hvilke datoer som overføres fra HP.
 
 ## Funn
 
-Mer tekst her
+Skille på ANCA og LVV. Mulige fremstillinger:
+
+
+* Overordnet
+* antall inklusjoner og oppfølginger
+* antall oppfølginger som finnes i hp men ikke i norvas
+* liste med ID for skjema som ikke blir overført
+* antall oppfølginger som finnes i norvas men ikke i hp 
+* liste med ID for skjema
+* antall duplikate oppfølgingsskjema
+* liste med ID for skjema
+* antall duplikate diagnoser
+* liste med ID for skjema
+* Manglende diagnoser i Norvas
+* liste med ID for skjema
+* antall oppfølgingsskjema samme dag som inklusjon 
+* liste med ID for skjema
+
+Ved sammenligninger på variabelnivå sammenlignes kun skjema som matcher på pasientid og dato. Der det finnes flere skjema for samme pasient på samme dato brukes skjemaet med færrest tomme felter.
+
+* Variabelnivå
+* Skille mellom ANCA og LVV
+* ANCA:
+* BVAS, Trenger score og sykdomsvurdering
+* Blodprøvesvar
+* LVV:
+* KERRS, Trenger score og sykdomsvurdering
+* Blodprøvesvar: CRP og blodtrykk
+* Felles:
+* Diagnoser
+* VDI
+* Medisiner/infusjonslogg
+* Vaskulittintervensjon
+* Komorbiditet
+* Ligger i Inklusjon og Oppfølging
+* Rand 12
+* VAS
+* Høyde, vekt, jobb, år på skole, snus, røyk, graviditet
+* Inkludert ny/etablert diagnose
+* Inkludert annet sykehus
+
+
+```{r}
+#| echo: false
+Oppfolging_inkl <- Oppfolging |>   
+  merge(Inklusjon |> select(PasientId, InklusjonDato),
+        by = "PasientId", all.x = TRUE)|>
+  filter(OppfolgingsDato >= InklusjonDato,
+         OppfolgingsDato >= "2022-11-12",
+         OppfolgingsDato <= "2025-10-31")
+
+duplikater <- Oppfolging_inkl |> 
+  summarise(N = n(), .by = c(PasientId, OppfolgingsDato)) |> 
+  filter(N > 1)
+
+```
+## Inklusjoner og oppfølginger
+
+For de `{r} dim(Inklusjon)[1]` pasientene som er med i valideringsundersøkelsen
+finnes det `{r} dim(Oppfolging_inkl)[1]` oppfølginger i Norvas som er registrert 
+etter inklusjonssdato og etter «GO LIVE» for HP, dvs. 2022-11-12 og før . Av disse er det 
+`{r} length(unique(inkl_og_oppf_samme_dato$PasientId))` skjemaer som er på samme 
+dato som pasientens inklusjon og som dermed ikke skulle blitt generert/overført.
+Det finnes `{r} dim(duplikater)[1]` tilfeller av at samme pasient har flere oppfølgingsskjema på samme dag, på det meste `{r} max(duplikater$N)[1]` skjemaer.
+
+```{r}
+#| echo: false
+
+knitr::kable(duplikater, caption = "Duplikater i Norvas", 
+             align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+knitr::kable(
+  inkl_og_oppf_samme_dato |> select(PasientId, InklusjonDato), 
+             caption = "Inklusjon og oppfølging samme dag", 
+             align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+\
+
+I den videre analysen er oppfølgingsskjema på samme dato som pasientens inklusjon
+fjernet. Der pasienten har flere skjema på samme dato er kun et skjema tatt med, nemlig den med med flest utfylte felter.
+
+Tabellen under oppsummerer antall inklusjoner og oppfølginger i Norvas (etter fjerning av skjemaer som beskrevet over) og i valideringsundersøkelsen.
+
+```{r}
+#| echo: false
+
+knitr::kable(tab_oppf, caption = "Inklusjoner og oppfølginger i Norvas og i valideringsdatabase.")
+
+oppf_samlet <- merge(
+  Oppfolging_validering |> mutate(Fulgt_opp_val = 1) |> 
+    select(PasientId, OppfolgingsDato, Fulgt_opp_val),
+  Oppfolging_unik |> mutate(Fulgt_opp_norvas = 1) |> 
+    select(PasientId, OppfolgingsDato, Fulgt_opp_norvas),
+  by = c("PasientId", "OppfolgingsDato"), all = TRUE
+) |> 
+  mutate(
+    Fulgt_opp_val = ifelse(is.na(Fulgt_opp_val), 0, Fulgt_opp_val),
+    Fulgt_opp_norvas = ifelse(is.na(Fulgt_opp_norvas), 0, Fulgt_opp_norvas))
+
+
+```
+\
+Av de 32 gjenværende oppfølgingene i Norvas etter datavask, så matcher samtlige 
+en oppfølging fra valideringsdatabasen. Dvs. at det finnes en oppfølging med samme dato og PasientId. Av de 73 oppfølgingene som ble registrert i valideringsdatabasen, så er det `{r} sum(oppf_samlet$Fulgt_opp_norvas==0) ` som ikke finner en match i Norvas.
+
+
+
+
+\
+\
+```{r}
+#| echo: false
+
+
+
+```
+
+
+## Vedlegg
+
+```{r}
+#| echo: false
+library(gt)
+library(dplyr)
+
+# Data hentet fra tabellen i bildet
+
+data <- tibble(
+  Seksjon = c(
+    # --- 1. Registreres av helsepersonell ved inklusjon (10 variabler) ---
+    rep("Registreres av helsepersonell ved inklusjon", 9),
+
+    # --- 2. Registrering av pasient (12 variabler) ---
+    rep("Registrering av pasient", 12),
+
+    # --- 3. Registreres av helsepersonell (8 variabler) ---
+    rep("Registreres av helsepersonell", 8),
+
+    # --- 4. Behandling (3 variabler) ---
+    rep("Behandling", 3)
+  ),
+  
+  Variabel = c(
+    # 1. Registreres av helsepersonell ved inklusjon
+    "Helsepersonell som registrerer",
+    "Institusjon",
+    "Pasient-ID",
+    "Kommune",
+    "Signert samtykke gitt",
+    "Inklusjonsdato",
+    "Diagnose, navn og kode",
+    "Inklusjon ved ny eller etablert diagnose",
+    "Klassifikasjonskriterier (diagnosespesifikke)",
+
+    # 2. Registrering av pasient
+    "Alder",
+    "Kjønn",
+    "Høyde",
+    "Vekt",
+    "Utdanning (antall skoleår)",
+    "Aktuell jobbsituasjon",
+    "Røykestatus",
+    "Bruk av snus",
+    "Ev. svangerskap/svangerskapsuke",
+    "Komorbiditet",
+    "Alvorlige infeksjoner siste konsultasjon",
+    "Type alvorlig infeksjon",
+
+    # 3. Registreres av helsepersonell
+    "Tidspunkt for diagnose",
+    "Tidspunkt for første symptom",
+    "Sykdomsaktivitet målt ved BVAS/Kerr’s",
+    "BVAS vurdering (debut, lett residiv, alvorlig residiv, persisterende sykdom, remisjon)",
+    "Kerr’s vurdering (debut, residiv, remisjon)",
+    "Antall residiv – regnes automatisk",
+    "Skadeutvikling (VDI)",
+    "Blodtrykk",
+
+    # 4. Behandling
+    "Tidligere legemidler (navn og doser)",
+    "Aktuelle legemidler (navn og doser)",
+    "Årsak til endring/stopp av legemiddel"
+  )
+)
+
+# GT-tabell med seksjonsfarging
+data %>%
+  gt(groupname_col = "Seksjon") %>%
+  tab_style(
+    style = list(
+      cell_fill(color = "#c6d4ef"),
+      cell_text(weight = "bold")
+    ),
+    locations = cells_row_groups()
+  ) %>%
+  cols_label(Variabel = "")
+
+
+```
