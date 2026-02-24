@@ -314,3 +314,125 @@ tmp2 <- KERR |> filter(PasientId == 80001174693,
 # setdiff(Diagnoser_validering$PasientId, Diagnoser$PasientId)
 # table(Diagnoser_alle$Icd_IcdDataDump, useNA = 'ifany')
 # setdiff(Diagnoser_validering$PasientId, Diagnoser_alle$PasientId)
+
+
+
+# var_inklusjon <- data.frame(
+#   variabel= var_inklusjon,
+#   felttype = kodebok_norvas$Felttype[
+#     match(var_inklusjon, kodebok_norvas$Variabelnavn)])
+#
+# date_vars    <- var_inklusjon$variabel[var_inklusjon$felttype == "Dato/tid"]
+# nominal_vars <- var_inklusjon$variabel[var_inklusjon$felttype == "Enkeltvalg"]
+# numeric_vars <- var_inklusjon$variabel[var_inklusjon$felttype == "Tall"]
+#
+# library(lubridate)
+# library(psych)      # for Cohen's kappa
+# library(ggplot2)
+#
+#
+# ### --- DATE VARIABLES ----------------------------------------------------
+#
+# analyze_dates <- function(df, vars) {
+#   results <- lapply(vars, function(v) {
+#     reg  <- df[[paste0(v, "_reg")]]
+#     gold <- df[[paste0(v, "_gold")]]
+#
+#     diff_days <- as.numeric(difftime(reg, gold, units = "days"))
+#
+#     data.frame(
+#       variable = v,
+#       n = sum(!is.na(diff_days)),
+#       mean_diff_days = mean(diff_days, na.rm = TRUE),
+#       median_diff_days = median(diff_days, na.rm = TRUE),
+#       sd_diff_days = sd(diff_days, na.rm = TRUE)
+#     )
+#   })
+#   bind_rows(results)
+# }
+#
+# date_results <- analyze_dates(sammenlign_inkl, date_vars)
+# print(date_results)
+#
+# ### --- NOMINAL VARIABLES ----------------------------------------------------
+#
+# analyze_nominal <- function(df, vars) {
+#   results <- lapply(vars, function(v) {
+#     reg  <- df[[paste0(v, "_reg")]]
+#     gold <- df[[paste0(v, "_gold")]]
+#
+#     tab <- table(reg, gold)
+#     kappa <- cohen.kappa(tab)
+#
+#     data.frame(
+#       variable = v,
+#       percent_agreement = sum(reg == gold, na.rm = TRUE) / sum(!is.na(reg) & !is.na(gold)),
+#       kappa = ifelse(is.null(kappa$kappa), NA, kappa$kappa),
+#       kappa_ci_low = ifelse(is.null(kappa$confid[1]), NA, kappa$confid[1]),
+#       kappa_ci_high = ifelse(is.null(kappa$confid[2]), NA, kappa$confid[2])
+#     )
+#   })
+#   bind_rows(results)
+# }
+#
+# nominal_results <- analyze_nominal(sammenlign_inkl, nominal_vars[-4])
+# print(nominal_results)
+#
+# ### --- NUMERIC VARIABLES ----------------------------------------------------
+#
+# analyze_numeric <- function(df, vars) {
+#   results <- lapply(vars, function(v) {
+#     reg  <- df[[paste0(v, "_reg")]]
+#     gold <- df[[paste0(v, "_gold")]]
+#
+#     diff <- reg - gold
+#     mean_diff <- mean(diff, na.rm = TRUE)
+#     sd_diff <- sd(diff, na.rm = TRUE)
+#
+#     loa_low  <- mean_diff - 1.96 * sd_diff
+#     loa_high <- mean_diff + 1.96 * sd_diff
+#
+#     data.frame(
+#       variable = v,
+#       n = sum(!is.na(diff)),
+#       mean_diff = mean_diff,
+#       sd_diff = sd_diff,
+#       loa_low = loa_low,
+#       loa_high = loa_high,
+#       correlation = cor(reg, gold, use = "complete")
+#     )
+#   })
+#   bind_rows(results)
+# }
+#
+# tmp <- sammenlign_inkl |> select(c(paste0(numeric_vars, "_gold"), paste0(numeric_vars, "_reg"))) %>%
+#   relocate(sort(names(.)))
+#
+# numeric_results <- analyze_numeric(sammenlign_inkl, numeric_vars)
+# print(numeric_results)
+#
+# ### --- OPTIONAL: Bland-Altman PLOT for any numeric variable --------------
+#
+# plot_bland_altman <- function(df, var) {
+#   reg  <- df[[paste0(var, "_reg")]]
+#   gold <- df[[paste0(var, "_gold")]]
+#
+#   avg <- (reg + gold) / 2
+#   diff <- reg - gold
+#
+#   mean_diff <- mean(diff, na.rm = TRUE)
+#   sd_diff <- sd(diff, na.rm = TRUE)
+#
+#   ggplot(data.frame(avg, diff), aes(x = avg, y = diff)) +
+#     geom_point(alpha = 0.4) +
+#     geom_hline(yintercept = mean_diff, color = "blue", linetype = "dashed") +
+#     geom_hline(yintercept = mean_diff + 1.96*sd_diff, color = "red", linetype = "dotted") +
+#     geom_hline(yintercept = mean_diff - 1.96*sd_diff, color = "red", linetype = "dotted") +
+#     labs(title = paste("Bland–Altman plot for", var),
+#          x = "Average of registry & gold",
+#          y = "Difference (reg - gold)") +
+#     theme_minimal()
+# }
+#
+# # Example:
+# # plot_bland_altman(df, "age")

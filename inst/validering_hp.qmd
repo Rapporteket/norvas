@@ -332,8 +332,8 @@ knitr::kable(duplikater, caption = "Duplikater i Norvas",
   kableExtra::kable_styling(full_width = FALSE)
 knitr::kable(
   inkl_og_oppf_samme_dato |> select(PasientId, InklusjonDato), 
-             caption = "Inklusjon og oppfølging samme dag", 
-             align = "l", booktabs = TRUE) |> 
+  caption = "Inklusjon og oppfølging samme dag", 
+  align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
 
 ```
@@ -375,7 +375,60 @@ knitr::kable(oppf_samlet |>
              align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
 
+var_inklusjon <- c(
+  "InklusjonDato", "Jobbsituasjon", "RoykeStatus", "SnuseStatus", "ErGravid",
+  "Pasientsmerter", "Tretthet", "PasientGlobalSykdomsaktivitet", "Rand12Q01",
+  "Rand12Q02", "Rand12Q03", "Rand12Q04", "Rand12Q05", "Rand12Q06", "Rand12Q07",
+  "Rand12Q08", "Rand12Q09", "Rand12Q10", "Rand12Q11", "Rand12Q12", "Rand12ScorePf",
+  "Rand12ScoreRp", "Rand12ScoreBp", "Rand12ScoreGh", "Rand12ScoreVt",
+  "Rand12ScoreSf", "Rand12ScoreRe", "Rand12ScoreMh"
+)
+sammenlign_inkl <- merge(
+  Inklusjon |> select(PasientId, all_of(var_inklusjon)) |>
+    mutate(InklusjonDato = as.Date(InklusjonDato, format="%d.%m.%Y")),
+  Inklusjon_validering |> select(PasientId, all_of(var_inklusjon)) |>
+    mutate(InklusjonDato = as.Date(InklusjonDato, format="%d.%m.%Y")),
+  by = "PasientId", suffixes = c("_reg", "_gold")) %>%
+  relocate(sort(names(.))) |>
+  relocate(PasientId) |> 
+  mutate(across(where(is.character), 
+                function(x){as.numeric(gsub(',', '\\.', x))}))
+
+
+agreement_simple <- function(df, vars) {
+  results <- lapply(vars, function(v) {
+    reg  <- df[[paste0(v, "_reg")]]
+    reg[is.na(reg)] <- -1
+    gold <- df[[paste0(v, "_gold")]]
+    gold[is.na(gold)] <- -1
+
+    # exact match including NA
+    matches <- reg == gold | (is.na(reg) & is.na(gold))
+
+    percent_agreement <- mean(matches) * 100
+
+    data.frame(
+      variabel = v,
+      samsvar = percent_agreement
+    )
+  })
+
+  do.call(rbind, results)
+}
+
+samsvar_inkl <- agreement_simple(sammenlign_inkl, var_inklusjon)
+
+knitr::kable(samsvar_inkl, 
+             caption = "Samsvar mellom innhold i Norvas og HP", 
+             digits = 1,
+             align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
 ```
+
+## Diagnoser
+
+
 
 
 \
@@ -406,13 +459,13 @@ data <- tibble(
   Seksjon = c(
     # --- 1. Registreres av helsepersonell ved inklusjon (10 variabler) ---
     rep("Registreres av helsepersonell ved inklusjon", 9),
-
+    
     # --- 2. Registrering av pasient (12 variabler) ---
     rep("Registrering av pasient", 12),
-
+    
     # --- 3. Registreres av helsepersonell (8 variabler) ---
     rep("Registreres av helsepersonell", 8),
-
+    
     # --- 4. Behandling (3 variabler) ---
     rep("Behandling", 3)
   ),
@@ -428,7 +481,7 @@ data <- tibble(
     "Diagnose, navn og kode",
     "Inklusjon ved ny eller etablert diagnose",
     "Klassifikasjonskriterier (diagnosespesifikke)",
-
+    
     # 2. Registrering av pasient
     "Alder",
     "Kjønn",
@@ -442,7 +495,7 @@ data <- tibble(
     "Komorbiditet",
     "Alvorlige infeksjoner siste konsultasjon",
     "Type alvorlig infeksjon",
-
+    
     # 3. Registreres av helsepersonell
     "Tidspunkt for diagnose",
     "Tidspunkt for første symptom",
@@ -452,7 +505,7 @@ data <- tibble(
     "Antall residiv – regnes automatisk",
     "Skadeutvikling (VDI)",
     "Blodtrykk",
-
+    
     # 4. Behandling
     "Tidligere legemidler (navn og doser)",
     "Aktuelle legemidler (navn og doser)",
