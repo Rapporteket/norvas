@@ -70,6 +70,12 @@ Av de 27 gjennomgåtte pasientene, ble 4 fjernet fra den endelige analysen av f�
 
 Den endelige analysen er derfor basert på 23 pasienter hvorav 14 med storkarsvaskulitt og 9 med ANCA-assosiert vaskulitt. 
 
+Fem av de 23 aktuelle pasientene er overført fra HP til NorVas uten diagnose, 2 med storkarsvaskulitt og 3 med ANCA-assosisert vaskulitt. Alle 5 har registrert diagnose i HP som kvalifiserer for inklusjon i NorVas. 
+
+En av pasientene med storkarsvaskulitt har en annen diagnose registrert i NorVas (M31.6) før overgangen til HP (I77.6). Begge er undergrupper av storkarsvaskulitter. 
+En av pasientene med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato. En annen har to ulike diagnoser med samme dato der kun den ene kvalifiserer for inklusjon i NorVas.
+
+
 Oppfølginger/kontroller registrert i testdatabasen gjelder for tidsperioden etter «GO LIVE» 12.11.22 til og med 31.10.25. 
 
 For pasientene som ble inkludert i NorVas etter «GO LIVE», er oppfølgingene/kontrollene i tidsrommet fra inklusjon til og med 31.10.25 som er registrert i testdatabasen. 
@@ -94,7 +100,9 @@ rm(list = ls())
 Inklusjon_validering <- read.table(
   "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_Inklusjonskjema_2026-02-12_0914_sensitiv.csv",
   header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |> 
+  mutate(InklusjonDato =
+           as.Date(InklusjonDato, format = "%d.%m.%Y"))
 Oppfolging_validering <- read.table(
   "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_OppfølgingSkjema_2026-02-12_0916.csv",
   header=TRUE, sep=";",
@@ -398,51 +406,778 @@ sammenlign_inkl <- merge(
 agreement_simple <- function(df, vars) {
   results <- lapply(vars, function(v) {
     reg  <- df[[paste0(v, "_reg")]]
+    na_reg <- sum(is.na(reg) | reg == -1 | as.character(reg) == "")
+    utfylt_norvas <- length(reg) - na_reg
     reg[is.na(reg)] <- -1
     gold <- df[[paste0(v, "_gold")]]
+    na_gold <- sum(is.na(gold) | gold == -1 | as.character(gold) == "")
+    utfylt_val <- length(gold) - na_gold
     gold[is.na(gold)] <- -1
-
+    utfylt_begge <- length(reg) - 
+      sum( (is.na(reg) | 
+              reg == -1 | as.character(reg) == "") |
+             (is.na(gold) | gold == -1 | as.character(gold) == ""))
+    ## FEIL, finn ut av!
+    
     # exact match including NA
     matches <- reg == gold | (is.na(reg) & is.na(gold))
-
+    
     percent_agreement <- mean(matches) * 100
-
+    
     data.frame(
       variabel = v,
-      samsvar = percent_agreement
+      samsvar = percent_agreement,
+      utfylt_norvas = utfylt_norvas,
+      utfylt_val = utfylt_val,
+      utfylt_begge = utfylt_begge
     )
   })
-
+  
   do.call(rbind, results)
 }
 
 samsvar_inkl <- agreement_simple(sammenlign_inkl, var_inklusjon)
 
-knitr::kable(samsvar_inkl, 
-             caption = "Samsvar mellom innhold i Norvas og HP", 
-             digits = 1,
-             align = "l", booktabs = TRUE) |> 
+knitr::kable(
+  samsvar_inkl, 
+  caption = "Samsvar mellom innhold i 23 inklusjonsskjema i Norvas og HP", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+\
+Tabellen under viser graden av samsvar mellom det som er registrert i Norvas og 
+i valideringsundersøkelsen. Basert på oppfølginger som er registrert i både Norvas og under valideringen, altså 32 skjemaer.
+
+
+```{r}
+#| echo: false
+var_oppf <- c(
+  "OppfolgingsDato", "IngenEndringerMedisinering", "DatoIngenEndringerMedisinering",
+  "EksklusjonsDato", "EksklusjonsArsak", "ArsakDod", "Avsluttet", "Hoyde",
+  "Vekt", "RoykeStatus", "SnuseStatus", "ErGravid", "Pasientsmerter", "Tretthet",
+  "PasientGlobalSykdomsaktivitet", "Rand12Q01", "Rand12Q02", "Rand12Q03",
+  "Rand12Q04", "Rand12Q05", "Rand12Q06", "Rand12Q07", "Rand12Q08", "Rand12Q09",
+  "Rand12Q10", "Rand12Q11", "Rand12Q12") 
+# , "Rand12ScoreSf", "Rand12ScoreVt",
+#   "Rand12ScoreGh", "Rand12ScorePf", "Rand12ScoreBp", "Rand12ScoreRp",
+#   "Rand12ScoreMh", "Rand12ScoreRe"
+felttype <- data.frame(
+  variabel= var_oppf,
+  felttype = kodebok_norvas$Felttype[
+    match(var_oppf, kodebok_norvas$Variabelnavn)])
+
+sammenlign_oppf <- merge(
+  Oppfolging_unik |> select(PasientId, all_of(var_oppf)) |>
+    mutate(across(felttype$variabel[felttype$felttype == "Avkrysning"], 
+                  as.logical)) |> 
+    mutate(OppfolgingsDato = as.Date(OppfolgingsDato, format="%d.%m.%Y")),
+  Oppfolging_validering |> select(PasientId, all_of(var_oppf)) |>
+    mutate(across(felttype$variabel[felttype$felttype == "Avkrysning"], 
+                  as.logical)) |> 
+    mutate(OppfolgingsDato = as.Date(OppfolgingsDato, format="%d.%m.%Y")),
+  by = c("PasientId", "OppfolgingsDato"), suffixes = c("_reg", "_gold")) %>%
+  relocate(sort(names(.))) |>
+  relocate(PasientId, OppfolgingsDato) |>
+  arrange(PasientId, OppfolgingsDato) |> 
+  mutate(across(where(is.character), 
+                function(x){as.numeric(gsub(',', '\\.', x))}))
+
+samsvar_oppf <- agreement_simple(sammenlign_oppf, var_oppf[-1])
+
+knitr::kable(
+  samsvar_oppf, 
+  caption = "Samsvar mellom innhold i oppfølgingsskjema i Norvas og HP", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+\
+
+IngenEndringerMedisinering og DatoIngenEndringerMedisinering
+
+## Diagnoser
+
+Av utvalget inkludert i valideringsundersøkelsen var det 5 pasienter som manglet 
+diagnose i Norvas. Det var 3 pasienter som hadde mer enn ett diagnoseskjema i Norvas. Tabellene under oppsummerer funnene.
+
+```{r}
+#| echo: false
+
+diagnoser_unik <- Diagnoser |> 
+  summarise(dato_norvas = paste0(Diagnose_Klinisk_Dato, collapse = ", "),
+            icd10_norvas = paste0(Icd_IcdDataDump, collapse = ", "),
+            .by = PasientId)
+
+samlet <- merge(Diagnoser_validering |> 
+                  select(PasientId, Diagnose_Klinisk_Dato, Icd_IcdDataDump) |> 
+                  rename(dato_validering = Diagnose_Klinisk_Dato,
+                         icd10_validering = Icd_IcdDataDump),
+                diagnoser_unik,
+                .by = "PasientId",
+                all.x = TRUE)
+
+knitr::kable(
+  samlet, 
+  caption = "Diagnoseskjema i Norvas og i HP", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+
+var_diag <- c("Diagnose", "Diagnose_Klinisk_Dato", "SymptomStartDato",
+              "Diagnosegruppe", "DiagnoseNr", "Icd_IcdDataDump")
+
+sammenlign_diag <- merge(
+  Diagnoser |> select(PasientId, all_of(var_diag)),
+  Diagnoser_validering |> select(PasientId, all_of(var_diag)),
+  # by = c("PasientId", "Diagnose_Klinisk_Dato"), 
+  by = "PasientId",
+  suffixes = c("_reg", "_gold")) %>%
+  filter(abs(difftime(Diagnose_Klinisk_Dato_reg, 
+                      Diagnose_Klinisk_Dato_gold, units = "days")) < 180) %>%
+  relocate(sort(names(.))) |>
+  relocate(PasientId)
+# relocate(PasientId, Diagnose_Klinisk_Dato)
+
+samsvar_diag <- agreement_simple(sammenlign_diag, var_diag)
+
+knitr::kable(
+  samsvar_diag, 
+  caption = "Samsvar mellom innhold i diagnoseskjema i Norvas og HP", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
 
 ```
 
-## Diagnoser
 
-
-
-
-\
-\
-```{r}
-#| echo: false
-
-
-
-```
 
 ## Blodprøver
 
 Tåler plussminus 2 uker avvik blodprøvedato og inkl/oppfdato.
+
+
+```{r}
+#| echo: false
+
+Blodprover_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_BlodprøvesvarSkjema_2026-02-12_0917.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  merge(Inklusjon_validering[, c("SkjemaGUID", "PasientId")],
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  dplyr::relocate(PasientId)|>
+  mutate(Blodprover_Dato =
+           as.Date(Blodprover_Dato, format = "%d.%m.%Y"))
+
+Blodprover <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-10-02_1412.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  # dplyr::filter(UnitId == 104579) |>
+  dplyr::filter(HovedskjemaGUID %in% Inklusjon$SkjemaGUID) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr)|>
+  mutate(Blodprover_Dato =
+           as.Date(Blodprover_Dato, format = "%d.%m.%Y"))
+duplikat <- Blodprover[
+  duplicated(Blodprover[c("PasientId", "Blodprover_Dato")]) |
+    duplicated(Blodprover[c("PasientId", "Blodprover_Dato")],
+               fromLast = TRUE), ]|>
+  dplyr::relocate(PasientId, Blodprover_Dato) |>
+  dplyr::arrange(PasientId, Blodprover_Dato)
+Blodprover <- Blodprover[
+  !duplicated(Blodprover[c("PasientId", "Blodprover_Dato")]), ]
+
+var_bp <- c(
+  "Blodprover_Dato", "PR3AncaPositiv", "MPO_AncaPositiv", "CrpVerdi",
+  "KreatininVerdi", "GfrVerdi", "IgGVerdi", "UBlodVerdi",
+  "UAlbuminVerdi", "UAlbuminKreatininRatioVerdi",
+  "BlodtrykkSystoliskHoyre", "BlodtrykkDiastoliskHoyre",
+  "BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre",
+  "BlodtrykkSystolisk", "BlodtrykkDiastolisk")
+
+
+# Bp_samlet <- merge(
+#   Blodprover |> select(PasientId, Blodprover_Dato),
+#   Blodprover_validering |> select(PasientId, Blodprover_Dato),
+#   by = "PasientId",
+#   suffixes = c("_reg", "_gold"),
+#   all = TRUE
+# ) |> 
+#   mutate(tidsdiff = abs(difftime(Blodprover_Dato_reg, 
+#                                  Blodprover_Dato_gold, units = "days"))) |> 
+#   arrange(PasientId, Blodprover_Dato_reg, tidsdiff) |>
+#   slice(1, .by = c(PasientId, Blodprover_Dato_reg)) |> 
+#   filter(tidsdiff <= 14)
+# 
+# Bp_samlet2 <- merge(
+#   Blodprover |> select(PasientId, Blodprover_Dato),
+#   Blodprover_validering |> select(PasientId, Blodprover_Dato),
+#   by = "PasientId",
+#   suffixes = c("_reg", "_gold"),
+#   all = TRUE
+# ) |> 
+#   mutate(tidsdiff = abs(difftime(Blodprover_Dato_reg, 
+#                                  Blodprover_Dato_gold, units = "days"))) |> 
+#   arrange(PasientId, Blodprover_Dato_gold, tidsdiff) |>
+#   slice(1, .by = c(PasientId, Blodprover_Dato_gold)) |> 
+#   filter(tidsdiff <= 14)
+
+oppf_m_lab <- Inklusjon |> 
+  filter(InklusjonDato >= "2022-11-12") |> 
+  select(PasientId, InklusjonDato) |> 
+  mutate(undersokelse = "inklusjon") |> 
+  rename(dato = InklusjonDato) |> 
+  bind_rows(
+    Oppfolging_unik |> select(PasientId, OppfolgingsDato) |> 
+      mutate(undersokelse = "oppfolging") |> 
+      rename(dato = OppfolgingsDato)
+  ) |> 
+  merge(Blodprover |> select(PasientId, Blodprover_Dato) |> 
+          filter(Blodprover_Dato >= "2022-11-12"),
+        by = "PasientId", all = T
+  ) |> 
+  mutate(tidsdiff = abs(difftime(dato, Blodprover_Dato, units = "days"))) |> 
+  arrange(PasientId, dato, tidsdiff) |>
+  slice(1, .by = c(PasientId, dato)) |> 
+  filter(tidsdiff <= 14)
+
+oppf_m_lab <- oppf_m_lab[
+  !duplicated(oppf_m_lab[,c("PasientId", "Blodprover_Dato")]), ]
+
+
+oppf_m_lab_val <- Inklusjon_validering |> 
+  filter(InklusjonDato >= "2022-11-12") |> 
+  select(PasientId, InklusjonDato) |> 
+  mutate(undersokelse = "inklusjon") |> 
+  rename(dato = InklusjonDato) |> 
+  bind_rows(
+    Oppfolging_validering |> select(PasientId, OppfolgingsDato) |> 
+      mutate(undersokelse = "oppfolging") |> 
+      rename(dato = OppfolgingsDato)
+  ) |> 
+  merge(Blodprover_validering |> select(PasientId, Blodprover_Dato) |> 
+          filter(Blodprover_Dato >= "2022-11-12"),
+        by = "PasientId", all = T
+  ) |> 
+  mutate(tidsdiff = abs(difftime(dato, Blodprover_Dato, units = "days"))) |> 
+  arrange(PasientId, dato, tidsdiff) |>
+  slice(1, .by = c(PasientId, dato)) |> 
+  filter(tidsdiff <= 14)
+
+oppf_m_lab_val <- oppf_m_lab_val[
+  !duplicated(oppf_m_lab_val[,c("PasientId", "Blodprover_Dato")]), ]
+
+oppf_m_lab_samlet <- merge(
+  oppf_m_lab, 
+  oppf_m_lab_val,
+  by = c("PasientId", "dato")
+)
+
+Blodprover <- merge(
+  Blodprover,
+  oppf_m_lab_samlet |> select(PasientId, dato, Blodprover_Dato.x),
+  by.x = c("PasientId", "Blodprover_Dato"),
+  by.y = c("PasientId", "Blodprover_Dato.x")
+)
+
+Blodprover_validering <- merge(
+  Blodprover_validering,
+  oppf_m_lab_samlet |> select(PasientId, dato, Blodprover_Dato.y),
+  by.x = c("PasientId", "Blodprover_Dato"),
+  by.y = c("PasientId", "Blodprover_Dato.y")
+)
+
+var_bp_anca <- c(
+  "Blodprover_Dato", "PR3AncaPositiv", "MPO_AncaPositiv", "CrpVerdi",
+  "KreatininVerdi", "GfrVerdi", "IgGVerdi", "UBlodVerdi",
+  "UAlbuminVerdi", "UAlbuminKreatininRatioVerdi",
+  "BlodtrykkSystoliskHoyre", "BlodtrykkDiastoliskHoyre",
+  "BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre",
+  "BlodtrykkSystolisk", "BlodtrykkDiastolisk")
+var_bp_storkar <- c(
+  "Blodprover_Dato", "CrpVerdi",
+  "BlodtrykkSystoliskHoyre", "BlodtrykkDiastoliskHoyre",
+  "BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre",
+  "BlodtrykkSystolisk", "BlodtrykkDiastolisk")
+
+sammenlign_bp_anca <- merge(
+  Blodprover |> 
+    select(PasientId, dato, all_of(var_bp_anca)) %>%
+    mutate(
+      Blodtrykk_syst_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkSystoliskHoyre, BlodtrykkSystoliskVenstre, 
+               BlodtrykkSystolisk)))),
+      Blodtrykk_diast_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkDiastoliskHoyre, BlodtrykkDiastoliskVenstre, 
+               BlodtrykkDiastolisk))))),
+  Blodprover_validering |> 
+    select(PasientId, dato, all_of(var_bp_anca)) %>%
+    mutate(
+      Blodtrykk_syst_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkSystoliskHoyre, BlodtrykkSystoliskVenstre, 
+               BlodtrykkSystolisk)))),
+      Blodtrykk_diast_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkDiastoliskHoyre, BlodtrykkDiastoliskVenstre, 
+               BlodtrykkDiastolisk))))),
+  by = c("PasientId", "dato"),
+  suffixes = c("_reg", "_gold")) %>%
+  relocate(sort(names(.))) |>
+  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+        by = "PasientId", all.x = TRUE) |> 
+  relocate(PasientId, dato, Diagnosegruppe) |> 
+  filter(Diagnosegruppe == "Anca-assosierte vaskulitter (AAV)")
+
+sammenlign_bp_storkar <- merge(
+  Blodprover |> 
+    select(PasientId, dato, all_of(var_bp_storkar)) %>%
+    mutate(
+      Blodtrykk_syst_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkSystoliskHoyre, BlodtrykkSystoliskVenstre, 
+               BlodtrykkSystolisk)))),
+      Blodtrykk_diast_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkDiastoliskHoyre, BlodtrykkDiastoliskVenstre, 
+               BlodtrykkDiastolisk))))),
+  Blodprover_validering |> 
+    select(PasientId, dato, all_of(var_bp_storkar)) %>%
+    mutate(
+      Blodtrykk_syst_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkSystoliskHoyre, BlodtrykkSystoliskVenstre, 
+               BlodtrykkSystolisk)))),
+      Blodtrykk_diast_ant = as.integer(rowSums(!is.na(
+        select(., BlodtrykkDiastoliskHoyre, BlodtrykkDiastoliskVenstre, 
+               BlodtrykkDiastolisk))))),
+  by = c("PasientId", "dato"),
+  suffixes = c("_reg", "_gold")) %>%
+  relocate(sort(names(.))) |>
+  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+        by = "PasientId", all.x = TRUE) |> 
+  relocate(PasientId, dato, Diagnosegruppe) |> 
+  filter(Diagnosegruppe == "Storkarsvaskulitter (LVV)")
+
+
+samsvar_bp_anca <- agreement_simple(sammenlign_bp_anca, 
+                                    c(var_bp_anca,
+                                      "Blodtrykk_syst_ant", 
+                                      "Blodtrykk_diast_ant"))
+
+samsvar_bp_storkar <- agreement_simple(sammenlign_bp_storkar, 
+                                       c(var_bp_storkar,
+                                         "Blodtrykk_syst_ant", 
+                                         "Blodtrykk_diast_ant"))
+
+
+```
+
+Kun laboratorieskjema som en innenfor pluss minus 14 dager av et oppfølgingsskjema eller inklusjonsskjema er tatt med i analysen, og ett labskjema knyttet til kun en oppfølging/inklusjon. I testdatabasen er det xx laboratorieskjema som oppfyller kravet, mens det i Norvas er yy skjema som oppfyller kravet. Kun inklusjoner/oppfølginger som har labskjema både i Norvas og i testdatabasen brukes i beregningen av samsvar. xx labskjema kan ikke knyttes til en oppfølging/inklusjon i Norvas, i testdatabsen ...
+
+
+```{r}
+#| echo: false
+
+knitr::kable(
+  samsvar_bp_anca, 
+  caption = "Samsvar mellom innhold i labskjema i Norvas og HP for ANCA", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+knitr::kable(
+  samsvar_bp_storkar, 
+  caption = "Samsvar mellom innhold i labskjema i Norvas og HP for storkarsvaskulitter", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+
+## Sykdomsvurdering
+
+### KERRS
+
+```{r}
+#| echo: false
+
+KERR_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_KerrsKriterierSkjema_2026-02-12_0917.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  merge(Inklusjon_validering |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  dplyr::relocate(PasientId)|>
+  mutate(KerrsKriterier_Dato =
+           as.Date(KerrsKriterier_Dato, format = "%d.%m.%Y")) |> 
+  filter(KerrsKriterier_Dato >= InklusjonDato,
+         Diagnosegruppe == "Storkarsvaskulitter (LVV)")
+
+KERR <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  # dplyr::filter(UnitId == 104579) |>
+  dplyr::filter(HovedskjemaGUID %in% Inklusjon$SkjemaGUID) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr)|>
+  mutate(KerrsKriterier_Dato =
+           as.Date(KerrsKriterier_Dato, format = "%d.%m.%Y")) |> 
+  filter(KerrsKriterier_Dato > "2022-11-12",
+         KerrsKriterier_Dato <= "2025-10-31",) |> 
+  merge(Inklusjon |> 
+          select(PasientId, InklusjonDato, Diagnosegruppe),
+        by = "PasientId", all.x = TRUE) |> 
+  filter(KerrsKriterier_Dato >= InklusjonDato,
+         Diagnosegruppe == "Storkarsvaskulitter (LVV)")
+
+duplikat <- KERR[
+  duplicated(KERR[c("PasientId", "KerrsKriterier_Dato")]) |
+    duplicated(KERR[c("PasientId", "KerrsKriterier_Dato")],
+               fromLast = TRUE), ]|>
+  dplyr::relocate(PasientId, KerrsKriterier_Dato) |>
+  dplyr::arrange(PasientId, KerrsKriterier_Dato)
+KERR <- KERR[
+  !duplicated(KERR[c("PasientId", "KerrsKriterier_Dato")]), ]
+
+
+oppf_m_kerr <- Inklusjon |> 
+  filter(InklusjonDato >= "2022-11-12") |> 
+  select(PasientId, InklusjonDato) |> 
+  mutate(undersokelse = "inklusjon") |> 
+  rename(dato = InklusjonDato) |> 
+  bind_rows(
+    Oppfolging_unik |> select(PasientId, OppfolgingsDato) |> 
+      mutate(undersokelse = "oppfolging") |> 
+      rename(dato = OppfolgingsDato)
+  ) |> 
+  merge(KERR |> select(PasientId, KerrsKriterier_Dato) |> 
+          filter(KerrsKriterier_Dato >= "2022-11-12"),
+        by = "PasientId", all = T
+  ) |> 
+  mutate(tidsdiff = abs(difftime(dato, KerrsKriterier_Dato, units = "days"))) |> 
+  arrange(PasientId, dato, tidsdiff) |>
+  slice(1, .by = c(PasientId, dato)) |> 
+  filter(tidsdiff <= 3) |> 
+  filter(tidsdiff == min(tidsdiff), 
+         .by = c(PasientId, KerrsKriterier_Dato))
+
+
+
+oppf_m_kerr_val <- Inklusjon_validering |> 
+  filter(InklusjonDato >= "2022-11-12") |> 
+  select(PasientId, InklusjonDato) |> 
+  mutate(undersokelse = "inklusjon") |> 
+  rename(dato = InklusjonDato) |> 
+  bind_rows(
+    Oppfolging_validering |> select(PasientId, OppfolgingsDato) |> 
+      mutate(undersokelse = "oppfolging") |> 
+      rename(dato = OppfolgingsDato)
+  ) |> 
+  merge(KERR_validering |> select(PasientId, KerrsKriterier_Dato) |> 
+          filter(KerrsKriterier_Dato >= "2022-11-12"),
+        by = "PasientId", all = T
+  ) |> 
+  
+  mutate(tidsdiff = abs(difftime(dato, KerrsKriterier_Dato, units = "days"))) |> 
+  arrange(PasientId, dato, tidsdiff) |>
+  slice(1, .by = c(PasientId, dato)) |> 
+  filter(tidsdiff <= 3) |> 
+  filter(tidsdiff == min(tidsdiff), 
+         .by = c(PasientId, KerrsKriterier_Dato))
+
+oppf_m_kerr_samlet <- merge(
+  oppf_m_kerr, 
+  oppf_m_kerr_val,
+  by = c("PasientId", "dato")
+)
+
+```
+
+Det er `{r} dim(KERR)[1]` KERRS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "GO LIVE" og før november 2025) etter fjerning to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I testdatabasen er det `{r} dim(KERR_validering)[1]` registreringer av KERRS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_kerr_val)[1]` skjema som er innenfor 3 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_kerr_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
+
+På variablenivå er samsvaret oppsummert i tabellen under.
+
+```{r}
+#| echo: false
+
+KERR <- merge(
+  KERR,
+  oppf_m_kerr_samlet |> select(PasientId, dato, KerrsKriterier_Dato.x),
+  by.x = c("PasientId", "KerrsKriterier_Dato"),
+  by.y = c("PasientId", "KerrsKriterier_Dato.x")
+)
+
+KERR_validering <- merge(
+  KERR_validering,
+  oppf_m_kerr_samlet |> select(PasientId, dato, KerrsKriterier_Dato.y),
+  by.x = c("PasientId", "KerrsKriterier_Dato"),
+  by.y = c("PasientId", "KerrsKriterier_Dato.y")
+)
+
+var_kerr <- c("KerrsKriterier_Dato","Videotelefonkonsultasjon",
+              "SystemicFeatures","ElevatedErythrocyteSedimentationRate",
+              "FeaturesOfVascularIschemiaOrInflammation",
+              "TypicalAngiographicFeatures","Sykdomsvurdering")
+
+
+sammenlign_kerr <- merge(
+  KERR |> 
+    select(PasientId, dato, all_of(var_kerr)),
+  KERR_validering |> 
+    select(PasientId, dato, all_of(var_kerr)),
+  by = c("PasientId", "dato"),
+  suffixes = c("_reg", "_gold")) %>%
+  relocate(sort(names(.))) |>
+  relocate(PasientId, dato)
+
+
+samsvar_kerr <- agreement_simple(sammenlign_kerr, 
+                                 c(var_kerr))
+
+knitr::kable(
+  samsvar_kerr, 
+  caption = "Samsvar mellom innhold i KERR-skjema i Norvas og HP", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+
+```
+
+
+
+### BVAS
+
+```{r}
+#| echo: false
+
+BVAS_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_BvasSkjema_2026-02-12_0917.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  merge(Inklusjon_validering |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  dplyr::relocate(PasientId)|>
+  mutate(BVAS_Dato =
+           as.Date(BVAS_Dato, format = "%d.%m.%Y")) |> 
+  filter(BVAS_Dato > "2022-11-12",
+         BVAS_Dato <= "2025-10-31") |> 
+  filter(BVAS_Dato >= InklusjonDato,
+         Diagnosegruppe == "Anca-assosierte vaskulitter (AAV)")
+
+BVAS <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(HovedskjemaGUID %in% Inklusjon$SkjemaGUID) |>
+  merge(hjelpenr[, c("PasientGUID", "hjelpenr")], by = "PasientGUID") |>
+  dplyr::relocate(hjelpenr) |>
+  dplyr::rename(PasientId = hjelpenr)|>
+  mutate(BVAS_Dato =
+           as.Date(BVAS_Dato, format = "%d.%m.%Y")) |> 
+  filter(BVAS_Dato > "2022-11-12",
+         BVAS_Dato <= "2025-10-31",) |> 
+  merge(Inklusjon_validering |> 
+          select(PasientId, InklusjonDato, Diagnosegruppe),
+        by = "PasientId", all.x = TRUE) |> 
+  filter(BVAS_Dato >= InklusjonDato,
+         Diagnosegruppe == "Anca-assosierte vaskulitter (AAV)")
+
+
+oppf_m_bvas <- Inklusjon |> 
+  filter(InklusjonDato >= "2022-11-12") |> 
+  select(PasientId, InklusjonDato) |> 
+  mutate(undersokelse = "inklusjon") |> 
+  rename(dato = InklusjonDato) |> 
+  bind_rows(
+    Oppfolging_unik |> select(PasientId, OppfolgingsDato) |> 
+      mutate(undersokelse = "oppfolging") |> 
+      rename(dato = OppfolgingsDato)
+  ) |> 
+  merge(BVAS |> select(PasientId, BVAS_Dato) |> 
+          filter(BVAS_Dato >= "2022-11-12"),
+        by = "PasientId", all = T
+  ) |> 
+  mutate(tidsdiff = abs(difftime(dato, BVAS_Dato, units = "days"))) |> 
+  arrange(PasientId, dato, tidsdiff) |>
+  slice(1, .by = c(PasientId, dato)) |> 
+  filter(tidsdiff <= 14) |> 
+  filter(tidsdiff == min(tidsdiff), 
+         .by = c(PasientId, BVAS_Dato))
+
+
+oppf_m_bvas_val <- Inklusjon_validering |> 
+  filter(InklusjonDato >= "2022-11-12") |> 
+  select(PasientId, InklusjonDato) |> 
+  mutate(undersokelse = "inklusjon") |> 
+  rename(dato = InklusjonDato) |> 
+  bind_rows(
+    Oppfolging_validering |> select(PasientId, OppfolgingsDato) |> 
+      mutate(undersokelse = "oppfolging") |> 
+      rename(dato = OppfolgingsDato)
+  ) |> 
+  merge(BVAS_validering |> select(PasientId, BVAS_Dato) |> 
+          filter(BVAS_Dato >= "2022-11-12"),
+        by = "PasientId", all = T
+  ) |> 
+  mutate(tidsdiff = abs(difftime(dato, BVAS_Dato, units = "days"))) |> 
+  arrange(PasientId, dato, tidsdiff) |>
+  slice(1, .by = c(PasientId, dato)) |> 
+  filter(tidsdiff <= 14) |> 
+  filter(tidsdiff == min(tidsdiff), 
+         .by = c(PasientId, BVAS_Dato))
+
+
+oppf_m_bvas_samlet <- merge(
+  oppf_m_bvas, 
+  oppf_m_bvas_val,
+  by = c("PasientId", "dato")
+)
+
+# tmp <- merge(
+#   BVAS, BVAS_validering, by = c("PasientId", "BVAS_Dato"))
+# )
+
+```
+
+
+Det er `{r} dim(BVAS)[1]` BVAS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "GO LIVE" og før november 2025). Av disse er det `{r} dim(oppf_m_bvas)[1]` som er registrert innenfor 14 dager av en inklusjon/oppfølging. I testdatabasen er det `{r} dim(BVAS_validering)[1]` registreringer av BVAS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_bvas_val)[1]` skjema registrert innenfor 14 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_bvas_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
+
+På variablenivå er samsvaret oppsummert i tabellen under.
+
+
+```{r}
+#| echo: false
+
+# BVAS <- merge(
+#   BVAS,
+#   oppf_m_bvas_samlet |> select(PasientId, dato, BVAS_Dato.x),
+#   by.x = c("PasientId", "BVAS_Dato"),
+#   by.y = c("PasientId", "BVAS_Dato.x")
+# )
+# 
+# BVAS_validering <- merge(
+#   BVAS_validering,
+#   oppf_m_bvas_samlet |> select(PasientId, dato, BVAS_Dato.y),
+#   by.x = c("PasientId", "BVAS_Dato"),
+#   by.y = c("PasientId", "BVAS_Dato.y")
+# )
+
+var_bvas <- c(
+  "BVAS_Dato", "Videotelefonkonsultasjon", "Myalgia",
+  "ArthralgiaArthritis", "Fever38OrHigher", "WeightLoss2KgOrMore",
+  "Infarct", "Purpura", "Ulcer", "Gangrene", "OtherSkinVasculitis",
+  "MouthUlcers", "GenitalUlcers", "AdnexalInflammation",
+  "SignificantProptosis", "ScleritisEpiscleritis",
+  "ConjunctivitisBlepharitisKeratitis", "BlurredVision",
+  "SuddenVisualLoss", "Uveitis", "RetinalChanges",
+  "BloodyNasalDischargeCrustsUlcersGranulomata",
+  "ParanasalSinusInvolvement", "SubglotticStenosis",
+  "ConductiveDeafness", "SensorineuralHearingLoss", "Wheeze",
+  "NodulesorCavities", "PleuralEffusionPleurisy", "Infiltrate",
+  "EndobronchialInvolvement", "MassiveHaemoptysisAlveolarHaemorrhage",
+  "RespiratoryFailure", "LossofPulses", "ValvularHeartDisease",
+  "Pericarditis", "IschaemicCardiacPain", "Cardiomyopathy",
+  "CongestiveCardiacFailure", "Peritonitis", "BloodyDiarrhoea",
+  "IschaemicAbdominalPain", "Hypertension", "ProteinuriaMoreThan1Plus",
+  "HaematuriaRbcHpf10OrMore", "SerumCreatinine125249",
+  "SerumCreatinine250499", "SerumCreatinineAbove500",
+  "RiseInCreatinineAbove30PercentorCreatinineClearanc", "Headache",
+  "Meningitis", "OrganicConfusion", "SeizuresNotHypertensive",
+  "CerebrovascularAccident", "SpinalCordLesion", "CranialNervePalsy",
+  "SensoryPeripheralNeuropathy", "MononeuritisMultiplex",
+  "PersistentDiseaseOnly", "BvasPersistentTotal", "Sykdomsvurdering",
+  "BvasKommentar", "BvasRenalNewOrWorseScore", "Skjematype",
+  "SkjemaGUID", "BVAS_ImportTidspunkt", "PasientGUID", 
+  "HovedskjemaGUID")
+
+
+sammenlign_bvas <- merge(
+  BVAS |> 
+    select(PasientId, all_of(var_bvas)),
+  BVAS_validering |> 
+    select(PasientId, all_of(var_bvas)),
+  by = c("PasientId", "BVAS_Dato"),
+  suffixes = c("_reg", "_gold")) %>%
+  relocate(sort(names(.))) |>
+  relocate(PasientId, BVAS_Dato)
+
+samsvar_bvas <- agreement_simple(sammenlign_bvas, 
+                                 c(var_bvas))
+
+knitr::kable(
+  samsvar_bvas, 
+  caption = "Samsvar mellom innhold i BVAS-skjema i Norvas og HP", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+
+```
+
+
+
+## VDI
+
+
+
+## Medisiner
+
+se på antall oppføringer på relevanter medisin
+se på med_startdato etter inklusjon/"go live"
+
+
+```{r}
+#| echo: false
+
+Medisin_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_MedisineringSkjema_2026-02-12_0916.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
+
+Medisin <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  merge(Inklusjon |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  dplyr::filter(UnitId == 104579) |> 
+  mutate(Med_StartDato = as.Date(Med_StartDato, format = "%d.%m.%Y"),
+         Med_SluttDato = as.Date(Med_SluttDato, format = "%d.%m.%Y")) |> 
+  filter((Med_StartDato >= "2022-11-12" & 
+            Med_StartDato >= InklusjonDato) | 
+           (Med_SluttDato >= "2022-11-12" & 
+            Med_SluttDato >= InklusjonDato)
+  )
+           
+  
+
+
+```
+
+## Vaskulittintervensjon
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -527,3 +1262,4 @@ data %>%
 
 
 ```
+

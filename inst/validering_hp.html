@@ -3367,6 +3367,8 @@ border: 0;
 <li>1 pasient med storkarsvaskulitt i NorVas inkludert i GTI i 2015. I HP er denne pasienten registrert med polyartrittdiagnose, dette kvalifiserer ikke til inklusjon i NorVas.</li>
 </ul>
 <p>Den endelige analysen er derfor basert på 23 pasienter hvorav 14 med storkarsvaskulitt og 9 med ANCA-assosiert vaskulitt.</p>
+<p>Fem av de 23 aktuelle pasientene er overført fra HP til NorVas uten diagnose, 2 med storkarsvaskulitt og 3 med ANCA-assosisert vaskulitt. Alle 5 har registrert diagnose i HP som kvalifiserer for inklusjon i NorVas.</p>
+<p>En av pasientene med storkarsvaskulitt har en annen diagnose registrert i NorVas (M31.6) før overgangen til HP (I77.6). Begge er undergrupper av storkarsvaskulitter. En av pasientene med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato. En annen har to ulike diagnoser med samme dato der kun den ene kvalifiserer for inklusjon i NorVas.</p>
 <p>Oppfølginger/kontroller registrert i testdatabasen gjelder for tidsperioden etter «GO LIVE» 12.11.22 til og med 31.10.25.</p>
 <p>For pasientene som ble inkludert i NorVas etter «GO LIVE», er oppfølgingene/kontrollene i tidsrommet fra inklusjon til og med 31.10.25 som er registrert i testdatabasen.</p>
 <p>Etter at samtykke foreligger, har HP overført data til NorVas som er datert forut for samtykket. Disse oppfølgingene er utelatt fra analysen da de ikke er registrert i testdatabasen.</p>
@@ -3778,125 +3780,664 @@ Av de 32 gjenværende oppfølgingene i Norvas etter datavask, så matcher samtli
 </div>
 <div class="cell-output-display">
 <table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
-<caption>Samsvar mellom innhold i Norvas og HP</caption>
+<caption>Samsvar mellom innhold i 23 inklusjonsskjema i Norvas og HP</caption>
 <thead>
 <tr class="header">
 <th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
 <th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">InklusjonDato</td>
 <td style="text-align: left;">100.0</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Jobbsituasjon</td>
 <td style="text-align: left;">73.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">RoykeStatus</td>
 <td style="text-align: left;">47.8</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">SnuseStatus</td>
 <td style="text-align: left;">39.1</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ErGravid</td>
 <td style="text-align: left;">13.0</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Pasientsmerter</td>
 <td style="text-align: left;">39.1</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">3</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Tretthet</td>
 <td style="text-align: left;">39.1</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">4</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">PasientGlobalSykdomsaktivitet</td>
 <td style="text-align: left;">39.1</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">4</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12Q01</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12Q02</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12Q03</td>
 <td style="text-align: left;">56.5</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12Q04</td>
 <td style="text-align: left;">56.5</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12Q05</td>
 <td style="text-align: left;">56.5</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12Q06</td>
 <td style="text-align: left;">65.2</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12Q07</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12Q08</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12Q09</td>
 <td style="text-align: left;">47.8</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12Q10</td>
 <td style="text-align: left;">52.2</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12Q11</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12Q12</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">23</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12ScorePf</td>
 <td style="text-align: left;">56.5</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12ScoreRp</td>
 <td style="text-align: left;">56.5</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12ScoreBp</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12ScoreGh</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12ScoreVt</td>
 <td style="text-align: left;">52.2</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12ScoreSf</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Rand12ScoreRe</td>
 <td style="text-align: left;">60.9</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Rand12ScoreMh</td>
 <td style="text-align: left;">47.8</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br>
+Tabellen under viser graden av samsvar mellom det som er registrert i Norvas og i valideringsundersøkelsen. Basert på oppfølginger som er registrert i både Norvas og under valideringen, altså 32 skjemaer.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Samsvar mellom innhold i oppfølgingsskjema i Norvas og HP</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">IngenEndringerMedisinering</td>
+<td style="text-align: left;">21.9</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">7</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DatoIngenEndringerMedisinering</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EksklusjonsDato</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EksklusjonsArsak</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ArsakDod</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Avsluttet</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hoyde</td>
+<td style="text-align: left;">40.6</td>
+<td style="text-align: left;">27</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">22</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vekt</td>
+<td style="text-align: left;">15.6</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RoykeStatus</td>
+<td style="text-align: left;">65.6</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SnuseStatus</td>
+<td style="text-align: left;">53.1</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ErGravid</td>
+<td style="text-align: left;">0.0</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pasientsmerter</td>
+<td style="text-align: left;">12.5</td>
+<td style="text-align: left;">11</td>
+<td style="text-align: left;">27</td>
+<td style="text-align: left;">8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tretthet</td>
+<td style="text-align: left;">53.1</td>
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">27</td>
+<td style="text-align: left;">25</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PasientGlobalSykdomsaktivitet</td>
+<td style="text-align: left;">43.8</td>
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">28</td>
+<td style="text-align: left;">26</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rand12Q01</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rand12Q02</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rand12Q03</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rand12Q04</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rand12Q05</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rand12Q06</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rand12Q07</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rand12Q08</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rand12Q09</td>
+<td style="text-align: left;">9.4</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rand12Q10</td>
+<td style="text-align: left;">9.4</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rand12Q11</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rand12Q12</td>
+<td style="text-align: left;">93.8</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+<td style="text-align: left;">32</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+<p><br>
+</p>
+<p>IngenEndringerMedisinering og DatoIngenEndringerMedisinering</p>
+</section>
+<section id="diagnoser" class="level2">
+<h2 class="anchored" data-anchor-id="diagnoser">Diagnoser</h2>
+<p>Av utvalget inkludert i valideringsundersøkelsen var det 5 pasienter som manglet diagnose i Norvas. Det var 3 pasienter som hadde mer enn ett diagnoseskjema i Norvas. Tabellene under oppsummerer funnene.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Diagnoseskjema i Norvas og i HP</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">PasientId</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">dato_validering</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">icd10_validering</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">dato_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">icd10_norvas</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">80000288822</td>
+<td style="text-align: left;">2023-04-13</td>
+<td style="text-align: left;">M301</td>
+<td style="text-align: left;">2023-04-13, 2023-03-24, 2017-11-09</td>
+<td style="text-align: left;">M301, M300, M301</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80000340506</td>
+<td style="text-align: left;">2025-07-07</td>
+<td style="text-align: left;">I776</td>
+<td style="text-align: left;">2025-07-07</td>
+<td style="text-align: left;">I776</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80000654543</td>
+<td style="text-align: left;">2024-10-16</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-10-16</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001113813</td>
+<td style="text-align: left;">2024-10-10</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-10-10</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001174693</td>
+<td style="text-align: left;">2024-04-26</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-04-26</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001362813</td>
+<td style="text-align: left;">2024-01-16</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-01-16</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">2016-06-15</td>
+<td style="text-align: left;">M317</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80002068145</td>
+<td style="text-align: left;">2024-01-25</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-01-25</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80002287742</td>
+<td style="text-align: left;">2011-06-15</td>
+<td style="text-align: left;">M313</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164653327</td>
+<td style="text-align: left;">2025-10-04</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2025-10-04</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80164717651</td>
+<td style="text-align: left;">2023-01-06</td>
+<td style="text-align: left;">M301</td>
+<td style="text-align: left;">2023-01-06</td>
+<td style="text-align: left;">M301</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164719824</td>
+<td style="text-align: left;">1998-02-05</td>
+<td style="text-align: left;">M313</td>
+<td style="text-align: left;">1997-09-01</td>
+<td style="text-align: left;">M313</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165032601</td>
+<td style="text-align: left;">2021-04-21</td>
+<td style="text-align: left;">M315</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165035082</td>
+<td style="text-align: left;">2024-11-27</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-11-27</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165282152</td>
+<td style="text-align: left;">2025-05-30</td>
+<td style="text-align: left;">M317</td>
+<td style="text-align: left;">2025-05-30, 2025-05-30</td>
+<td style="text-align: left;">M317, N059</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165357233</td>
+<td style="text-align: left;">2007-06-15</td>
+<td style="text-align: left;">M314</td>
+<td style="text-align: left;">2007-10-17</td>
+<td style="text-align: left;">M314</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165494915</td>
+<td style="text-align: left;">2024-10-22</td>
+<td style="text-align: left;">M313</td>
+<td style="text-align: left;">2024-10-22</td>
+<td style="text-align: left;">M313</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165588480</td>
+<td style="text-align: left;">2013-06-15</td>
+<td style="text-align: left;">M313</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165697832</td>
+<td style="text-align: left;">2022-09-30</td>
+<td style="text-align: left;">M315</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165747910</td>
+<td style="text-align: left;">2016-06-15</td>
+<td style="text-align: left;">M301</td>
+<td style="text-align: left;">2016-09-27</td>
+<td style="text-align: left;">M301</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166128459</td>
+<td style="text-align: left;">2021-12-01</td>
+<td style="text-align: left;">I776</td>
+<td style="text-align: left;">2023-05-19, 2021-12-25</td>
+<td style="text-align: left;">I776, M316</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80166579078</td>
+<td style="text-align: left;">2024-08-16</td>
+<td style="text-align: left;">M316</td>
+<td style="text-align: left;">2024-08-16</td>
+<td style="text-align: left;">M316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166677320</td>
+<td style="text-align: left;">2023-06-29</td>
+<td style="text-align: left;">M315</td>
+<td style="text-align: left;">2023-06-29</td>
+<td style="text-align: left;">M315</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Samsvar mellom innhold i diagnoseskjema i Norvas og HP</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Diagnose</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Diagnose_Klinisk_Dato</td>
+<td style="text-align: left;">75</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SymptomStartDato</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Diagnosegruppe</td>
+<td style="text-align: left;">90</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DiagnoseNr</td>
+<td style="text-align: left;">85</td>
+<td style="text-align: left;">18</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">18</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Icd_IcdDataDump</td>
+<td style="text-align: left;">85</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">20</td>
 </tr>
 </tbody>
 </table>
@@ -3905,34 +4446,851 @@ Av de 32 gjenværende oppfølgingene i Norvas etter datavask, så matcher samtli
 </div>
 </div>
 </section>
-<section id="diagnoser" class="level2">
-<h2 class="anchored" data-anchor-id="diagnoser">Diagnoser</h2>
-<p><br>
-<br>
-</p>
-</section>
 <section id="blodprøver" class="level2">
 <h2 class="anchored" data-anchor-id="blodprøver">Blodprøver</h2>
 <p>Tåler plussminus 2 uker avvik blodprøvedato og inkl/oppfdato.</p>
+<p>Kun laboratorieskjema som en innenfor pluss minus 14 dager av et oppfølgingsskjema eller inklusjonsskjema er tatt med i analysen, og ett labskjema knyttet til kun en oppfølging/inklusjon. I testdatabasen er det xx laboratorieskjema som oppfyller kravet, mens det i Norvas er yy skjema som oppfyller kravet. Kun inklusjoner/oppfølginger som har labskjema både i Norvas og i testdatabasen brukes i beregningen av samsvar. xx labskjema kan ikke knyttes til en oppfølging/inklusjon i Norvas, i testdatabsen …</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Samsvar mellom innhold i labskjema i Norvas og HP for ANCA</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Blodprover_Dato</td>
+<td style="text-align: left;">21.4</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PR3AncaPositiv</td>
+<td style="text-align: left;">57.1</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MPO_AncaPositiv</td>
+<td style="text-align: left;">50.0</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CrpVerdi</td>
+<td style="text-align: left;">35.7</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">KreatininVerdi</td>
+<td style="text-align: left;">42.9</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">GfrVerdi</td>
+<td style="text-align: left;">14.3</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">4</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IgGVerdi</td>
+<td style="text-align: left;">50.0</td>
+<td style="text-align: left;">9</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UBlodVerdi</td>
+<td style="text-align: left;">7.1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">UAlbuminVerdi</td>
+<td style="text-align: left;">7.1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">13</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">UAlbuminKreatininRatioVerdi</td>
+<td style="text-align: left;">57.1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BlodtrykkSystoliskHoyre</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlodtrykkDiastoliskHoyre</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BlodtrykkSystoliskVenstre</td>
+<td style="text-align: left;">42.9</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlodtrykkDiastoliskVenstre</td>
+<td style="text-align: left;">42.9</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BlodtrykkSystolisk</td>
+<td style="text-align: left;">64.3</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlodtrykkDiastolisk</td>
+<td style="text-align: left;">64.3</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Blodtrykk_syst_ant</td>
+<td style="text-align: left;">64.3</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blodtrykk_diast_ant</td>
+<td style="text-align: left;">64.3</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">14</td>
+<td style="text-align: left;">14</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Samsvar mellom innhold i labskjema i Norvas og HP for storkarsvaskulitter</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Blodprover_Dato</td>
+<td style="text-align: left;">12.5</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CrpVerdi</td>
+<td style="text-align: left;">16.7</td>
+<td style="text-align: left;">23</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">23</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BlodtrykkSystoliskHoyre</td>
+<td style="text-align: left;">37.5</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlodtrykkDiastoliskHoyre</td>
+<td style="text-align: left;">37.5</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BlodtrykkSystoliskVenstre</td>
+<td style="text-align: left;">25.0</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlodtrykkDiastoliskVenstre</td>
+<td style="text-align: left;">25.0</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BlodtrykkSystolisk</td>
+<td style="text-align: left;">66.7</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlodtrykkDiastolisk</td>
+<td style="text-align: left;">66.7</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Blodtrykk_syst_ant</td>
+<td style="text-align: left;">8.3</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blodtrykk_diast_ant</td>
+<td style="text-align: left;">8.3</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+<td style="text-align: left;">24</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="sykdomsvurdering" class="level2">
+<h2 class="anchored" data-anchor-id="sykdomsvurdering">Sykdomsvurdering</h2>
+<section id="kerrs" class="level3">
+<h3 class="anchored" data-anchor-id="kerrs">KERRS</h3>
+<p>Det er 15 KERRS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter “GO LIVE” og før november 2025) etter fjerning to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I testdatabasen er det 15 registreringer av KERRS som oppfyller kravene, og av disse er det 14 skjema som er innenfor 3 dager av en inklusjon/oppfølging. 12 skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.</p>
+<p>På variablenivå er samsvaret oppsummert i tabellen under.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Samsvar mellom innhold i KERR-skjema i Norvas og HP</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">KerrsKriterier_Dato</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Videotelefonkonsultasjon</td>
+<td style="text-align: left;">50.0</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">6</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SystemicFeatures</td>
+<td style="text-align: left;">91.7</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ElevatedErythrocyteSedimentationRate</td>
+<td style="text-align: left;">83.3</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">FeaturesOfVascularIschemiaOrInflammation</td>
+<td style="text-align: left;">91.7</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TypicalAngiographicFeatures</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sykdomsvurdering</td>
+<td style="text-align: left;">100.0</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">10</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+<section id="bvas" class="level3">
+<h3 class="anchored" data-anchor-id="bvas">BVAS</h3>
+<p>Det er 14 BVAS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter “GO LIVE” og før november 2025). Av disse er det 5 som er registrert innenfor 14 dager av en inklusjon/oppfølging. I testdatabasen er det 14 registreringer av BVAS som oppfyller kravene, og av disse er det 14 skjema registrert innenfor 14 dager av en inklusjon/oppfølging. 5 skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.</p>
+<p>På variablenivå er samsvaret oppsummert i tabellen under.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<caption>Samsvar mellom innhold i BVAS-skjema i Norvas og HP</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">variabel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">samsvar</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_norvas</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_val</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">utfylt_begge</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">BVAS_Dato</td>
+<td style="text-align: left;">NaN</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Videotelefonkonsultasjon</td>
+<td style="text-align: left;">25</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Myalgia</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ArthralgiaArthritis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fever38OrHigher</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">WeightLoss2KgOrMore</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Infarct</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Purpura</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ulcer</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Gangrene</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">OtherSkinVasculitis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MouthUlcers</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">GenitalUlcers</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">AdnexalInflammation</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SignificantProptosis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ScleritisEpiscleritis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ConjunctivitisBlepharitisKeratitis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BlurredVision</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SuddenVisualLoss</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uveitis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RetinalChanges</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BloodyNasalDischargeCrustsUlcersGranulomata</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ParanasalSinusInvolvement</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SubglotticStenosis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ConductiveDeafness</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SensorineuralHearingLoss</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wheeze</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NodulesorCavities</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PleuralEffusionPleurisy</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Infiltrate</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">EndobronchialInvolvement</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MassiveHaemoptysisAlveolarHaemorrhage</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RespiratoryFailure</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">LossofPulses</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ValvularHeartDisease</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pericarditis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IschaemicCardiacPain</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cardiomyopathy</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CongestiveCardiacFailure</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Peritonitis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BloodyDiarrhoea</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">IschaemicAbdominalPain</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hypertension</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ProteinuriaMoreThan1Plus</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">HaematuriaRbcHpf10OrMore</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SerumCreatinine125249</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SerumCreatinine250499</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SerumCreatinineAbove500</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RiseInCreatinineAbove30PercentorCreatinineClearanc</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Headache</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Meningitis</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">OrganicConfusion</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SeizuresNotHypertensive</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CerebrovascularAccident</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SpinalCordLesion</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CranialNervePalsy</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SensoryPeripheralNeuropathy</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">MononeuritisMultiplex</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PersistentDiseaseOnly</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BvasPersistentTotal</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sykdomsvurdering</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BvasKommentar</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">BvasRenalNewOrWorseScore</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Skjematype</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SkjemaGUID</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BVAS_ImportTidspunkt</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PasientGUID</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">HovedskjemaGUID</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">12</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</section>
+</section>
+<section id="vdi" class="level2">
+<h2 class="anchored" data-anchor-id="vdi">VDI</h2>
+</section>
+<section id="medisiner" class="level2">
+<h2 class="anchored" data-anchor-id="medisiner">Medisiner</h2>
+<p>se på antall oppføringer på relevanter medisin se på med_startdato etter inklusjon/“go live”</p>
+</section>
+<section id="vaskulittintervensjon" class="level2">
+<h2 class="anchored" data-anchor-id="vaskulittintervensjon">Vaskulittintervensjon</h2>
 </section>
 <section id="vedlegg" class="level2">
 <h2 class="anchored" data-anchor-id="vedlegg">Vedlegg</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div id="szofprrhoi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#szofprrhoi table {
+<div id="dhchhbubvr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dhchhbubvr table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#szofprrhoi thead, #szofprrhoi tbody, #szofprrhoi tfoot, #szofprrhoi tr, #szofprrhoi td, #szofprrhoi th {
+#dhchhbubvr thead, #dhchhbubvr tbody, #dhchhbubvr tfoot, #dhchhbubvr tr, #dhchhbubvr td, #dhchhbubvr th {
 border-style: none;
 }
-#szofprrhoi p {
+#dhchhbubvr p {
 margin: 0;
 padding: 0;
 }
-#szofprrhoi .gt_table {
+#dhchhbubvr .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -3957,11 +5315,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#szofprrhoi .gt_caption {
+#dhchhbubvr .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#szofprrhoi .gt_title {
+#dhchhbubvr .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -3972,7 +5330,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#szofprrhoi .gt_subtitle {
+#dhchhbubvr .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -3983,7 +5341,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#szofprrhoi .gt_heading {
+#dhchhbubvr .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -3994,12 +5352,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#szofprrhoi .gt_bottom_border {
+#dhchhbubvr .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#szofprrhoi .gt_col_headings {
+#dhchhbubvr .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4013,7 +5371,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#szofprrhoi .gt_col_heading {
+#dhchhbubvr .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4032,7 +5390,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#szofprrhoi .gt_column_spanner_outer {
+#dhchhbubvr .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4043,13 +5401,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#szofprrhoi .gt_column_spanner_outer:first-child {
+#dhchhbubvr .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#szofprrhoi .gt_column_spanner_outer:last-child {
+#dhchhbubvr .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#szofprrhoi .gt_column_spanner {
+#dhchhbubvr .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -4060,10 +5418,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#szofprrhoi .gt_spanner_row {
+#dhchhbubvr .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#szofprrhoi .gt_group_heading {
+#dhchhbubvr .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4088,7 +5446,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#szofprrhoi .gt_empty_group_heading {
+#dhchhbubvr .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -4102,13 +5460,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#szofprrhoi .gt_from_md > :first-child {
+#dhchhbubvr .gt_from_md > :first-child {
 margin-top: 0;
 }
-#szofprrhoi .gt_from_md > :last-child {
+#dhchhbubvr .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#szofprrhoi .gt_row {
+#dhchhbubvr .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4126,7 +5484,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#szofprrhoi .gt_stub {
+#dhchhbubvr .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4138,7 +5496,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#szofprrhoi .gt_stub_row_group {
+#dhchhbubvr .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -4151,13 +5509,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#szofprrhoi .gt_row_group_first td {
+#dhchhbubvr .gt_row_group_first td {
 border-top-width: 2px;
 }
-#szofprrhoi .gt_row_group_first th {
+#dhchhbubvr .gt_row_group_first th {
 border-top-width: 2px;
 }
-#szofprrhoi .gt_summary_row {
+#dhchhbubvr .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4166,14 +5524,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#szofprrhoi .gt_first_summary_row {
+#dhchhbubvr .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#szofprrhoi .gt_first_summary_row.thick {
+#dhchhbubvr .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#szofprrhoi .gt_last_summary_row {
+#dhchhbubvr .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4182,7 +5540,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#szofprrhoi .gt_grand_summary_row {
+#dhchhbubvr .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -4191,7 +5549,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#szofprrhoi .gt_first_grand_summary_row {
+#dhchhbubvr .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4200,7 +5558,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#szofprrhoi .gt_last_grand_summary_row_top {
+#dhchhbubvr .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -4209,10 +5567,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#szofprrhoi .gt_striped {
+#dhchhbubvr .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#szofprrhoi .gt_table_body {
+#dhchhbubvr .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -4220,7 +5578,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#szofprrhoi .gt_footnotes {
+#dhchhbubvr .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4233,7 +5591,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#szofprrhoi .gt_footnote {
+#dhchhbubvr .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -4241,7 +5599,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#szofprrhoi .gt_sourcenotes {
+#dhchhbubvr .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -4254,64 +5612,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#szofprrhoi .gt_sourcenote {
+#dhchhbubvr .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#szofprrhoi .gt_left {
+#dhchhbubvr .gt_left {
 text-align: left;
 }
-#szofprrhoi .gt_center {
+#dhchhbubvr .gt_center {
 text-align: center;
 }
-#szofprrhoi .gt_right {
+#dhchhbubvr .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#szofprrhoi .gt_font_normal {
+#dhchhbubvr .gt_font_normal {
 font-weight: normal;
 }
-#szofprrhoi .gt_font_bold {
+#dhchhbubvr .gt_font_bold {
 font-weight: bold;
 }
-#szofprrhoi .gt_font_italic {
+#dhchhbubvr .gt_font_italic {
 font-style: italic;
 }
-#szofprrhoi .gt_super {
+#dhchhbubvr .gt_super {
 font-size: 65%;
 }
-#szofprrhoi .gt_footnote_marks {
+#dhchhbubvr .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#szofprrhoi .gt_asterisk {
+#dhchhbubvr .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#szofprrhoi .gt_indent_1 {
+#dhchhbubvr .gt_indent_1 {
 text-indent: 5px;
 }
-#szofprrhoi .gt_indent_2 {
+#dhchhbubvr .gt_indent_2 {
 text-indent: 10px;
 }
-#szofprrhoi .gt_indent_3 {
+#dhchhbubvr .gt_indent_3 {
 text-indent: 15px;
 }
-#szofprrhoi .gt_indent_4 {
+#dhchhbubvr .gt_indent_4 {
 text-indent: 20px;
 }
-#szofprrhoi .gt_indent_5 {
+#dhchhbubvr .gt_indent_5 {
 text-indent: 25px;
 }
-#szofprrhoi .katex-display {
+#dhchhbubvr .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#szofprrhoi div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#dhchhbubvr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
