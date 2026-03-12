@@ -15,7 +15,7 @@ Formålet med prosjektet å undersøke kvaliteten og korrektheten av data som ov
 
 ## Bakgrunn
 
-NorVas er et nasjonalt medisinsk kvalitetsregister for systemiske vaskulittsykdommer. Alle pasienter over 16 år som behandles for ANCA-assosiert vaskulitt eller storkarsvaskulitt ved en revmatologisk avdeling i Norge, skal inkluderes i registeret. Formålet med registeret er å sikre kvalitet og enhetlig utredning, behandling og oppfølging av vaskulittpasienter i Norge. Registeret har syv kvalitetsindikatorer som samtlige er i tråd med den nasjonale veilederen utarbeidet i regi av Norsk revmatologisk forening. Pasienter som inkluderes i NorVas er kronikere som følges over år. Dette innebærer at data skal registreres ved sykdomsdebut og ved samtlige påfølgende kontroller. Innregistrering foregår av merkantilt personell med spesialoppgaver, sykepleiere, leger og pasienter. I hovedsak er det leger som følger og behandler denne pasientgruppen, da det dreier seg om relativt sjeldne og potensielt alvorlige sykdommer. All innsamling av data til NorVas skjer elektronisk via GoTreatIT (GTI), Medisinsk registreringssystem (MRS) eller Helseplattformen (HP). Universitetssykehuset Nord-Norge HF er dataansvarlig for registeret. Databasen er lagt til MRS som forvaltes av Hemit HF. Innlogging til databasen skjer via Norsk Helsenett SF (NHN) som eies av helse- og omsorgsdepartementet. 
+NorVas er et nasjonalt medisinsk kvalitetsregister for systemiske vaskulittsykdommer. Alle pasienter over 16 år som behandles for ANCA-assosiert vaskulitt eller storkarsvaskulitt ved en revmatologisk avdeling i Norge, skal inkluderes i registeret. Formålet med registeret er å sikre kvalitet og enhetlig utredning, behandling og oppfølging av vaskulittpasienter i Norge. Registeret har syv kvalitetsindikatorer som er i tråd med den nasjonale veilederen utarbeidet i regi av Norsk revmatologisk forening. Pasienter som inkluderes i NorVas er kronikere som følges over år. Dette innebærer at data skal registreres ved sykdomsdebut og ved samtlige påfølgende kontroller. Innregistrering foregår av merkantilt personell med spesialoppgaver, sykepleiere, leger og pasienter. I hovedsak er det leger som følger og behandler denne pasientgruppen, da det dreier seg om relativt sjeldne og potensielt alvorlige sykdommer. All innsamling av data til NorVas skjer elektronisk via GoTreatIT (GTI), Medisinsk registreringssystem (MRS) eller Helseplattformen (HP). Universitetssykehuset Nord-Norge HF er dataansvarlig for registeret. Databasen er lagt til MRS som forvaltes av Hemit HF. Innlogging til databasen skjer via Norsk Helsenett SF (NHN) som eies av helse- og omsorgsdepartementet. 
 
 Deltakelse i NorVas er frivillig for pasienten og har siden oppstarten i 2016 vært basert på skriftlig samtykke. I slutten av 2024 gikk NorVas over til reservasjonsrett. Det innebærer at pasientene nå blir inkludert i registeret så lenge de ikke velger å reservere seg. Løsning for reservasjonsrett ble etablert i MRS desember 2024 og i GTI mars 2025. Det foreligger per feburar 2026 enda ikke løsning for reservasjonsrett i HP og pasienter i Helse Midt-Norge må fremdeles samtykke skriftlig til inklusjon. Pasientene kan når som helst velge å trekke samtykket eller reservere seg mot deltakelse, og allerede innsamlede data til NorVas vil da bli slettet. For utfyllende detaljer vedrørende samtykke og reservasjonsrett, vises til norvas.no. 
 
@@ -23,7 +23,7 @@ HP ble innført ved St. Olavs Hospital HF november 2022, ved Helse Møre og Roms
 
 Revmatologisk avdeling ved St. Olavs var frem til overgangen til HP gode til å inkludere pasienter og registrere inn data i NorVas via GTI. Etter overgangen har dessverre antall inkluderte falt betydelig, samtidig som kvaliteten på innkommende data har blitt dårligere. For eksempel inkluderte St. Olavs 32 pasienter i NorVas mellom november 2022 og juni 2024, mens de til sammenligning inkluderte 31 pasienter i 2021 alene. 
 
-Birmingham vasculitis activity score (BVAS), et validert skåringsverktøy for å monitorere aktiv vaskulittsykdom hos pasienter med ANCA-assosiert vaskulitt, skal fylles ut hver gang en pasient med ANCA-assosiert vaskulitt er til kontroll. I 2021 ble dette gjort ved 81 % av kontrollene ved St. Olavs, mot kun 27 % av kontrollene i 2023. Generelt har registreringsaktiviteten i NorVas gått ned fra mellom 40-60 registerkontroller i måneden før HP til nå cirka 20 registerkontroller i måneden. Medisineringsdataene er tilsynelatende svært mangelfulle og responsraten på pasientrapporterte data (PROMs) er bare rundt 50 %. 
+Birmingham vasculitis activity score (BVAS), et validert skåringsverktøy for å monitorere aktiv vaskulittsykdom hos pasienter med ANCA-assosiert vaskulitt, skal fylles ut hver gang en pasient med ANCA-assosiert vaskulitt er til kontroll. I 2021 ble dette gjort ved 81 % av kontrollene ved St. Olavs, mot kun 27 % av kontrollene i 2023. Generelt har registreringsaktiviteten i NorVas gått ned fra mellom 40-60 registerkontroller i måneden før HP til nå cirka 20 registerkontroller i måneden. Medisineringsdataene er tilsynelatende svært mangelfulle og responsraten på pasientrapporterte data (PROMs) er bare rundt 50 %.
 Vi ønsker å undersøke om nevnte forhold skyldes manglende innrapportering/lav kompletthet og/eller feil i dataløsningen, og avdekke eventuelle tiltak som kan forbedre datakvaliteten. 
 
 
@@ -58,13 +58,13 @@ knitr::kable(data, col.names = c("ICD-10", " "), align = "l", booktabs = TRUE) |
 ```
 
 Pasientene er koblet til unike hjelpenummer i MRS, denne koblingen er lagret kryptert.
-Faglig leder i registeret satt fysisk sammen med overlege ved St. Olavs i 3 dager (29-31.10.25) og gikk gjennom journalen til totalt 27 pasienter. Dette var det antallet man klarte på tilgjengelig tid. Rent praktisk har overlege ved St. Olavs navigert i HP, mens registeransatt har registrert alle tilgjengelige aktuelle variabler i testdatabasen i MRS. 
+Faglig leder i registeret satt fysisk sammen med overlege ved St. Olavs i 3 dager (29-31.10.25) og gikk gjennom journalen til totalt 27 pasienter. Dette var det antallet man klarte på tilgjengelig tid. Rent praktisk har overlege ved St. Olavs navigert i HP, mens registeransatt har registrert alle tilgjengelige aktuelle variabler i valideringsdatabasen i MRS. 
 
 Av de 27 gjennomgåtte pasientene, ble 4 fjernet fra den endelige analysen av følgende årsaker:
 
 * 1 pasient har diagnose psoriasisartritt - ikke diagnose som kvalifiserer til NorVas, samtykket til NorArtritt (migrert fra GTI) 10.02.16, ikke samtykket til inklusjon i Norvas
 * 1 pasient har PAN – diagnose som ikke skal følges i registeret per nå, men skulle det tidligere. Nå ekskludert med oppfølging avsluttet
-* 1 pasient med GPA som ikke har registrert samtykke i HP (heller ikke migrert fra GTI), heller ikke at pasienten har trukket samtykke eller at oppfølging er avsluttet. Denne pasienten ble ikke tatt med i testdatabasen på bakgrunn av manglende samtykke. 
+* 1 pasient med GPA som ikke har registrert samtykke i HP (heller ikke migrert fra GTI), heller ikke at pasienten har trukket samtykke eller at oppfølging er avsluttet. Denne pasienten ble ikke tatt med i valideringsdatabasen på bakgrunn av manglende samtykke. 
 * 1 pasient med storkarsvaskulitt i NorVas inkludert i GTI i 2015. I HP er denne pasienten registrert med polyartrittdiagnose, dette kvalifiserer ikke til inklusjon i NorVas.
 
 
@@ -76,15 +76,15 @@ En av pasientene med storkarsvaskulitt har en annen diagnose registrert i NorVas
 En av pasientene med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato. En annen har to ulike diagnoser med samme dato der kun den ene kvalifiserer for inklusjon i NorVas.
 
 
-Oppfølginger/kontroller registrert i testdatabasen gjelder for tidsperioden etter «GO LIVE» 12.11.22 til og med 31.10.25. 
+Oppfølginger/kontroller registrert i valideringsdatabasen gjelder for tidsperioden etter «go live» 12.11.22 til og med 31.10.25. 
 
-For pasientene som ble inkludert i NorVas etter «GO LIVE», er oppfølgingene/kontrollene i tidsrommet fra inklusjon til og med 31.10.25 som er registrert i testdatabasen. 
+For pasientene som ble inkludert i NorVas etter «go live», er oppfølgingene/kontrollene i tidsrommet fra inklusjon til og med 31.10.25 som er registrert i valideringsdatabasen. 
 
-Etter at samtykke foreligger, har HP overført data til NorVas som er datert forut for samtykket. Disse oppfølgingene er utelatt fra analysen da de ikke er registrert i testdatabasen.  
+Etter at samtykke foreligger, har HP overført data til NorVas som er datert forut for samtykket. Disse oppfølgingene er utelatt fra analysen da de ikke er registrert i valideringsdatabasen.  
 
-For pasienter inkludert før «GO LIVE», er det registrert et inklusjonsskjema på aktuelle dato i testdatabasen og deretter alle oppfølginger/kontroller som foreligger etter «GO LIVE» 12.11.22 frem til og med 31.10.25. 
+For pasienter inkludert før «go live», er det registrert et inklusjonsskjema på aktuelle dato i valideringsdatabasen og deretter alle oppfølginger/kontroller som foreligger etter «go live» 12.11.22 frem til og med 31.10.25. 
 
-Flere pasienter har flere kontakter på samme dato i HP, f.eks. en legekontakt, en sykepleierkontakt og en pasientmelding/innsending av spørreskjema. Dette er registrert som en kontakt/oppfølging i testdatabasen. 
+Flere pasienter har flere kontakter på samme dato i HP, f.eks. en legekontakt, en sykepleierkontakt og en pasientmelding/innsending av spørreskjema. Dette er registrert som en kontakt/oppfølging i valideringsdatabasen. 
 
 I perioden analysene ble utført, har det ikke vært mulig å registrere klassifikasjonskriterier i HP ved St. Olavs. Klassifikasjonskriteriene (kalt diagnostiske kriterier i MRS) er derfor utelatt fra analysen. For øvrig er alle variablene som skal rapporteres til NorVas registrert så fremst de gjenfinnes i HP (se vedlegg).
 
@@ -327,7 +327,7 @@ duplikater <- Oppfolging_inkl |>
 
 For de `{r} dim(Inklusjon)[1]` pasientene som er med i valideringsundersøkelsen
 finnes det `{r} dim(Oppfolging_inkl)[1]` oppfølginger i Norvas som er registrert 
-etter inklusjonssdato og etter «GO LIVE» for HP, dvs. 2022-11-12 og før . Av disse er det 
+etter inklusjonssdato og etter «go live» for HP, dvs. 2022-11-12 og før . Av disse er det 
 `{r} length(unique(inkl_og_oppf_samme_dato$PasientId))` skjemaer som er på samme 
 dato som pasientens inklusjon og som dermed ikke skulle blitt generert/overført.
 Det finnes `{r} dim(duplikater)[1]` tilfeller av at samme pasient har flere oppfølgingsskjema på samme dag, på det meste `{r} max(duplikater$N)[1]` skjemaer.
@@ -774,7 +774,7 @@ samsvar_bp_storkar <- agreement_simple(sammenlign_bp_storkar,
 
 ```
 
-Kun laboratorieskjema som en innenfor pluss minus 14 dager av et oppfølgingsskjema eller inklusjonsskjema er tatt med i analysen, og ett labskjema knyttet til kun en oppfølging/inklusjon. I testdatabasen er det xx laboratorieskjema som oppfyller kravet, mens det i Norvas er yy skjema som oppfyller kravet. Kun inklusjoner/oppfølginger som har labskjema både i Norvas og i testdatabasen brukes i beregningen av samsvar. xx labskjema kan ikke knyttes til en oppfølging/inklusjon i Norvas, i testdatabsen ...
+Kun laboratorieskjema som en innenfor pluss minus 14 dager av et oppfølgingsskjema eller inklusjonsskjema er tatt med i analysen, og ett labskjema knyttet til kun en oppfølging/inklusjon. I valideringsdatabasen er det xx laboratorieskjema som oppfyller kravet, mens det i Norvas er yy skjema som oppfyller kravet. Kun inklusjoner/oppfølginger som har labskjema både i Norvas og i valideringsdatabasen brukes i beregningen av samsvar. xx labskjema kan ikke knyttes til en oppfølging/inklusjon i Norvas, i testdatabsen ...
 
 
 ```{r}
@@ -898,7 +898,7 @@ oppf_m_kerr_samlet <- merge(
 
 ```
 
-Det er `{r} dim(KERR)[1]` KERRS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "GO LIVE" og før november 2025) etter fjerning to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I testdatabasen er det `{r} dim(KERR_validering)[1]` registreringer av KERRS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_kerr_val)[1]` skjema som er innenfor 3 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_kerr_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
+Det er `{r} dim(KERR)[1]` KERRS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "go live" og før november 2025) etter fjerning to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I valideringsdatabasen er det `{r} dim(KERR_validering)[1]` registreringer av KERRS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_kerr_val)[1]` skjema som er innenfor 3 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_kerr_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
 
 På variablenivå er samsvaret oppsummert i tabellen under.
 
@@ -1047,7 +1047,7 @@ oppf_m_bvas_samlet <- merge(
 ```
 
 
-Det er `{r} dim(BVAS)[1]` BVAS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "GO LIVE" og før november 2025). Av disse er det `{r} dim(oppf_m_bvas)[1]` som er registrert innenfor 14 dager av en inklusjon/oppfølging. I testdatabasen er det `{r} dim(BVAS_validering)[1]` registreringer av BVAS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_bvas_val)[1]` skjema registrert innenfor 14 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_bvas_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
+Det er `{r} dim(BVAS)[1]` BVAS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "go live" og før november 2025). Av disse er det `{r} dim(oppf_m_bvas)[1]` som er registrert innenfor 14 dager av en inklusjon/oppfølging. I valideringsdatabasen er det `{r} dim(BVAS_validering)[1]` registreringer av BVAS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_bvas_val)[1]` skjema registrert innenfor 14 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_bvas_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
 
 På variablenivå er samsvaret oppsummert i tabellen under.
 
@@ -1202,7 +1202,7 @@ oppsum2 <- duplikat2 |> summarise(
 
 ```
 
-Det er `{r} dim(Medisin)[1]` registreringer av medisiner fra St. Olavs i Norvas med enten Med_StartDato eller Med_SluttDato i prosjektperioden. Av disse er det en god del duplikater, som definert av at de har samme PasientId, Med_StartDato og Legemiddel.   Det er `{r} dim(Medisin_validering)[1]` registreringer av medisiner i testdatabasen, og også her er det noen tilfeller av samme PasientId, Med_StartDato og Legemiddel. Dette er oppsummert i tabellene under. Det er `{r} sum(Medisin$Med_SluttDato < Medisin$Med_StartDato, na.rm = T)` registreringer med Med_SluttDato før Med_StartDato, i norvas, i testdatabasen er det `{r} sum(Medisin_validering$Med_SluttDato < Medisin_validering$Med_StartDato, na.rm = T)`.
+Det er `{r} dim(Medisin)[1]` registreringer av medisiner fra St. Olavs i Norvas med enten Med_StartDato eller Med_SluttDato i prosjektperioden. Av disse er det en god del duplikater, som definert av at de har samme PasientId, Med_StartDato og Legemiddel.   Det er `{r} dim(Medisin_validering)[1]` registreringer av medisiner i valideringsdatabasen, og også her er det noen tilfeller av samme PasientId, Med_StartDato og Legemiddel. Dette er oppsummert i tabellene under. Det er `{r} sum(Medisin$Med_SluttDato < Medisin$Med_StartDato, na.rm = T)` registreringer med Med_SluttDato før Med_StartDato, i norvas, i valideringsdatabasen er det `{r} sum(Medisin_validering$Med_SluttDato < Medisin_validering$Med_StartDato, na.rm = T)`.
 
 
 ```{r}
@@ -1217,7 +1217,7 @@ knitr::kable(
 
 knitr::kable(
   oppsum2, 
-  caption = "Duplikater av medisiner i testdatabasen", 
+  caption = "Duplikater av medisiner i valideringsdatabasen", 
   digits = 1,
   align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
@@ -1238,9 +1238,9 @@ Medisin_validering <- Medisin_validering |>
 
 
 ```
-Når man fjerner registreringer med sluttdato før startdato og beholder kun den av de dupliserte registreringene som har flest utfylte felter sitter man igjen med `{r} dim(Medisin)[1]` registreringer i Norvas. I testdatabasen er det `{r} dim(Medisin_validering)[1]` registreringer etter samme filtrering. I Norvas er det variabelen Legemiddel som ser ut til å være utfylt og komplett, mens i testdatabasen registrert direkte i MRS er det LegemiddelType2023 og LegemiddelNr som brukes. 
+Når man fjerner registreringer med sluttdato før startdato og beholder kun den av de dupliserte registreringene som har flest utfylte felter sitter man igjen med `{r} dim(Medisin)[1]` registreringer i Norvas. I valideringsdatabasen er det `{r} dim(Medisin_validering)[1]` registreringer etter samme filtrering. I Norvas er det variabelen Legemiddel som ser ut til å være utfylt og komplett, mens i valideringsdatabasen registrert direkte i MRS er det LegemiddelType2023 og LegemiddelNr som brukes. 
 
-Det er `{r} sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` som er registrert med Legemiddel "HP ZOLEDRONSYRE 4 MG 100 ML NACL INF",  eller "HP METYLPREDNISOLON INF" som ikke finnes i kodebok. Disse fjernes fra den videre sammenstillingen, hvilket betyr at `{r} dim(Medisin_validering)[1] - sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` ses på i den videre analysen.
+Det er `{r} sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` som er registrert med Legemiddel "HP ZOLEDRONSYRE 4 MG 100 ML NACL INF",  eller "HP METYLPREDNISOLON INF" som ikke finnes i kodebok. Disse fjernes fra den videre sammenstillingen, hvilket betyr at `{r} dim(Medisin)[1] - sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` ses på i den videre analysen.
 
 
 ```{r}
@@ -1252,7 +1252,7 @@ Medisin <- Medisin |>
 
 oppsum_med_reg <- Medisin |> 
   mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
-                              "ikke.reg", as.character(Med_SluttDato))) |>
+                                "ikke.reg", as.character(Med_SluttDato))) |>
   summarise(
     startdatoer = paste0(Med_StartDato, collapse = ", "),
     sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
@@ -1263,7 +1263,7 @@ oppsum_med_reg <- Medisin |>
 
 oppsum_med_val <- Medisin_validering |> 
   mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
-                              "ikke.reg", as.character(Med_SluttDato))) |> 
+                                "ikke.reg", as.character(Med_SluttDato))) |> 
   summarise(
     startdatoer = paste0(Med_StartDato, collapse = ", "),
     sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
@@ -1288,7 +1288,7 @@ oppsum_med <- merge(
         by = "PasientId")
 ```
 
-Tabellen under viser alle gjenværende registreringer medikamentregistreringer i Norvas og i testdatabasen per pasient og medikament.
+Tabellen under viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament.
 
 
 ```{r}
@@ -1296,7 +1296,7 @@ Tabellen under viser alle gjenværende registreringer medikamentregistreringer i
 
 knitr::kable(
   oppsum_med, 
-  caption = "Medikamentregistreringer i Norvas og i testdatabasen", 
+  caption = "Medikamentregistreringer i Norvas og i valideringsdatabasen", 
   digits = 1,
   align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
@@ -1305,6 +1305,85 @@ knitr::kable(
 
 ```{r}
 #| echo: false
+
+Infusjonslogg_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2026-02-12_0917.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |> 
+  merge(Inklusjon_validering |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  mutate(InfusjonsDato = as.Date(InfusjonsDato, format = "%d.%m.%Y"),
+         FormDate = as.Date(FormDate, format = "%d.%m.%Y"))
+
+Infusjonslogg <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) |> 
+  mutate(InfusjonsDato = as.Date(InfusjonsDato, format = "%d.%m.%Y")) |> 
+  dplyr::filter(InfusjonsDato >= "2022-11-12",
+                InfusjonsDato <= "2025-10-31") |> 
+  merge(Inklusjon |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID")
+
+Infusjon_samlet <- merge(
+  Infusjonslogg_validering |> 
+    select(PasientId, InfusjonsDato, Infusjon_LegemiddelType2022, InfusjonsDose),
+  Infusjonslogg |> 
+    select(PasientId, InfusjonsDato, InfusjonsDose),
+  by = c("PasientId", "InfusjonsDato"),
+  all.x = TRUE,
+  suffixes = c("_gold", "_reg")
+) %>%
+  relocate(sort(names(.))) |> 
+  relocate(PasientId, InfusjonsDato)
+  
+
+
+
+```
+
+## Infusjonslogg
+
+I prosjektperioden er det overført `{r} dim(Infusjonslogg)[1]` medikamenter til Norvas fra HP. Variabelen Infusjon_LegemiddelType2023 er tom for 229 og har registrert "None" på de resterende. Variabelen Infusjon_LegemiddelType2022 er tom for 97 og har registrert "None" på 115, samt AnnetImportert på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosmaid, som er de eneste medikamentene som faktisk skal finnes infusjonslogg på per nå.
+
+Det ble registrert `{r} dim(Infusjonslogg_validering)[1]` medikamenter i infusjonsloggen i valideringsdatabasen. Av disse er det `{r} sum(is.na(Infusjon_samlet$InfusjonsDose_reg))` som ikke har treff på pasientID og InfusjonsDato i infusjonsloggen til Norvas. Tabellen under viser registreringer med sammenfallende PasientId og InfusjonsDato i valideringsdatabasen og Norvas. Siden ingen av de relevante registreringene i Norvas har verdi annet enn "None" i Norvas har vi ikke inkludert LegemiddelType fra Norvas i tabellen. Når det er flere linjer med samme PasientId, InfusjonsDato og legemiddeltype, skyldes det at det er flere registreringer i Norvas som matcher på PasientId og InfusjonsDato.
+
+```{r}
+#| echo: false
+
+knitr::kable(
+  Infusjon_samlet |> filter(!is.na(InfusjonsDose_reg)), 
+  caption = "Infusjonslogg", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+
+```
+
+## Medisinering historisk dose
+Det finnes ikke mulighet til å registrere historisk dose av Rituksimab eller Syklofosmaid i HP.
+
+
+
+
+```{r}
+#| echo: false
+
+# merge(Inklusjon |> 
+#         select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+#       by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+# mutate(Med_StartDato = as.Date(Med_StartDato, format = "%d.%m.%Y"),
+#        Med_SluttDato = as.Date(Med_SluttDato, format = "%d.%m.%Y"),
+#        FormDate = as.Date(FormDate, format = "%d.%m.%Y")) |> 
+# filter(Med_StartDato >= "2022-11-12" | 
+#          Med_SluttDato >= "2022-11-12") |> 
+# relocate(PasientId, Med_StartDato, Med_SluttDato, 
+#          InklusjonDato, FormDate) |>
+# arrange(Med_StartDato, Med_SluttDato)
 
 # samlet <- merge(
 #   Medisin |> 
