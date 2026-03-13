@@ -6159,7 +6159,7 @@ Tabell 16: Duplikater av medisiner i valideringsdatabasen
 </div>
 <p>\ Når man fjerner registreringer med sluttdato før startdato og beholder kun den av de dupliserte registreringene som har flest utfylte felter sitter man igjen med 66 registreringer i Norvas. I valideringsdatabasen er det 140 registreringer etter samme filtrering. I Norvas er det variabelen Legemiddel som ser ut til å være utfylt og komplett, mens i valideringsdatabasen registrert direkte i MRS er det LegemiddelType2023 og LegemiddelNr som brukes.</p>
 <p>Det er 3 som er registrert med Legemiddel “HP ZOLEDRONSYRE 4 MG 100 ML NACL INF”, eller “HP METYLPREDNISOLON INF” som ikke finnes i kodebok. Disse fjernes fra den videre sammenstillingen, hvilket betyr at 63 ses på i den videre analysen.</p>
-<p><a href="#tbl-oppsumMedikament" class="quarto-xref">Tabell 19</a> viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament.</p>
+<p><a href="#tbl-oppsumMedikament" class="quarto-xref">Tabell 19</a> viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament. <span class="citation" data-cites="oppsumMedikamentAlle">@oppsumMedikamentAlle</span> viser det samme for de uvaskede dataene.</p>
 </section>
 <section id="infusjonslogg" class="level2">
 <h2 class="anchored" data-anchor-id="infusjonslogg">Infusjonslogg</h2>
@@ -6483,7 +6483,7 @@ Tabell 18: Samsvar mellom innhold i Vaskulittintervensjon-skjema i Norvas og HP
 <div id="tbl-oppsumMedikament" class="cell quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-tbl figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-oppsumMedikament-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Tabell 19: Medikamentregistreringer i Norvas og i valideringsdatabasen
+Tabell 19: Medikamentregistreringer i Norvas og i valideringsdatabasen etter vask av tabeller
 </figcaption>
 <div aria-describedby="tbl-oppsumMedikament-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
@@ -7307,21 +7307,887 @@ Tabell 19: Medikamentregistreringer i Norvas og i valideringsdatabasen
 </div>
 </div>
 <div class="cell">
+<div id="tbl-oppsumMedikamentAlle" class="cell quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-oppsumMedikamentAlle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Tabell 20: Medikamentregistreringer i Norvas og i valideringsdatabasen, alle registreringer
+</figcaption>
+<div aria-describedby="tbl-oppsumMedikamentAlle-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="nbfxocdenr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#nbfxocdenr table {
+<table class="table do-not-create-environment cell caption-top table-sm table-striped small" data-quarto-postprocess="true">
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">PasientId</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Legemiddel</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">startdatoer_reg</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">startdatoer_gold</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Dose_reg</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Dose_gold</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">sluttdatoer_reg</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">sluttdatoer_gold</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">N_reg</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">N_gold</th>
+<th style="text-align: left;" data-quarto-table-cell-role="th">Diagnosegruppe</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">80000288822</td>
+<td style="text-align: left;">Azathioprin</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-04-13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">150</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80000288822</td>
+<td style="text-align: left;">Benralizumab</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-04-02</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">30</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80000288822</td>
+<td style="text-align: left;">HP ZOLEDRONSYRE 4 MG 100 ML NACL INF</td>
+<td style="text-align: left;">2023-03-24</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-03-25</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80000288822</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-04-13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">7,5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80000340506</td>
+<td style="text-align: left;">Adalimumab</td>
+<td style="text-align: left;">2025-08-26</td>
+<td style="text-align: left;">2025-08-26</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80000340506</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2025-08-18</td>
+<td style="text-align: left;">2025-07-02, 2025-08-18</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">40, 15</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">2025-08-17, ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80000654543</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-09-27, 2024-10-12, 2024-11-27, 2025-01-08, 2025-05-02</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">30, 20, 15, 10, 7,5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-10-11, 2024-11-26, 2025-01-07, 2025-05-01, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001113813</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2025-08-29</td>
+<td style="text-align: left;">2025-08-29</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001113813</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2024-10-10</td>
+<td style="text-align: left;">2024-08-19, 2024-08-26, 2024-10-10</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">5, 5, 40</td>
+<td style="text-align: left;">2025-03-03</td>
+<td style="text-align: left;">2024-08-25, 2024-10-09, ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001174693</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2024-07-22, 2025-08-06</td>
+<td style="text-align: left;">2024-06-07, 2024-07-22</td>
+<td style="text-align: left;">20, 20</td>
+<td style="text-align: left;">15, 20</td>
+<td style="text-align: left;">2025-01-30, ikke.reg</td>
+<td style="text-align: left;">2024-07-21, ikke.reg</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001174693</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2024-04-20</td>
+<td style="text-align: left;">2024-04-20, 2024-04-26, 2024-05-03, 2024-06-07, 2025-08-07</td>
+<td style="text-align: left;">40</td>
+<td style="text-align: left;">40, 60, 40, 20, 3,75</td>
+<td style="text-align: left;">2024-04-29</td>
+<td style="text-align: left;">2024-04-25, 2024-05-02, 2024-06-06, 2025-08-06, ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001362813</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2024-03-04, 2024-03-04, 2024-08-09, 2024-08-09</td>
+<td style="text-align: left;">2024-03-04, 2024-08-09, 2025-10-01</td>
+<td style="text-align: left;">15, 15, 17,5, 17,5</td>
+<td style="text-align: left;">15, 17,5, 17,5</td>
+<td style="text-align: left;">2024-08-09, 2024-08-09, 2025-10-01, ikke.reg</td>
+<td style="text-align: left;">2024-08-08, 2025-09-30, 2025-10-01</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001362813</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2024-03-01, 2024-03-01</td>
+<td style="text-align: left;">2024-03-01, 2024-03-02</td>
+<td style="text-align: left;">500, 500</td>
+<td style="text-align: left;">500, 500</td>
+<td style="text-align: left;">2024-03-02, 2024-03-02</td>
+<td style="text-align: left;">2024-03-01, 2024-03-02</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001362813</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2024-08-09, 2024-08-09</td>
+<td style="text-align: left;">2024-01-17, 2024-03-11, 2025-08-23, 2025-09-20, 2025-10-01</td>
+<td style="text-align: left;">5, 5</td>
+<td style="text-align: left;">40, 20, 7,5, 5, 3,75</td>
+<td style="text-align: left;">ikke.reg, ikke.reg</td>
+<td style="text-align: left;">2024-03-10, 2025-08-22, 2025-09-19, 2025-09-30, ikke.reg</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">Azathioprin</td>
+<td style="text-align: left;">2024-03-16</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">50</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">HumantImmunoglobulinG</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-06-08, 2023-06-08</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">30000, 30000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-06-07, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2023-04-29, 2023-04-30, 2023-05-01, 2023-05-02, 2023-08-24</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">250, 500, 750, 1000, 125</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-04-30, 2023-05-01, 2023-05-02, 2023-05-05, 2023-08-25</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2023-08-09, 2023-09-15, 2023-09-21</td>
+<td style="text-align: left;">2023-09-01</td>
+<td style="text-align: left;">20, 10, 5</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">2023-08-10, 2023-09-18, 2023-09-22</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80001811081</td>
+<td style="text-align: left;">Rituximab</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-09-14</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80002068145</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2024-11-14</td>
+<td style="text-align: left;">2024-11-14</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">2025-05-02</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80002068145</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2024-11-14</td>
+<td style="text-align: left;">2024-11-14, 2024-11-16</td>
+<td style="text-align: left;">250</td>
+<td style="text-align: left;">250, 250</td>
+<td style="text-align: left;">2024-11-15</td>
+<td style="text-align: left;">2024-11-15, 2024-11-16</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80002068145</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-01-27, 2024-02-04, 2024-03-31</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">60, 40, 20</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-02-03, 2024-03-30, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80002287742</td>
+<td style="text-align: left;">MycofenolatMofetil</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-08-22</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80002287742</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2024-09-13, 2024-09-17, 2024-09-18</td>
+<td style="text-align: left;">2025-08-22, 2025-10-22</td>
+<td style="text-align: left;">5, 20, 10</td>
+<td style="text-align: left;">5, 10</td>
+<td style="text-align: left;">2024-09-20, 2024-09-20, 2024-09-20</td>
+<td style="text-align: left;">2025-10-21, ikke.reg</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80002287742</td>
+<td style="text-align: left;">Tacrolimus</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-09-12</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164653327</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2025-10-02</td>
+<td style="text-align: left;">2025-10-02, 2025-10-05</td>
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">1000, 1000</td>
+<td style="text-align: left;">2025-10-03</td>
+<td style="text-align: left;">2025-10-04, 2025-10-05</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80164653327</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-10-05</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">60</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164717651</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2023-01-04, 2023-01-04, 2023-06-20, 2023-06-20, 2024-01-19, 2024-01-19</td>
+<td style="text-align: left;">2023-01-04, 2023-06-20</td>
+<td style="text-align: left;">20, 20, 15, 15, 1, 1</td>
+<td style="text-align: left;">20, 15</td>
+<td style="text-align: left;">2023-02-13, 2023-02-13, 2023-07-31, 2023-07-31, 2024-05-24, 2024-05-24</td>
+<td style="text-align: left;">2023-06-19, ikke.reg</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80164717651</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2023-02-09, 2023-02-09</td>
+<td style="text-align: left;">2023-02-09, 2023-02-12</td>
+<td style="text-align: left;">500, 500</td>
+<td style="text-align: left;">500, 500</td>
+<td style="text-align: left;">2023-02-11, 2023-02-11</td>
+<td style="text-align: left;">2023-02-11, 2023-02-12</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164717651</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2024-01-19, 2024-01-19</td>
+<td style="text-align: left;">2023-02-13, 2023-03-12, 2023-03-13, 2023-08-21</td>
+<td style="text-align: left;">5, 5</td>
+<td style="text-align: left;">30, 30, 20, 30</td>
+<td style="text-align: left;">ikke.reg, ikke.reg</td>
+<td style="text-align: left;">2023-03-12, 2023-02-12, 2023-08-20, ikke.reg</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80164719824</td>
+<td style="text-align: left;">HP METYLPREDNISOLON INF</td>
+<td style="text-align: left;">2023-04-19</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">125</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-04-20</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164719824</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2023-04-19</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">125</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-04-20</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80164719824</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2022-09-08, 2023-02-03, 2023-03-03, 2023-04-14, 2023-04-28, 2023-05-26</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2,5, 30, 20, 10, 7,5, 5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-02-02, 2023-03-02, 2023-04-13, 2023-04-27, 2023-05-25, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80164719824</td>
+<td style="text-align: left;">Rituximab</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-04-19</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">500</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165032601</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2022-10-25, 2023-01-13</td>
+<td style="text-align: left;">2022-10-25, 2023-01-13</td>
+<td style="text-align: left;">15, 20</td>
+<td style="text-align: left;">15, 20</td>
+<td style="text-align: left;">2023-01-13, 2023-01-14</td>
+<td style="text-align: left;">2023-01-12, ikke.reg</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165032601</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2023-01-12</td>
+<td style="text-align: left;">2023-01-12, 2023-01-14</td>
+<td style="text-align: left;">500</td>
+<td style="text-align: left;">500, 500</td>
+<td style="text-align: left;">2023-01-13</td>
+<td style="text-align: left;">2023-01-13, 2023-01-14</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165032601</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2023-11-10</td>
+<td style="text-align: left;">2023-01-14, 2023-02-25, 2023-03-11, 2024-05-25</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">40, 20, 15, 3,75</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">2023-02-24, 2023-03-10, 2024-05-24, ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165035082</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2024-12-13, 2024-12-13, 2025-04-25</td>
+<td style="text-align: left;">2024-12-13, 2025-01-24, 2025-04-25</td>
+<td style="text-align: left;">15, 20, 25</td>
+<td style="text-align: left;">15, 20, 25</td>
+<td style="text-align: left;">2025-04-25, 2025-04-25, ikke.reg</td>
+<td style="text-align: left;">2025-01-23, 2025-04-24, ikke.reg</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165035082</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2024-11-26, 2024-11-28</td>
+<td style="text-align: left;">2024-11-26, 2024-11-28, 2024-11-29, 2024-11-29</td>
+<td style="text-align: left;">1000, 500</td>
+<td style="text-align: left;">1000, 500, 500, 500</td>
+<td style="text-align: left;">2024-11-27, 2024-11-29</td>
+<td style="text-align: left;">2024-11-27, 2024-11-28, 2024-11-28, 2024-11-29</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165035082</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-11-29, 2024-12-27, 2025-01-24, 2025-08-22</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">40, 20, 15, 20</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-12-26, 2025-01-23, 2025-08-21, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165282152</td>
+<td style="text-align: left;">Avakopan</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-06-17, 2025-08-13</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">60, 60</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-08-12, 2025-08-13</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165282152</td>
+<td style="text-align: left;">Cyclofosfamid</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-08-14, 2025-08-14</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1162,5, 1200</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-08-13, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165282152</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2025-05-30, 2025-05-30, 2025-06-04, 2025-06-16</td>
+<td style="text-align: left;">2025-05-30, 2025-06-05, 2025-06-05, 2025-06-07, 2025-08-11, 2025-08-14, 2025-08-14</td>
+<td style="text-align: left;">1000, 500, 250, 125</td>
+<td style="text-align: left;">500, 500, 250, 250, 1000, 1000, 1000</td>
+<td style="text-align: left;">2025-05-31, 2025-06-01, 2025-06-05, 2025-06-17</td>
+<td style="text-align: left;">2025-06-04, 2025-06-05, 2025-06-06, 2025-06-07, 2025-08-13, 2025-08-13, 2025-08-14</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">7</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165282152</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-06-16, 2025-06-20, 2025-06-23, 2025-06-27, 2025-07-21, 2025-08-04, 2025-08-14, 2025-08-21, 2025-09-26, 2025-10-24</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">40, 40, 30, 60, 20, 15, 60, 40, 20, 12,5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-06-22, 2025-06-15, 2025-07-20, 2025-06-19, 2025-08-03, 2025-08-13, 2025-08-20, 2025-09-25, 2025-10-23, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165282152</td>
+<td style="text-align: left;">Rituximab</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-06-03</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165357233</td>
+<td style="text-align: left;">Azathioprin</td>
+<td style="text-align: left;">2024-06-27, 2024-06-28</td>
+<td style="text-align: left;">2023-11-06, 2023-11-06, 2024-07-30</td>
+<td style="text-align: left;">50, 100</td>
+<td style="text-align: left;">150, 150, 100</td>
+<td style="text-align: left;">2024-07-01, 2024-07-01</td>
+<td style="text-align: left;">2023-11-05, 2024-07-29, ikke.reg</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165494915</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2024-10-18, 2024-10-18</td>
+<td style="text-align: left;">2024-10-18, 2024-10-21</td>
+<td style="text-align: left;">1000, 1000</td>
+<td style="text-align: left;">1000, 1000</td>
+<td style="text-align: left;">2024-10-20, 2024-10-20</td>
+<td style="text-align: left;">2024-10-20, 2024-10-21</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165494915</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2024-10-21, 2024-10-21, 2024-10-28, 2024-10-28, 2024-12-02, 2024-12-02, 2024-12-16, 2025-01-13, 2025-01-13, 2025-02-24, 2025-02-24, 2025-09-22</td>
+<td style="text-align: left;">2024-10-21, 2024-10-28, 2024-12-02, 2025-01-27, 2025-02-24, 2025-09-22</td>
+<td style="text-align: left;">80, 80, 40, 40, 20, 20, 15, 10, 10, 5, 5, 2,5</td>
+<td style="text-align: left;">80, 40, 20, 7,5, 5, 2,5</td>
+<td style="text-align: left;">2024-10-22, 2024-10-22, 2024-10-25, 2024-10-25, 2024-10-28, 2024-10-28, 2024-10-28, 2024-10-28, 2024-10-28, 2024-10-28, 2024-10-28, ikke.reg</td>
+<td style="text-align: left;">2024-10-27, 2024-12-01, 2025-01-26, 2025-02-23, 2025-09-21, ikke.reg</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165494915</td>
+<td style="text-align: left;">Rituximab</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-10-25</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165588480</td>
+<td style="text-align: left;">HumantImmunoglobulinG</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-09-24</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">3000</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165588480</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-10-30, 2025-09-03</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">15, 15</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2025-09-02, 2025-09-03</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165588480</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2022-02-07, 2022-02-07, 2023-03-06, 2023-10-31, 2023-10-31, 2023-10-31, 2024-01-31, 2024-01-31, 2024-01-31, 2024-01-31, 2024-01-31, 2024-01-31</td>
+<td style="text-align: left;">2022-02-07, 2023-03-31, 2024-01-31, 2024-02-14, 2024-04-30, 2024-04-30</td>
+<td style="text-align: left;">5, 5, 5, 2,5, 2,5, 2,5, 20, 20, 20, 45, 45, 45</td>
+<td style="text-align: left;">5, 2,5, 65, 50, 5, 5</td>
+<td style="text-align: left;">2023-03-06, 2023-03-06, 2023-10-31, 2023-11-23, 2023-11-23, 2023-11-23, 2024-02-05, 2024-02-05, 2024-02-05, 2024-02-20, 2024-02-20, 2024-02-20</td>
+<td style="text-align: left;">2023-03-30, 2024-01-30, 2024-02-13, 2024-04-29, 2024-04-29, ikke.reg</td>
+<td style="text-align: left;">12</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165697832</td>
+<td style="text-align: left;">HP ZOLEDRONSYRE 4 MG 100 ML NACL INF</td>
+<td style="text-align: left;">2022-12-16</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2022-12-17</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165697832</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2023-03-10</td>
+<td style="text-align: left;">2022-09-30, 2023-03-10, 2023-04-01, 2024-01-01, 2024-05-01, 2024-09-01</td>
+<td style="text-align: left;">10</td>
+<td style="text-align: left;">5, 10, 7,5, 5, 2,5, 2,5</td>
+<td style="text-align: left;">2023-09-25</td>
+<td style="text-align: left;">2023-03-09, 2023-03-31, 2023-12-31, 2024-04-30, 2024-08-31, 2024-09-01</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80165747910</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-06-07</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">15</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80165747910</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-06-07</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">Anca-assosierte vaskulitter (AAV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166128459</td>
+<td style="text-align: left;">Anakinra</td>
+<td style="text-align: left;">2022-11-04, 2023-10-19</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">100, 0,67</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-01-27, 2023-10-20</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80166128459</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2023-08-28</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-09-07</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166128459</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2023-05-19, 2023-05-19</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">5, 1</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2023-09-07, 2024-04-24</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80166579078</td>
+<td style="text-align: left;">Metylprednisolon</td>
+<td style="text-align: left;">2024-08-16, 2024-08-16</td>
+<td style="text-align: left;">2024-08-16, 2024-08-19</td>
+<td style="text-align: left;">1000, 1000</td>
+<td style="text-align: left;">1000, 1000</td>
+<td style="text-align: left;">2024-08-18, 2024-08-18</td>
+<td style="text-align: left;">2024-08-18, 2024-08-19</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166579078</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-08-19, 2024-09-01, 2024-10-14, 2024-12-02, 2025-08-07</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">60, 40, 20, 10, 3,75</td>
+<td style="text-align: left;">NA</td>
+<td style="text-align: left;">2024-08-31, 2024-10-13, 2024-12-01, 2025-08-06, ikke.reg</td>
+<td style="text-align: left;">0</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80166677320</td>
+<td style="text-align: left;">Methotrexate</td>
+<td style="text-align: left;">2024-02-01, 2024-05-02, 2024-08-09</td>
+<td style="text-align: left;">2024-02-01, 2024-11-15</td>
+<td style="text-align: left;">15, 20, 17,5</td>
+<td style="text-align: left;">15, 15</td>
+<td style="text-align: left;">2024-05-02, 2024-08-09, 2024-08-10</td>
+<td style="text-align: left;">2024-11-14, 2024-11-15</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">80166677320</td>
+<td style="text-align: left;">Prednisolon</td>
+<td style="text-align: left;">2025-02-21</td>
+<td style="text-align: left;">2023-07-13, 2023-08-10, 2023-09-22, 2024-06-03, 2025-08-06</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">40, 20, 10, 7,5, 3,75</td>
+<td style="text-align: left;">2025-08-05</td>
+<td style="text-align: left;">2023-08-09, 2023-09-21, 2024-06-02, 2025-08-05, ikke.reg</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">5</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">80166677320</td>
+<td style="text-align: left;">Tocilizumab</td>
+<td style="text-align: left;">2025-02-14</td>
+<td style="text-align: left;">2024-08-09, 2025-02-21</td>
+<td style="text-align: left;">162</td>
+<td style="text-align: left;">162, 162</td>
+<td style="text-align: left;">2025-02-21</td>
+<td style="text-align: left;">2025-02-20, 2025-02-21</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: left;">Storkarsvaskulitter (LVV)</td>
+</tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</figure>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="ewozfsmmkc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ewozfsmmkc table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#nbfxocdenr thead, #nbfxocdenr tbody, #nbfxocdenr tfoot, #nbfxocdenr tr, #nbfxocdenr td, #nbfxocdenr th {
+#ewozfsmmkc thead, #ewozfsmmkc tbody, #ewozfsmmkc tfoot, #ewozfsmmkc tr, #ewozfsmmkc td, #ewozfsmmkc th {
 border-style: none;
 }
-#nbfxocdenr p {
+#ewozfsmmkc p {
 margin: 0;
 padding: 0;
 }
-#nbfxocdenr .gt_table {
+#ewozfsmmkc .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -7346,11 +8212,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#nbfxocdenr .gt_caption {
+#ewozfsmmkc .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#nbfxocdenr .gt_title {
+#ewozfsmmkc .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -7361,7 +8227,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#nbfxocdenr .gt_subtitle {
+#ewozfsmmkc .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -7372,7 +8238,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#nbfxocdenr .gt_heading {
+#ewozfsmmkc .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -7383,12 +8249,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#nbfxocdenr .gt_bottom_border {
+#ewozfsmmkc .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#nbfxocdenr .gt_col_headings {
+#ewozfsmmkc .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -7402,7 +8268,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#nbfxocdenr .gt_col_heading {
+#ewozfsmmkc .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7421,7 +8287,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#nbfxocdenr .gt_column_spanner_outer {
+#ewozfsmmkc .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7432,13 +8298,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#nbfxocdenr .gt_column_spanner_outer:first-child {
+#ewozfsmmkc .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#nbfxocdenr .gt_column_spanner_outer:last-child {
+#ewozfsmmkc .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#nbfxocdenr .gt_column_spanner {
+#ewozfsmmkc .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -7449,10 +8315,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#nbfxocdenr .gt_spanner_row {
+#ewozfsmmkc .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#nbfxocdenr .gt_group_heading {
+#ewozfsmmkc .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7477,7 +8343,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#nbfxocdenr .gt_empty_group_heading {
+#ewozfsmmkc .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -7491,13 +8357,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#nbfxocdenr .gt_from_md > :first-child {
+#ewozfsmmkc .gt_from_md > :first-child {
 margin-top: 0;
 }
-#nbfxocdenr .gt_from_md > :last-child {
+#ewozfsmmkc .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#nbfxocdenr .gt_row {
+#ewozfsmmkc .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7515,7 +8381,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#nbfxocdenr .gt_stub {
+#ewozfsmmkc .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7527,7 +8393,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nbfxocdenr .gt_stub_row_group {
+#ewozfsmmkc .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -7540,13 +8406,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#nbfxocdenr .gt_row_group_first td {
+#ewozfsmmkc .gt_row_group_first td {
 border-top-width: 2px;
 }
-#nbfxocdenr .gt_row_group_first th {
+#ewozfsmmkc .gt_row_group_first th {
 border-top-width: 2px;
 }
-#nbfxocdenr .gt_summary_row {
+#ewozfsmmkc .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7555,14 +8421,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nbfxocdenr .gt_first_summary_row {
+#ewozfsmmkc .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#nbfxocdenr .gt_first_summary_row.thick {
+#ewozfsmmkc .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#nbfxocdenr .gt_last_summary_row {
+#ewozfsmmkc .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7571,7 +8437,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#nbfxocdenr .gt_grand_summary_row {
+#ewozfsmmkc .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -7580,7 +8446,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nbfxocdenr .gt_first_grand_summary_row {
+#ewozfsmmkc .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7589,7 +8455,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#nbfxocdenr .gt_last_grand_summary_row_top {
+#ewozfsmmkc .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -7598,10 +8464,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#nbfxocdenr .gt_striped {
+#ewozfsmmkc .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#nbfxocdenr .gt_table_body {
+#ewozfsmmkc .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -7609,7 +8475,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#nbfxocdenr .gt_footnotes {
+#ewozfsmmkc .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7622,7 +8488,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#nbfxocdenr .gt_footnote {
+#ewozfsmmkc .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -7630,7 +8496,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nbfxocdenr .gt_sourcenotes {
+#ewozfsmmkc .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -7643,64 +8509,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#nbfxocdenr .gt_sourcenote {
+#ewozfsmmkc .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#nbfxocdenr .gt_left {
+#ewozfsmmkc .gt_left {
 text-align: left;
 }
-#nbfxocdenr .gt_center {
+#ewozfsmmkc .gt_center {
 text-align: center;
 }
-#nbfxocdenr .gt_right {
+#ewozfsmmkc .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#nbfxocdenr .gt_font_normal {
+#ewozfsmmkc .gt_font_normal {
 font-weight: normal;
 }
-#nbfxocdenr .gt_font_bold {
+#ewozfsmmkc .gt_font_bold {
 font-weight: bold;
 }
-#nbfxocdenr .gt_font_italic {
+#ewozfsmmkc .gt_font_italic {
 font-style: italic;
 }
-#nbfxocdenr .gt_super {
+#ewozfsmmkc .gt_super {
 font-size: 65%;
 }
-#nbfxocdenr .gt_footnote_marks {
+#ewozfsmmkc .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#nbfxocdenr .gt_asterisk {
+#ewozfsmmkc .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#nbfxocdenr .gt_indent_1 {
+#ewozfsmmkc .gt_indent_1 {
 text-indent: 5px;
 }
-#nbfxocdenr .gt_indent_2 {
+#ewozfsmmkc .gt_indent_2 {
 text-indent: 10px;
 }
-#nbfxocdenr .gt_indent_3 {
+#ewozfsmmkc .gt_indent_3 {
 text-indent: 15px;
 }
-#nbfxocdenr .gt_indent_4 {
+#ewozfsmmkc .gt_indent_4 {
 text-indent: 20px;
 }
-#nbfxocdenr .gt_indent_5 {
+#ewozfsmmkc .gt_indent_5 {
 text-indent: 25px;
 }
-#nbfxocdenr .katex-display {
+#ewozfsmmkc .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#nbfxocdenr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#ewozfsmmkc div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>

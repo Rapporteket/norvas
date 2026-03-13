@@ -1399,6 +1399,43 @@ Medisin <- read.table(
            InklusjonDato, FormDate) |>
   arrange(Med_StartDato, Med_SluttDato)
 
+oppsum_med_reg <- Medisin |> 
+  mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
+                                "ikke.reg", as.character(Med_SluttDato))) |>
+  summarise(
+    startdatoer = paste0(Med_StartDato, collapse = ", "),
+    sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
+    Dose = paste0(Dose, collapse = ", "),
+    N = n(),
+    .by = c(PasientId, Legemiddel)
+  )
+
+oppsum_med_val <- Medisin_validering |> 
+  mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
+                                "ikke.reg", as.character(Med_SluttDato))) |> 
+  summarise(
+    startdatoer = paste0(Med_StartDato, collapse = ", "),
+    sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
+    Dose = paste0(Dose, collapse = ", "),
+    N = n(),
+    .by = c(PasientId, LegemiddelType2023)
+  ) |> 
+  rename(Legemiddel = LegemiddelType2023)
+
+oppsum_med_alle <- merge(
+  oppsum_med_reg,
+  oppsum_med_val,
+  by = c("PasientId", "Legemiddel"),
+  suffixes = c("_reg", "_gold"),
+  all = T) |> 
+  mutate(N_reg = ifelse(is.na(N_reg), 0, N_reg),
+         N_gold = ifelse(is.na(N_gold), 0, N_gold)) |> 
+  relocate(PasientId, Legemiddel, startdatoer_reg, startdatoer_gold,
+           Dose_reg, Dose_gold, sluttdatoer_reg, sluttdatoer_gold,
+           N_reg, N_gold) |> 
+  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+        by = "PasientId")
+
 duplikat <- Medisin[
   duplicated(Medisin[c("PasientId", "Med_StartDato", "Legemiddel")]) |
     duplicated(Medisin[c("PasientId", "Med_StartDato", "Legemiddel")],
@@ -1523,7 +1560,7 @@ oppsum_med <- merge(
         by = "PasientId")
 ```
 
-@tbl-oppsumMedikament viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament.
+@tbl-oppsumMedikament viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament. @oppsumMedikamentAlle viser det samme for de uvaskede dataene.
 
 
 
@@ -1906,13 +1943,25 @@ knitr::kable(
 
 knitr::kable(
   oppsum_med, 
-  caption = "Medikamentregistreringer i Norvas og i valideringsdatabasen", 
+  caption = "Medikamentregistreringer i Norvas og i valideringsdatabasen etter vask av tabeller", 
   digits = 1,
   align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
 
 ```
 
+```{r}
+#| echo: false
+#| label: tbl-oppsumMedikamentAlle
+
+knitr::kable(
+  oppsum_med_alle, 
+  caption = "Medikamentregistreringer i Norvas og i valideringsdatabasen, alle registreringer", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
 
 ```{r}
 #| echo: false
