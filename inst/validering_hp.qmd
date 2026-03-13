@@ -816,7 +816,6 @@ knitr::kable(
 ### KERRS
 
 Kerr’s kriterier er mål på sykdomsaktivitet ved storkarsvaskulitt og skal fylles ut ved inklusjon og alle påfølgende kontroller for pasienter med aktuell diagnose. Behandler krysser av for aktuelle punkter (av 4 mulige) hvor det er tegn til aktiv sykdom, samt tar stilling til sykdomsvurdering. Skjemaet inneholder også muligheten for å krysse av for om en pasientkontroll er gjennomført per telefon eller video. Dette er per nå ikke mulig å gjøre i HP. 
-Det er 15 Kerr’s-skjema i Norvas som oppfyller kravene for å være med i valideringen (dvs. på eller etter inklusjonsdato, etter “go live” og innen 31.10.25) etter fjerning to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I valideringsdatabasen er det 15 registreringer av Kerr’s-skjema som oppfyller kravene, og av disse er det 14 skjema som er innenfor 3 dager av en inklusjon/oppfølging. Tolv skjema finnes i både Norvas og validerigsdatabasen tilknyttet samme inklusjons- eller oppfølgingsskjema. Disse 12 inngår i samsvarsanalysen. 
 
 
 ```{r}
@@ -919,10 +918,11 @@ oppf_m_kerr_samlet <- merge(
 
 Det er `{r} dim(KERR)[1]` KERRS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "go live" og før november 2025) etter fjerning to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I valideringsdatabasen er det `{r} dim(KERR_validering)[1]` registreringer av KERRS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_kerr_val)[1]` skjema som er innenfor 3 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_kerr_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
 
-På variablenivå er samsvaret oppsummert i tabellen under.
+På variablenivå er samsvaret oppsummert i @tbl-samsvarKERR.
 
 ```{r}
 #| echo: false
+#| label: tbl-samsvarKERR
 
 KERR <- merge(
   KERR,
@@ -965,7 +965,6 @@ knitr::kable(
   align = "l", booktabs = TRUE) |> 
   kableExtra::kable_styling(full_width = FALSE)
 
-
 ```
 
 
@@ -973,7 +972,7 @@ knitr::kable(
 ### BVAS
 
 BVAS er et mål på sykdomsaktivitet ved ANCA-assosiert vaskulitt og skal fylles ut ved inklusjon og alle påfølgende kontroller for pasienter med aktuell diagnose. Behandler krysser av for aktuelle punkter hvor det er tegn til aktiv sykdom, samt tar stilling til sykdomsvurdering. Skjemaet inneholder også muligheten for å krysse av for om en pasientkontroll er gjennomført per telefon eller video. Dette er per nå ikke mulig å gjøre i HP. 
-Det er 14 BVAS-skjema i Norvas som oppfyller kravene for å være med i valideringen (dvs. på eller etter inklusjonsdato, etter “go live” og innen 31.10.25). Av disse er det 5 som er registrert innenfor 14 dager av en inklusjon/oppfølging. I valideringsdatabasen er det 14 registreringer av BVAS som oppfyller kravene, og av disse er det 14 skjema registrert innenfor 14 dager av en inklusjon/oppfølging. Fem skjema finnes i både Norvas og valideringsdatabasen tilknyttet samme inklusjons- eller oppfølgingsskjema. Disse 5 inngår i samsvarsanalysen. 
+
 
 ```{r}
 #| echo: false
@@ -1071,11 +1070,12 @@ oppf_m_bvas_samlet <- merge(
 
 Det er `{r} dim(BVAS)[1]` BVAS-skjema i Norvas som oppfyller kravene for å være med i valideringen (På eller etter inklusjonsdato, etter "go live" og før november 2025). Av disse er det `{r} dim(oppf_m_bvas)[1]` som er registrert innenfor 14 dager av en inklusjon/oppfølging. I valideringsdatabasen er det `{r} dim(BVAS_validering)[1]` registreringer av BVAS som oppfyller kravene, og av disse er det `{r} dim(oppf_m_bvas_val)[1]` skjema registrert innenfor 14 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_bvas_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
 
-På variablenivå er samsvaret oppsummert i tabellen under.
+På variablenivå er samsvaret oppsummert i @tbl-samsvarBVAS.
 
 
 ```{r}
 #| echo: false
+#| label: tbl-samsvarBVAS
 
 # BVAS <- merge(
 #   BVAS,
@@ -1237,11 +1237,11 @@ VDI er en skadeskår som skal fylles ut ved inklusjon og alle påfølgende oppf�
 
 Det er `{r} dim(VDI)[1]` VDI-skjema i Norvas som oppfyller kravene for å være med i valideringen (Etter "go live" og før november 2025). Av disse er det `{r} dim(oppf_m_vdi)[1]` som er registrert innenfor 14 dager av en inklusjon/oppfølging. I valideringsdatabasen er det `{r} dim(VDI_validering)[1]` registreringer av VDI som oppfyller kravene, og av disse er det `{r} dim(oppf_m_vdi_val)[1]` skjema registrert innenfor 14 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_vdi_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
 
-På variablenivå er samsvaret oppsummert i tabellen under.
+På variablenivå er samsvaret oppsummert i @tbl-samsvarVDI.
 
 ```{r}
 #| echo: false
-
+#| label: tbl-samsvarVDI
 var_vdi <- c(
   "VDI_Dato",
   "SignificantMuscleAtrophyorWeakness",
@@ -1355,6 +1355,244 @@ knitr::kable(
 
 ```
 
+## Medisiner
+
+<!-- se på antall oppføringer på relevanter medisin -->
+<!-- se på med_startdato etter inklusjon/"go live" -->
+
+
+```{r}
+#| echo: false
+
+Medisin_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_MedisineringSkjema_2026-02-12_0916.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |> 
+  merge(Inklusjon_validering |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  mutate(Med_StartDato = as.Date(Med_StartDato, format = "%d.%m.%Y"),
+         Med_SluttDato = as.Date(Med_SluttDato, format = "%d.%m.%Y"),
+         FormDate = as.Date(FormDate, format = "%d.%m.%Y")) |> 
+  relocate(PasientId, Med_StartDato, Med_SluttDato, 
+           InklusjonDato, FormDate) |> 
+  arrange(Med_StartDato, Med_SluttDato)
+
+# Medisin_wal <- Medisin_validering |> 
+#   filter((Med_StartDato >= "2022-11-12") | 
+#            (Med_SluttDato >= "2022-11-12"))
+
+Medisin <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) |> 
+  merge(Inklusjon |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  mutate(Med_StartDato = as.Date(Med_StartDato, format = "%d.%m.%Y"),
+         Med_SluttDato = as.Date(Med_SluttDato, format = "%d.%m.%Y"),
+         FormDate = as.Date(FormDate, format = "%d.%m.%Y")) |> 
+  filter(Med_StartDato >= "2022-11-12" | 
+           Med_SluttDato >= "2022-11-12") |> 
+  relocate(PasientId, Med_StartDato, Med_SluttDato, 
+           InklusjonDato, FormDate) |>
+  arrange(Med_StartDato, Med_SluttDato)
+
+duplikat <- Medisin[
+  duplicated(Medisin[c("PasientId", "Med_StartDato", "Legemiddel")]) |
+    duplicated(Medisin[c("PasientId", "Med_StartDato", "Legemiddel")],
+               fromLast = TRUE), ]|>
+  dplyr::relocate(PasientId, Med_StartDato) |>
+  dplyr::arrange(PasientId, Med_StartDato)
+
+oppsum <- duplikat |> summarise(
+  LegemiddelNr = paste0(LegemiddelNr, collapse = ", "),
+  Med_SluttDato = paste0(Med_SluttDato, collapse = ", "),
+  N =n(),
+  .by = c("PasientId", "Med_StartDato", "Legemiddel"))
+
+duplikat2 <- Medisin_validering[
+  duplicated(Medisin_validering
+             [c("PasientId", "Med_StartDato", "LegemiddelType2023")]) |
+    duplicated(Medisin_validering[
+      c("PasientId", "Med_StartDato", "LegemiddelType2023")],
+      fromLast = TRUE), ]|>
+  dplyr::relocate(PasientId, Med_StartDato) |>
+  dplyr::arrange(PasientId, Med_StartDato)
+
+oppsum2 <- duplikat2 |> summarise(
+  LegemiddelNr = paste0(LegemiddelNr, collapse = ", "),
+  Med_SluttDato = paste0(Med_SluttDato, collapse = ", "),
+  N =n(),
+  .by = c("PasientId", "Med_StartDato", "LegemiddelType2023"))
+
+
+```
+
+Det er `{r} dim(Medisin)[1]` registreringer av medisiner fra St. Olavs i Norvas med enten Med_StartDato eller Med_SluttDato i prosjektperioden. Av disse er det en god del duplikater, som definert av at de har samme PasientId, Med_StartDato og Legemiddel.   Det er `{r} dim(Medisin_validering)[1]` registreringer av medisiner i valideringsdatabasen, og også her er det noen tilfeller av samme PasientId, Med_StartDato og Legemiddel. Dette er oppsummert i tabellene under. Det er `{r} sum(Medisin$Med_SluttDato < Medisin$Med_StartDato, na.rm = T)` registreringer med Med_SluttDato før Med_StartDato, i norvas, i valideringsdatabasen er det `{r} sum(Medisin_validering$Med_SluttDato < Medisin_validering$Med_StartDato, na.rm = T)`.
+
+
+```{r}
+#| echo: false
+#| label: tbl-duplikatMedisinNorvas
+knitr::kable(
+  oppsum, 
+  caption = "Duplikater av medisiner i Norvas", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+
+```{r}
+#| echo: false
+#| label: tbl-duplikatMedisinValidering
+
+knitr::kable(
+  oppsum2, 
+  caption = "Duplikater av medisiner i valideringsdatabasen", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+# start_foer_slutt_norvas <- 
+
+Medisin <- Medisin |> 
+  filter(Med_SluttDato >= Med_StartDato | is.na(Med_SluttDato)) |> 
+  mutate(na_count = rowSums(is.na(across(everything())))) |>
+  arrange(PasientId, Med_StartDato, Legemiddel, na_count) |>
+  slice(1, .by = c(PasientId, Med_StartDato, Legemiddel))
+
+Medisin_validering <- Medisin_validering |> 
+  filter(Med_SluttDato >= Med_StartDato | is.na(Med_SluttDato)) |> 
+  mutate(na_count = rowSums(is.na(across(everything())))) |>
+  arrange(PasientId, Med_StartDato, LegemiddelType2023, na_count) |>
+  slice(1, .by = c(PasientId, Med_StartDato, LegemiddelType2023))
+
+
+```
+\\
+Når man fjerner registreringer med sluttdato før startdato og beholder kun den av de dupliserte registreringene som har flest utfylte felter sitter man igjen med `{r} dim(Medisin)[1]` registreringer i Norvas. I valideringsdatabasen er det `{r} dim(Medisin_validering)[1]` registreringer etter samme filtrering. I Norvas er det variabelen Legemiddel som ser ut til å være utfylt og komplett, mens i valideringsdatabasen registrert direkte i MRS er det LegemiddelType2023 og LegemiddelNr som brukes. 
+
+Det er `{r} sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` som er registrert med Legemiddel "HP ZOLEDRONSYRE 4 MG 100 ML NACL INF",  eller "HP METYLPREDNISOLON INF" som ikke finnes i kodebok. Disse fjernes fra den videre sammenstillingen, hvilket betyr at `{r} dim(Medisin)[1] - sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` ses på i den videre analysen.
+
+
+```{r}
+#| echo: false
+
+Medisin <- Medisin |> 
+  filter(!(Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF")))
+
+
+oppsum_med_reg <- Medisin |> 
+  mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
+                                "ikke.reg", as.character(Med_SluttDato))) |>
+  summarise(
+    startdatoer = paste0(Med_StartDato, collapse = ", "),
+    sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
+    Dose = paste0(Dose, collapse = ", "),
+    N = n(),
+    .by = c(PasientId, Legemiddel)
+  )
+
+oppsum_med_val <- Medisin_validering |> 
+  mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
+                                "ikke.reg", as.character(Med_SluttDato))) |> 
+  summarise(
+    startdatoer = paste0(Med_StartDato, collapse = ", "),
+    sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
+    Dose = paste0(Dose, collapse = ", "),
+    N = n(),
+    .by = c(PasientId, LegemiddelType2023)
+  ) |> 
+  rename(Legemiddel = LegemiddelType2023)
+
+oppsum_med <- merge(
+  oppsum_med_reg,
+  oppsum_med_val,
+  by = c("PasientId", "Legemiddel"),
+  suffixes = c("_reg", "_gold"),
+  all = T) |> 
+  mutate(N_reg = ifelse(is.na(N_reg), 0, N_reg),
+         N_gold = ifelse(is.na(N_gold), 0, N_gold)) |> 
+  relocate(PasientId, Legemiddel, startdatoer_reg, startdatoer_gold,
+           Dose_reg, Dose_gold, sluttdatoer_reg, sluttdatoer_gold,
+           N_reg, N_gold) |> 
+  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
+        by = "PasientId")
+```
+
+@tbl-oppsumMedikament viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament.
+
+
+
+```{r}
+#| echo: false
+
+Infusjonslogg_validering <- read.table(
+  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2026-02-12_0917.csv",
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |> 
+  merge(Inklusjon_validering |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
+  mutate(InfusjonsDato = as.Date(InfusjonsDato, format = "%d.%m.%Y"),
+         FormDate = as.Date(FormDate, format = "%d.%m.%Y"))
+
+Infusjonslogg <- read.table(
+  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2025-11-18_1547.csv',
+  header=TRUE, sep=";",
+  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
+  dplyr::filter(UnitId == 104579) |> 
+  mutate(InfusjonsDato = as.Date(InfusjonsDato, format = "%d.%m.%Y")) |> 
+  dplyr::filter(InfusjonsDato >= "2022-11-12",
+                InfusjonsDato <= "2025-10-31") |> 
+  merge(Inklusjon |> 
+          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
+        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID")
+
+Infusjon_samlet <- merge(
+  Infusjonslogg_validering |> 
+    select(PasientId, InfusjonsDato, Infusjon_LegemiddelType2022, InfusjonsDose),
+  Infusjonslogg |> 
+    select(PasientId, InfusjonsDato, InfusjonsDose),
+  by = c("PasientId", "InfusjonsDato"),
+  all.x = TRUE,
+  suffixes = c("_gold", "_reg")
+) %>%
+  relocate(sort(names(.))) |> 
+  relocate(PasientId, InfusjonsDato)
+
+
+
+
+```
+
+## Infusjonslogg
+
+I prosjektperioden er det overført `{r} dim(Infusjonslogg)[1]` medikamenter til Norvas fra HP. Variabelen Infusjon_LegemiddelType2023 er tom for 229 og har registrert "None" på de resterende. Variabelen Infusjon_LegemiddelType2022 er tom for 97 og har registrert "None" på 115, samt AnnetImportert på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosmaid, som er de eneste medikamentene som faktisk skal finnes infusjonslogg på per nå.
+
+Det ble registrert `{r} dim(Infusjonslogg_validering)[1]` medikamenter i infusjonsloggen i valideringsdatabasen. Av disse er det `{r} sum(is.na(Infusjon_samlet$InfusjonsDose_reg))` som ikke har treff på pasientID og InfusjonsDato i infusjonsloggen til Norvas. Tabellen under viser registreringer med sammenfallende PasientId og InfusjonsDato i valideringsdatabasen og Norvas. Siden ingen av de relevante registreringene i Norvas har verdi annet enn "None" i Norvas har vi ikke inkludert LegemiddelType fra Norvas i tabellen. Når det er flere linjer med samme PasientId, InfusjonsDato og legemiddeltype, skyldes det at det er flere registreringer i Norvas som matcher på PasientId og InfusjonsDato.
+
+```{r}
+#| echo: false
+#| label: tbl-infusjonslogg
+
+knitr::kable(
+  Infusjon_samlet |> filter(!is.na(InfusjonsDose_reg)), 
+  caption = "Infusjonslogg", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+
+```
+
+## Medisinering historisk dose
+Det finnes ikke mulighet til å registrere historisk dose av Rituksimab eller Syklofosmaid i HP.
+
+
 ## Vaskulittintervensjon
 
 Vaskulittintervensjon inkluderer støttebehandling pasienten mottar for å forebygge komplikasjoner. Vaskulittintervensjon skal tas stilling til ved inklusjon og alle påfølgende oppfølginger for alle pasienter som er inkludert i NorVas.
@@ -1448,10 +1686,11 @@ oppf_m_vaskulittintervensjon_samlet <- merge(
 
 Det er `{r} dim(Vaskulittintervensjon)[1]` vaskulittintervensjonskjema i Norvas som oppfyller kravene for å være med i valideringen (Etter "go live" og før november 2025). Av disse er det `{r} dim(oppf_m_vaskulittintervensjon)[1]` som er registrert innenfor 14 dager av en inklusjon/oppfølging. I valideringsdatabasen er det `{r} dim(Vaskulittintervensjon_validering)[1]` registreringer av vaskulittintervensjon som oppfyller kravene, og av disse er det `{r} dim(oppf_m_vaskulittintervensjon_val)[1]` skjema registrert innenfor 14 dager av en inklusjon/oppfølging. `{r} dim(oppf_m_vaskulittintervensjon_samlet)[1]` skjema finnes i både Norvas og testdatabase tilknyttet samme inklusjons- eller oppfølgingsskjema.
 
-På variablenivå er samsvaret oppsummert i tabellen under.
+På variablenivå er samsvaret oppsummert i @tbl-vaskulittintervensjon.
 
 ```{r}
 #| echo: false
+#| label: tbl-vaskulittintervensjon
 
 var_vaskulittintervensjon <- c(
   "VaskulittIntervensjon_Dato",
@@ -1519,252 +1758,6 @@ knitr::kable(
 
 
 ```
-
-
-
-
-## Medisiner
-
-<!-- se på antall oppføringer på relevanter medisin -->
-<!-- se på med_startdato etter inklusjon/"go live" -->
-
-
-```{r}
-#| echo: false
-
-Medisin_validering <- read.table(
-  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_MedisineringSkjema_2026-02-12_0916.csv",
-  header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |> 
-  merge(Inklusjon_validering |> 
-          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
-        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
-  mutate(Med_StartDato = as.Date(Med_StartDato, format = "%d.%m.%Y"),
-         Med_SluttDato = as.Date(Med_SluttDato, format = "%d.%m.%Y"),
-         FormDate = as.Date(FormDate, format = "%d.%m.%Y")) |> 
-  relocate(PasientId, Med_StartDato, Med_SluttDato, 
-           InklusjonDato, FormDate) |> 
-  arrange(Med_StartDato, Med_SluttDato)
-
-# Medisin_wal <- Medisin_validering |> 
-#   filter((Med_StartDato >= "2022-11-12") | 
-#            (Med_SluttDato >= "2022-11-12"))
-
-Medisin <- read.table(
-  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
-  header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
-  dplyr::filter(UnitId == 104579) |> 
-  merge(Inklusjon |> 
-          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
-        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
-  mutate(Med_StartDato = as.Date(Med_StartDato, format = "%d.%m.%Y"),
-         Med_SluttDato = as.Date(Med_SluttDato, format = "%d.%m.%Y"),
-         FormDate = as.Date(FormDate, format = "%d.%m.%Y")) |> 
-  filter(Med_StartDato >= "2022-11-12" | 
-           Med_SluttDato >= "2022-11-12") |> 
-  relocate(PasientId, Med_StartDato, Med_SluttDato, 
-           InklusjonDato, FormDate) |>
-  arrange(Med_StartDato, Med_SluttDato)
-
-duplikat <- Medisin[
-  duplicated(Medisin[c("PasientId", "Med_StartDato", "Legemiddel")]) |
-    duplicated(Medisin[c("PasientId", "Med_StartDato", "Legemiddel")],
-               fromLast = TRUE), ]|>
-  dplyr::relocate(PasientId, Med_StartDato) |>
-  dplyr::arrange(PasientId, Med_StartDato)
-
-oppsum <- duplikat |> summarise(
-  LegemiddelNr = paste0(LegemiddelNr, collapse = ", "),
-  Med_SluttDato = paste0(Med_SluttDato, collapse = ", "),
-  N =n(),
-  .by = c("PasientId", "Med_StartDato", "Legemiddel"))
-
-duplikat2 <- Medisin_validering[
-  duplicated(Medisin_validering
-             [c("PasientId", "Med_StartDato", "LegemiddelType2023")]) |
-    duplicated(Medisin_validering[
-      c("PasientId", "Med_StartDato", "LegemiddelType2023")],
-      fromLast = TRUE), ]|>
-  dplyr::relocate(PasientId, Med_StartDato) |>
-  dplyr::arrange(PasientId, Med_StartDato)
-
-oppsum2 <- duplikat2 |> summarise(
-  LegemiddelNr = paste0(LegemiddelNr, collapse = ", "),
-  Med_SluttDato = paste0(Med_SluttDato, collapse = ", "),
-  N =n(),
-  .by = c("PasientId", "Med_StartDato", "LegemiddelType2023"))
-
-
-```
-
-Det er `{r} dim(Medisin)[1]` registreringer av medisiner fra St. Olavs i Norvas med enten Med_StartDato eller Med_SluttDato i prosjektperioden. Av disse er det en god del duplikater, som definert av at de har samme PasientId, Med_StartDato og Legemiddel.   Det er `{r} dim(Medisin_validering)[1]` registreringer av medisiner i valideringsdatabasen, og også her er det noen tilfeller av samme PasientId, Med_StartDato og Legemiddel. Dette er oppsummert i tabellene under. Det er `{r} sum(Medisin$Med_SluttDato < Medisin$Med_StartDato, na.rm = T)` registreringer med Med_SluttDato før Med_StartDato, i norvas, i valideringsdatabasen er det `{r} sum(Medisin_validering$Med_SluttDato < Medisin_validering$Med_StartDato, na.rm = T)`.
-
-
-```{r}
-#| echo: false
-
-knitr::kable(
-  oppsum, 
-  caption = "Duplikater av medisiner i Norvas", 
-  digits = 1,
-  align = "l", booktabs = TRUE) |> 
-  kableExtra::kable_styling(full_width = FALSE)
-
-knitr::kable(
-  oppsum2, 
-  caption = "Duplikater av medisiner i valideringsdatabasen", 
-  digits = 1,
-  align = "l", booktabs = TRUE) |> 
-  kableExtra::kable_styling(full_width = FALSE)
-
-# start_foer_slutt_norvas <- 
-
-Medisin <- Medisin |> 
-  filter(Med_SluttDato >= Med_StartDato | is.na(Med_SluttDato)) |> 
-  mutate(na_count = rowSums(is.na(across(everything())))) |>
-  arrange(PasientId, Med_StartDato, Legemiddel, na_count) |>
-  slice(1, .by = c(PasientId, Med_StartDato, Legemiddel))
-
-Medisin_validering <- Medisin_validering |> 
-  filter(Med_SluttDato >= Med_StartDato | is.na(Med_SluttDato)) |> 
-  mutate(na_count = rowSums(is.na(across(everything())))) |>
-  arrange(PasientId, Med_StartDato, LegemiddelType2023, na_count) |>
-  slice(1, .by = c(PasientId, Med_StartDato, LegemiddelType2023))
-
-
-```
-Når man fjerner registreringer med sluttdato før startdato og beholder kun den av de dupliserte registreringene som har flest utfylte felter sitter man igjen med `{r} dim(Medisin)[1]` registreringer i Norvas. I valideringsdatabasen er det `{r} dim(Medisin_validering)[1]` registreringer etter samme filtrering. I Norvas er det variabelen Legemiddel som ser ut til å være utfylt og komplett, mens i valideringsdatabasen registrert direkte i MRS er det LegemiddelType2023 og LegemiddelNr som brukes. 
-
-Det er `{r} sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` som er registrert med Legemiddel "HP ZOLEDRONSYRE 4 MG 100 ML NACL INF",  eller "HP METYLPREDNISOLON INF" som ikke finnes i kodebok. Disse fjernes fra den videre sammenstillingen, hvilket betyr at `{r} dim(Medisin)[1] - sum(Medisin$Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF"))` ses på i den videre analysen.
-
-
-```{r}
-#| echo: false
-
-Medisin <- Medisin |> 
-  filter(!(Legemiddel %in% c("HP ZOLEDRONSYRE 4 MG 100 ML NACL INF", "HP METYLPREDNISOLON INF")))
-
-
-oppsum_med_reg <- Medisin |> 
-  mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
-                                "ikke.reg", as.character(Med_SluttDato))) |>
-  summarise(
-    startdatoer = paste0(Med_StartDato, collapse = ", "),
-    sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
-    Dose = paste0(Dose, collapse = ", "),
-    N = n(),
-    .by = c(PasientId, Legemiddel)
-  )
-
-oppsum_med_val <- Medisin_validering |> 
-  mutate(Med_SluttDato = ifelse(is.na(Med_SluttDato), 
-                                "ikke.reg", as.character(Med_SluttDato))) |> 
-  summarise(
-    startdatoer = paste0(Med_StartDato, collapse = ", "),
-    sluttdatoer = paste0(Med_SluttDato, collapse = ", "),
-    Dose = paste0(Dose, collapse = ", "),
-    N = n(),
-    .by = c(PasientId, LegemiddelType2023)
-  ) |> 
-  rename(Legemiddel = LegemiddelType2023)
-
-oppsum_med <- merge(
-  oppsum_med_reg,
-  oppsum_med_val,
-  by = c("PasientId", "Legemiddel"),
-  suffixes = c("_reg", "_gold"),
-  all = T) |> 
-  mutate(N_reg = ifelse(is.na(N_reg), 0, N_reg),
-         N_gold = ifelse(is.na(N_gold), 0, N_gold)) |> 
-  relocate(PasientId, Legemiddel, startdatoer_reg, startdatoer_gold,
-           Dose_reg, Dose_gold, sluttdatoer_reg, sluttdatoer_gold,
-           N_reg, N_gold) |> 
-  merge(Diagnoser_validering |> select(PasientId, Diagnosegruppe),
-        by = "PasientId")
-```
-
-Tabellen under viser alle gjenværende registreringer medikamentregistreringer i Norvas og i valideringsdatabasen per pasient og medikament.
-
-
-```{r}
-#| echo: false
-
-knitr::kable(
-  oppsum_med, 
-  caption = "Medikamentregistreringer i Norvas og i valideringsdatabasen", 
-  digits = 1,
-  align = "l", booktabs = TRUE) |> 
-  kableExtra::kable_styling(full_width = FALSE)
-
-```
-
-
-```{r}
-#| echo: false
-
-Infusjonslogg_validering <- read.table(
-  "C:/Users/kth200/regdata/norvas/validering_helseplattform/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2026-02-12_0917.csv",
-  header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |> 
-  merge(Inklusjon_validering |> 
-          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
-        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID") |>
-  mutate(InfusjonsDato = as.Date(InfusjonsDato, format = "%d.%m.%Y"),
-         FormDate = as.Date(FormDate, format = "%d.%m.%Y"))
-
-Infusjonslogg <- read.table(
-  'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2025-11-18_1547.csv',
-  header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM') |>
-  dplyr::filter(UnitId == 104579) |> 
-  mutate(InfusjonsDato = as.Date(InfusjonsDato, format = "%d.%m.%Y")) |> 
-  dplyr::filter(InfusjonsDato >= "2022-11-12",
-                InfusjonsDato <= "2025-10-31") |> 
-  merge(Inklusjon |> 
-          select(SkjemaGUID, PasientId, Diagnosegruppe, InklusjonDato),
-        by.x = "HovedskjemaGUID", by.y = "SkjemaGUID")
-
-Infusjon_samlet <- merge(
-  Infusjonslogg_validering |> 
-    select(PasientId, InfusjonsDato, Infusjon_LegemiddelType2022, InfusjonsDose),
-  Infusjonslogg |> 
-    select(PasientId, InfusjonsDato, InfusjonsDose),
-  by = c("PasientId", "InfusjonsDato"),
-  all.x = TRUE,
-  suffixes = c("_gold", "_reg")
-) %>%
-  relocate(sort(names(.))) |> 
-  relocate(PasientId, InfusjonsDato)
-
-
-
-
-```
-
-## Infusjonslogg
-
-I prosjektperioden er det overført `{r} dim(Infusjonslogg)[1]` medikamenter til Norvas fra HP. Variabelen Infusjon_LegemiddelType2023 er tom for 229 og har registrert "None" på de resterende. Variabelen Infusjon_LegemiddelType2022 er tom for 97 og har registrert "None" på 115, samt AnnetImportert på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosmaid, som er de eneste medikamentene som faktisk skal finnes infusjonslogg på per nå.
-
-Det ble registrert `{r} dim(Infusjonslogg_validering)[1]` medikamenter i infusjonsloggen i valideringsdatabasen. Av disse er det `{r} sum(is.na(Infusjon_samlet$InfusjonsDose_reg))` som ikke har treff på pasientID og InfusjonsDato i infusjonsloggen til Norvas. Tabellen under viser registreringer med sammenfallende PasientId og InfusjonsDato i valideringsdatabasen og Norvas. Siden ingen av de relevante registreringene i Norvas har verdi annet enn "None" i Norvas har vi ikke inkludert LegemiddelType fra Norvas i tabellen. Når det er flere linjer med samme PasientId, InfusjonsDato og legemiddeltype, skyldes det at det er flere registreringer i Norvas som matcher på PasientId og InfusjonsDato.
-
-```{r}
-#| echo: false
-
-knitr::kable(
-  Infusjon_samlet |> filter(!is.na(InfusjonsDose_reg)), 
-  caption = "Infusjonslogg", 
-  digits = 1,
-  align = "l", booktabs = TRUE) |> 
-  kableExtra::kable_styling(full_width = FALSE)
-
-
-```
-
-## Medisinering historisk dose
-Det finnes ikke mulighet til å registrere historisk dose av Rituksimab eller Syklofosmaid i HP.
-
-
 
 
 ```{r}
@@ -1906,6 +1899,20 @@ Det finnes ikke mulighet til å registrere historisk dose av Rituksimab eller Sy
 
 
 ## Vedlegg
+
+```{r}
+#| echo: false
+#| label: tbl-oppsumMedikament
+
+knitr::kable(
+  oppsum_med, 
+  caption = "Medikamentregistreringer i Norvas og i valideringsdatabasen", 
+  digits = 1,
+  align = "l", booktabs = TRUE) |> 
+  kableExtra::kable_styling(full_width = FALSE)
+
+```
+
 
 ```{r}
 #| echo: false
