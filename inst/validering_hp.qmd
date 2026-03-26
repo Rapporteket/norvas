@@ -307,7 +307,7 @@ Med samsvar i påfølgende tabeller menes andelen registreringer i NorVas (overf
 
 Av de 23 pasientene inkludert i valideringsundersøkelsen, var det 5 pasienter som manglet diagnose i Norvas. Det var 3 pasienter som hadde mer enn ett diagnoseskjema i Norvas. @tbl-diagnoserOppsum oppsummerer funnene.
 
-Pasient 80166128459 med storkarsvaskulitt har en annen diagnose registrert i NorVas (M31.6) før overgangen til HP (I77.6). Begge er undergrupper av storkarsvaskulitter. En av pasientene (80000288822) med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato, i tillegg til diagnosen M300 som ikke kvalifiserer til inklusjon i Norvas. En annen (80165282152) har to ulike diagnoser med samme dato der kun den ene (M317) kvalifiserer for inklusjon i NorVas. DiagnoserNr mangler i både valideringsdatabasen og i Norvas for icd-10 M31.5.
+Pasient 80166128459 med storkarsvaskulitt har en annen diagnose registrert i NorVas (M31.6) før overgangen til HP (I77.6). Begge er undergrupper av storkarsvaskulitter. En av pasientene (80000288822) med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato, i tillegg til diagnosen M300 som ikke kvalifiserer til inklusjon i Norvas. En annen (80165282152) har to ulike diagnoser med samme dato der kun den ene (M317) kvalifiserer for inklusjon i NorVas. Diagnosenummer (DiagnoserNr) mangler i både valideringsdatabasen og i Norvas for ICD-10 M31.5.
 
 @tbl-diagnoserSamsvar viser samsvar mellom innhold i diagnoseskjemaet i NorVas og valideringsdatabasen, blant de som har diagnoser i Norvas. I tilfellene der pasienten har flere diagnoser i Norvas benyttes skjemaet med flest utfylte felter, ev. første registrering.
 
@@ -822,7 +822,7 @@ knitr::kable(
 
 ## Sykdomsvurdering
 
-### KERRS
+### Kerr’s kriterier
 
 Kerr’s kriterier er mål på sykdomsaktivitet ved storkarsvaskulitt og skal fylles ut ved inklusjon og alle påfølgende kontroller for pasienter med aktuell diagnose. Behandler krysser av for aktuelle punkter (av 4 mulige) hvor det er tegn til aktiv sykdom, samt tar stilling til sykdomsvurdering. Skjemaet inneholder også muligheten for å krysse av for om en pasientkontroll er gjennomført per telefon eller video. Sistnevnte er per nå ikke mulig å gjøre i HP. 
 
@@ -1617,7 +1617,7 @@ Infusjon_samlet <- merge(
 
 ## Infusjonslogg
 
-NorVas ønsker at det skal føres infusjonslogg for Rituksimab og Syklofosfamid ved behandling av ANCA-assosiserte vaskulitter. I prosjektperioden er det overført `{r} dim(Infusjonslogg)[1]` medikamenter til Norvas fra HP. Variabelen "Infusjon_LegemiddelType2023" er tom for 229 av de 326 og har registrert "None" på de resterende. Variabelen «Infusjon_LegemiddelType2023» er tom for 229 av de 326 og har registrert “None” på de resterende. Variabelen «Infusjon_LegemiddelType2022» er tom for 97 av de 326 og har registrert «None» på 115, samt «AnnetImportert» på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosfamid. 
+NorVas ønsker at det skal føres infusjonslogg for Rituksimab og Syklofosfamid ved behandling av ANCA-assosiserte vaskulitter. I prosjektperioden er det overført `{r} dim(Infusjonslogg)[1]` infusjoner til Norvas fra HP. Variabelen "Infusjon_LegemiddelType2023" er tom for 229 av de 326 og har registrert "None" på de resterende. Variabelen «Infusjon_LegemiddelType2023» er tom for 229 av de 326 og har registrert “None” på de resterende. Variabelen «Infusjon_LegemiddelType2022» er tom for 97 av de 326 og har registrert «None» på 115, samt «AnnetImportert» på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosfamid. 
 
 Det ble registrert `{r} dim(Infusjonslogg_validering)[1]` medikamenter i infusjonsloggen i valideringsdatabasen. Av disse er det `{r} sum(is.na(Infusjon_samlet$InfusjonsDose_reg))` som ikke har treff på «pasientID» og «InfusjonsDato» i infusjonsloggen til Norvas. Tabellen under viser registreringer med sammenfallende «PasientId» og «InfusjonsDato» i valideringsdatabasen og Norvas. Siden ingen av de relevante registreringene i Norvas har verdi annet enn «None» i Norvas har vi ikke inkludert «LegemiddelType» fra Norvas i tabellen. Når det er flere linjer med samme «PasientId», «InfusjonsDato» og «legemiddeltype», skyldes det at det er flere registreringer i Norvas som matcher på «PasientId» og «InfusjonsDato».
 
@@ -1941,7 +1941,17 @@ knitr::kable(
 
 ## Oppsummering
 
-Automatisert datafangst til kvalitetsregistre ansees som meget nyttig og tidsbesparende i en travel klinisk hverdag. HP er det første journalsystemet hvor registerdata er integrert i pasientjournalen og høstes direkte derfra uten behov for dobbeltføring. Bakgrunnen for prosjektet var å undersøke kvaliteten og korrektheten av data som overføres fra HP til NorVas. Vi fant at en betydelig andel av gjennomførte kontroller ved St. Olavs ikke medførte overføring av data til registeret. Noe av dette skyldes nok manglende utfylling fra behandlers side, men det forklarer ikke alt. Det kommer over en del duplikater til registeret, dette medfører bias/støy i datahåndteringen. Når det først kommer over data, samsvarer disse i stor grad for de fleste variablene. Det største unntaket er nok den medikamentelle behandlingen, og da både reseptforskrevne medisiner og infusjoner, som har betydelige feil og mangler. Enkelte pasienter inkluderes i NorVas uten at registeret får opplysninger om hvilken diagnose de har, selv om diagnosen er tilgjengelig i HP. Det er en essensiell opplysning for registeret. Vi ser frem til videre godt samarbeid med HP for å optimalisere datafangsten til NorVas fra de revmatologiske avdelingene i Helse Midt-Norge.
+Automatisert datafangst til kvalitetsregistre ansees som meget nyttig og tidsbesparende i en travel klinisk hverdag. HP er det første journalsystemet hvor registerdata er integrert i pasientjournalen og høstes direkte til NorVas uten behov for dobbeltføring. Bakgrunnen for prosjektet var å undersøke kvaliteten og korrektheten av data som overføres fra HP til NorVas. 
+
+Vi fant at en betydelig andel av gjennomførte kontroller ved St. Olavs ikke har tilhørende dataoverføring til NorVas. Dette forklares nok delvis av manglende utfylling fra behandlers side av skjema som for eksempel BVAS eller Kerr’s, men forklarer ikke hvorfor laboratoriedata eller medisineringsdata ikke er overført. Et av spørsmålene vi har stilt HP som følge av dette, er hvilke regler som ligger til grunn for at data fra en inkludert pasient overføres til NorVas. 
+
+Enkelte pasienter inkluderes i NorVas uten at registeret får opplysninger om hvilken diagnose de har, selv om diagnosen er tilgjengelig i HP. Dette er en essensiell opplysning for registeret. 
+
+Vi har avdekket at det overføres en del duplikater fra HP til NorVas. Dette medfører støy i datahåndteringen og er ønskelig å unngå. 
+Når det kommer over data til registeret, samsvarer disse i stor grad med det som er journalført i HP. Det største unntaket er nok den medikamentelle behandlingen, både infusjoner og reseptforskrevne medikamenter, som har betydelige feil og mangler. 
+
+NorVas har løpende dialog med HP om feil og mangler som avdekkes. Vi ser frem til videre godt samarbeid for å optimalisere datafangsten fra de revmatologiske avdelingene i Helse Midt-Norge.
+
 
 
 ## Vedlegg

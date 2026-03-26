@@ -3400,7 +3400,7 @@ Tabell 1: Diagnoser som kvalifiserer til inklusjon i NorVas
 <section id="diagnoser" class="level2">
 <h2 class="anchored" data-anchor-id="diagnoser">Diagnoser</h2>
 <p>Av de 23 pasientene inkludert i valideringsundersøkelsen, var det 5 pasienter som manglet diagnose i Norvas. Det var 3 pasienter som hadde mer enn ett diagnoseskjema i Norvas. <a href="#tbl-diagnoserOppsum" class="quarto-xref">Tabell 2</a> oppsummerer funnene.</p>
-<p>Pasient 80166128459 med storkarsvaskulitt har en annen diagnose registrert i NorVas (M31.6) før overgangen til HP (I77.6). Begge er undergrupper av storkarsvaskulitter. En av pasientene (80000288822) med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato, i tillegg til diagnosen M300 som ikke kvalifiserer til inklusjon i Norvas. En annen (80165282152) har to ulike diagnoser med samme dato der kun den ene (M317) kvalifiserer for inklusjon i NorVas. DiagnoserNr mangler i både valideringsdatabasen og i Norvas for icd-10 M31.5.</p>
+<p>Pasient 80166128459 med storkarsvaskulitt har en annen diagnose registrert i NorVas (M31.6) før overgangen til HP (I77.6). Begge er undergrupper av storkarsvaskulitter. En av pasientene (80000288822) med ANCA-assosiert vaskulitt har samme diagnose registrert to ganger med ulik diagnosedato, i tillegg til diagnosen M300 som ikke kvalifiserer til inklusjon i Norvas. En annen (80165282152) har to ulike diagnoser med samme dato der kun den ene (M317) kvalifiserer for inklusjon i NorVas. Diagnosenummer (DiagnoserNr) mangler i både valideringsdatabasen og i Norvas for ICD-10 M31.5.</p>
 <p><a href="#tbl-diagnoserSamsvar" class="quarto-xref">Tabell 3</a> viser samsvar mellom innhold i diagnoseskjemaet i NorVas og valideringsdatabasen, blant de som har diagnoser i Norvas. I tilfellene der pasienten har flere diagnoser i Norvas benyttes skjemaet med flest utfylte felter, ev. første registrering.</p>
 <div class="cell">
 <div id="tbl-diagnoserOppsum" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -4768,8 +4768,8 @@ Tabell 11: Samsvar mellom innhold i labskjema i Norvas og HP for storkarsvaskul
 </section>
 <section id="sykdomsvurdering" class="level2">
 <h2 class="anchored" data-anchor-id="sykdomsvurdering">Sykdomsvurdering</h2>
-<section id="kerrs" class="level3">
-<h3 class="anchored" data-anchor-id="kerrs">KERRS</h3>
+<section id="kerrs-kriterier" class="level3">
+<h3 class="anchored" data-anchor-id="kerrs-kriterier">Kerr’s kriterier</h3>
 <p>Kerr’s kriterier er mål på sykdomsaktivitet ved storkarsvaskulitt og skal fylles ut ved inklusjon og alle påfølgende kontroller for pasienter med aktuell diagnose. Behandler krysser av for aktuelle punkter (av 4 mulige) hvor det er tegn til aktiv sykdom, samt tar stilling til sykdomsvurdering. Skjemaet inneholder også muligheten for å krysse av for om en pasientkontroll er gjennomført per telefon eller video. Sistnevnte er per nå ikke mulig å gjøre i HP.</p>
 <p>Det er 15 Kerr’s-skjema i Norvas som oppfyller kravene for å være med i valideringen (på eller etter inklusjonsdato, etter “go live” og før november 2025) etter fjerning av to duplikater (samme pasientID og kerrskriterierdato). Alle disse matcher et inklusjons- eller oppfølgingsskjema. I valideringsdatabasen er det 15 registreringer av Kerr’s som oppfyller kravene, og av disse er det 14 skjema som er innenfor 3 dager av en inklusjon/oppfølging. 12 skjema finnes i både Norvas og valideringsdatabasen tilknyttet samme inklusjons- eller oppfølgingsskjema.</p>
 <p>På variabelnivå er samsvaret oppsummert i <a href="#tbl-samsvarKERR" class="quarto-xref">Tabell 12</a>.</p>
@@ -6166,7 +6166,7 @@ Tabell 16: Duplikater av medisiner i valideringsdatabasen
 </section>
 <section id="infusjonslogg" class="level2">
 <h2 class="anchored" data-anchor-id="infusjonslogg">Infusjonslogg</h2>
-<p>NorVas ønsker at det skal føres infusjonslogg for Rituksimab og Syklofosfamid ved behandling av ANCA-assosiserte vaskulitter. I prosjektperioden er det overført 326 medikamenter til Norvas fra HP. Variabelen “Infusjon_LegemiddelType2023” er tom for 229 av de 326 og har registrert “None” på de resterende. Variabelen «Infusjon_LegemiddelType2023» er tom for 229 av de 326 og har registrert “None” på de resterende. Variabelen «Infusjon_LegemiddelType2022» er tom for 97 av de 326 og har registrert «None» på 115, samt «AnnetImportert» på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosfamid.</p>
+<p>NorVas ønsker at det skal føres infusjonslogg for Rituksimab og Syklofosfamid ved behandling av ANCA-assosiserte vaskulitter. I prosjektperioden er det overført 326 infusjoner til Norvas fra HP. Variabelen “Infusjon_LegemiddelType2023” er tom for 229 av de 326 og har registrert “None” på de resterende. Variabelen «Infusjon_LegemiddelType2023» er tom for 229 av de 326 og har registrert “None” på de resterende. Variabelen «Infusjon_LegemiddelType2022» er tom for 97 av de 326 og har registrert «None» på 115, samt «AnnetImportert» på 102. De resterende registreringene fordeler seg på Anakinra (4), HumantImmunoglobulinG (5) og Methotrexate (3). Det finnes ingen registreringer på Rituksimab eller Syklofosfamid.</p>
 <p>Det ble registrert 15 medikamenter i infusjonsloggen i valideringsdatabasen. Av disse er det 8 som ikke har treff på «pasientID» og «InfusjonsDato» i infusjonsloggen til Norvas. Tabellen under viser registreringer med sammenfallende «PasientId» og «InfusjonsDato» i valideringsdatabasen og Norvas. Siden ingen av de relevante registreringene i Norvas har verdi annet enn «None» i Norvas har vi ikke inkludert «LegemiddelType» fra Norvas i tabellen. Når det er flere linjer med samme «PasientId», «InfusjonsDato» og «legemiddeltype», skyldes det at det er flere registreringer i Norvas som matcher på «PasientId» og «InfusjonsDato».</p>
 <div class="cell">
 <div id="tbl-infusjonslogg" class="cell quarto-float quarto-figure quarto-figure-center anchored">
@@ -6482,7 +6482,11 @@ Tabell 18: Samsvar mellom innhold i Vaskulittintervensjon-skjema i Norvas og HP
 </section>
 <section id="oppsummering" class="level2">
 <h2 class="anchored" data-anchor-id="oppsummering">Oppsummering</h2>
-<p>Automatisert datafangst til kvalitetsregistre ansees som meget nyttig og tidsbesparende i en travel klinisk hverdag. HP er det første journalsystemet hvor registerdata er integrert i pasientjournalen og høstes direkte derfra uten behov for dobbeltføring. Bakgrunnen for prosjektet var å undersøke kvaliteten og korrektheten av data som overføres fra HP til NorVas. Vi fant at en betydelig andel av gjennomførte kontroller ved St. Olavs ikke medførte overføring av data til registeret. Noe av dette skyldes nok manglende utfylling fra behandlers side, men det forklarer ikke alt. Det kommer over en del duplikater til registeret, dette medfører bias/støy i datahåndteringen. Når det først kommer over data, samsvarer disse i stor grad for de fleste variablene. Det største unntaket er nok den medikamentelle behandlingen, og da både reseptforskrevne medisiner og infusjoner, som har betydelige feil og mangler. Enkelte pasienter inkluderes i NorVas uten at registeret får opplysninger om hvilken diagnose de har, selv om diagnosen er tilgjengelig i HP. Det er en essensiell opplysning for registeret. Vi ser frem til videre godt samarbeid med HP for å optimalisere datafangsten til NorVas fra de revmatologiske avdelingene i Helse Midt-Norge.</p>
+<p>Automatisert datafangst til kvalitetsregistre ansees som meget nyttig og tidsbesparende i en travel klinisk hverdag. HP er det første journalsystemet hvor registerdata er integrert i pasientjournalen og høstes direkte til NorVas uten behov for dobbeltføring. Bakgrunnen for prosjektet var å undersøke kvaliteten og korrektheten av data som overføres fra HP til NorVas.</p>
+<p>Vi fant at en betydelig andel av gjennomførte kontroller ved St. Olavs ikke har tilhørende dataoverføring til NorVas. Dette forklares nok delvis av manglende utfylling fra behandlers side av skjema som for eksempel BVAS eller Kerr’s, men forklarer ikke hvorfor laboratoriedata eller medisineringsdata ikke er overført. Et av spørsmålene vi har stilt HP som følge av dette, er hvilke regler som ligger til grunn for at data fra en inkludert pasient overføres til NorVas.</p>
+<p>Enkelte pasienter inkluderes i NorVas uten at registeret får opplysninger om hvilken diagnose de har, selv om diagnosen er tilgjengelig i HP. Dette er en essensiell opplysning for registeret.</p>
+<p>Vi har avdekket at det overføres en del duplikater fra HP til NorVas. Dette medfører støy i datahåndteringen og er ønskelig å unngå. Når det kommer over data til registeret, samsvarer disse i stor grad med det som er journalført i HP. Det største unntaket er nok den medikamentelle behandlingen, både infusjoner og reseptforskrevne medikamenter, som har betydelige feil og mangler.</p>
+<p>NorVas har løpende dialog med HP om feil og mangler som avdekkes. Vi ser frem til videre godt samarbeid for å optimalisere datafangsten fra de revmatologiske avdelingene i Helse Midt-Norge.</p>
 </section>
 <section id="vedlegg" class="level2">
 <h2 class="anchored" data-anchor-id="vedlegg">Vedlegg</h2>
@@ -8187,20 +8191,20 @@ Tabell 21: Variabler i NorVas
 </figcaption>
 <div aria-describedby="tbl-variabler_norvas-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output-display">
-<div id="ysnrfqapzh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ysnrfqapzh table {
+<div id="jdjoorunsm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jdjoorunsm table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#ysnrfqapzh thead, #ysnrfqapzh tbody, #ysnrfqapzh tfoot, #ysnrfqapzh tr, #ysnrfqapzh td, #ysnrfqapzh th {
+#jdjoorunsm thead, #jdjoorunsm tbody, #jdjoorunsm tfoot, #jdjoorunsm tr, #jdjoorunsm td, #jdjoorunsm th {
 border-style: none;
 }
-#ysnrfqapzh p {
+#jdjoorunsm p {
 margin: 0;
 padding: 0;
 }
-#ysnrfqapzh .gt_table {
+#jdjoorunsm .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -8225,11 +8229,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_caption {
+#jdjoorunsm .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#ysnrfqapzh .gt_title {
+#jdjoorunsm .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -8240,7 +8244,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#ysnrfqapzh .gt_subtitle {
+#jdjoorunsm .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -8251,7 +8255,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#ysnrfqapzh .gt_heading {
+#jdjoorunsm .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -8262,12 +8266,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_bottom_border {
+#jdjoorunsm .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_col_headings {
+#jdjoorunsm .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -8281,7 +8285,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_col_heading {
+#jdjoorunsm .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8300,7 +8304,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#ysnrfqapzh .gt_column_spanner_outer {
+#jdjoorunsm .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8311,13 +8315,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#ysnrfqapzh .gt_column_spanner_outer:first-child {
+#jdjoorunsm .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#ysnrfqapzh .gt_column_spanner_outer:last-child {
+#jdjoorunsm .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#ysnrfqapzh .gt_column_spanner {
+#jdjoorunsm .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -8328,10 +8332,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#ysnrfqapzh .gt_spanner_row {
+#jdjoorunsm .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#ysnrfqapzh .gt_group_heading {
+#jdjoorunsm .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8356,7 +8360,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#ysnrfqapzh .gt_empty_group_heading {
+#jdjoorunsm .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -8370,13 +8374,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#ysnrfqapzh .gt_from_md > :first-child {
+#jdjoorunsm .gt_from_md > :first-child {
 margin-top: 0;
 }
-#ysnrfqapzh .gt_from_md > :last-child {
+#jdjoorunsm .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#ysnrfqapzh .gt_row {
+#jdjoorunsm .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8394,7 +8398,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#ysnrfqapzh .gt_stub {
+#jdjoorunsm .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8406,7 +8410,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ysnrfqapzh .gt_stub_row_group {
+#jdjoorunsm .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -8419,13 +8423,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#ysnrfqapzh .gt_row_group_first td {
+#jdjoorunsm .gt_row_group_first td {
 border-top-width: 2px;
 }
-#ysnrfqapzh .gt_row_group_first th {
+#jdjoorunsm .gt_row_group_first th {
 border-top-width: 2px;
 }
-#ysnrfqapzh .gt_summary_row {
+#jdjoorunsm .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -8434,14 +8438,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ysnrfqapzh .gt_first_summary_row {
+#jdjoorunsm .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_first_summary_row.thick {
+#jdjoorunsm .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#ysnrfqapzh .gt_last_summary_row {
+#jdjoorunsm .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8450,7 +8454,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_grand_summary_row {
+#jdjoorunsm .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -8459,7 +8463,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ysnrfqapzh .gt_first_grand_summary_row {
+#jdjoorunsm .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8468,7 +8472,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_last_grand_summary_row_top {
+#jdjoorunsm .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -8477,10 +8481,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_striped {
+#jdjoorunsm .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#ysnrfqapzh .gt_table_body {
+#jdjoorunsm .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -8488,7 +8492,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_footnotes {
+#jdjoorunsm .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -8501,7 +8505,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_footnote {
+#jdjoorunsm .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -8509,7 +8513,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ysnrfqapzh .gt_sourcenotes {
+#jdjoorunsm .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -8522,64 +8526,64 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ysnrfqapzh .gt_sourcenote {
+#jdjoorunsm .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ysnrfqapzh .gt_left {
+#jdjoorunsm .gt_left {
 text-align: left;
 }
-#ysnrfqapzh .gt_center {
+#jdjoorunsm .gt_center {
 text-align: center;
 }
-#ysnrfqapzh .gt_right {
+#jdjoorunsm .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#ysnrfqapzh .gt_font_normal {
+#jdjoorunsm .gt_font_normal {
 font-weight: normal;
 }
-#ysnrfqapzh .gt_font_bold {
+#jdjoorunsm .gt_font_bold {
 font-weight: bold;
 }
-#ysnrfqapzh .gt_font_italic {
+#jdjoorunsm .gt_font_italic {
 font-style: italic;
 }
-#ysnrfqapzh .gt_super {
+#jdjoorunsm .gt_super {
 font-size: 65%;
 }
-#ysnrfqapzh .gt_footnote_marks {
+#jdjoorunsm .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#ysnrfqapzh .gt_asterisk {
+#jdjoorunsm .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#ysnrfqapzh .gt_indent_1 {
+#jdjoorunsm .gt_indent_1 {
 text-indent: 5px;
 }
-#ysnrfqapzh .gt_indent_2 {
+#jdjoorunsm .gt_indent_2 {
 text-indent: 10px;
 }
-#ysnrfqapzh .gt_indent_3 {
+#jdjoorunsm .gt_indent_3 {
 text-indent: 15px;
 }
-#ysnrfqapzh .gt_indent_4 {
+#jdjoorunsm .gt_indent_4 {
 text-indent: 20px;
 }
-#ysnrfqapzh .gt_indent_5 {
+#jdjoorunsm .gt_indent_5 {
 text-indent: 25px;
 }
-#ysnrfqapzh .katex-display {
+#jdjoorunsm .katex-display {
 display: inline-flex !important;
 margin-bottom: 0.75em !important;
 }
-#ysnrfqapzh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#jdjoorunsm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
 height: 0px !important;
 }
 </style>
