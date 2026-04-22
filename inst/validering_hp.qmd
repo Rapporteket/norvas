@@ -1,5 +1,5 @@
 ---
-title: "Validering Helseplattformen"
+title: "Validering Helseplattformen – Norsk vaskulittregister"
 author: 
   - Julianne Elvenes, faglig leder NorVas
   - Kevin Thon, SKDE
