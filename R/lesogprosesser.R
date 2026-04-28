@@ -9,129 +9,74 @@
 lesogprosesser <- function(rap_aar = 2024,
                            fjern_andre_diagnoser = TRUE) {
 
-
-  Inklusjon <- read.table(
-    "C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2026-01-08_1248.csv",
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Oppfolging <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2026-01-08_1248.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Diagnoser <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Medisiner <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2026-01-08_1248.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  MedisinerHistorisk <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringHistoriskDoseSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  MedisinerInfusjonslogg <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  BVAS <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  KERR <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_KerrsKriterierSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  VDI <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_VdiSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Labskjema <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_BlodprøvesvarSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Komorbid <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_KomorbidTilstandSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Pasientsvar <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Svar+fra+pasienten_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  DiagnoseKriterier <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2026-01-08_1250.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Alvorlig_infeksjon <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Utredning <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Utredning_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  VaskulittIntervensjon <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#
-#   Inklusjon <- read.table(
-#     "C:/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-11-18_1546.csv",
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Oppfolging <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-11-18_1546.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Diagnoser <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Medisiner <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   MedisinerHistorisk <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringHistoriskDoseSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   MedisinerInfusjonslogg <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   BVAS <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   KERR <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   VDI <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_VdiSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Labskjema <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Komorbid <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_KomorbidTilstandSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Pasientsvar <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_Svar+fra+pasienten_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   DiagnoseKriterier <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2025-11-18_1548.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Alvorlig_infeksjon <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Utredning <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_Utredning_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   VaskulittIntervensjon <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-
+  Inklusjon <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM inklusjonskjema_1"
+    )
+  Oppfolging <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM oppfoelgingskjema_2"
+  )
+  Medisiner <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM medisineringskjema_3"
+  )
+  Bivirkningsskjema <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM bivirkningskjema_4"
+  )
+  Komorbid <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM komorbidtilstandskjema_5"
+  )
+  VDI <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM vdiskjema_6"
+  )
+  BVAS <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM bvasskjema_7"
+  )
+  VaskulittIntervensjon <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM vaskulittintervensjonskje_8"
+  )
+  Diagnoser <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM diagnoseskjema_9"
+  )
+  MedisinerHistorisk <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM medisineringhistoriskdose_19"
+  )
+  MedisinerInfusjonslogg <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM medisineringinfusjonslogg_20"
+  )
+  KERR <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM kerrskriterierskjema_18"
+  )
+  Labskjema <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM blodproevesvarskjema_10"
+  )
+  Pasientsvar <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM svar_fra_pasienten_21"
+  )
+  DiagnoseKriterier <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM klassifikasjonskriteriers_22"
+  )
+  Alvorlig_infeksjon <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM selvrapportertalvorliginf_12"
+  )
+  Utredning <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM utredning_11"
+  )
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
   Oppfolging <- norvas::norvasPreprosess(Oppfolging)
