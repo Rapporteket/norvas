@@ -6,7 +6,7 @@ library(tidyr)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2024
+rap_aar <- 2025
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
@@ -54,7 +54,7 @@ vasint <- merge(Inkl_oppf,
   tidyr::pivot_wider(id_cols = Aar, names_from = Diag_gr, values_from = andel_txt) %>%
   arrange(Aar)
 
-write.csv2(vasint, "~/mydata/norvas/Utfylt_stottebehandling.csv", row.names = F,
+write.csv2(vasint, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/Utfylt_stottebehandling.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
 
 
@@ -185,7 +185,7 @@ samlet_1aar_og_diaggr <- function(data1, data2, data3, aar, diaggr, variabel) {
 
 samle3aar <- function(Sdomdebut, oppf_6mnd, oppf_12mnd,
                       diaggr = "Storkarsvaskulitt (LVV)",
-                      sisteaar = 2024,
+                      sisteaar = rap_aar,
                       variabel = "CaVitaminD") {
   dplyr::bind_rows(
     samlet_1aar_og_diaggr(Sdomdebut, oppf_6mnd, oppf_12mnd,
@@ -212,46 +212,46 @@ samle3aar <- function(Sdomdebut, oppf_6mnd, oppf_12mnd,
 Samlet_CaVitaminD_GCA <-
   samle3aar(Sdomdebut, oppf_6mnd, oppf_12mnd,
             diaggr = "Storkarsvaskulitt (LVV)",
-            sisteaar = 2024,
+            sisteaar = rap_aar,
             variabel = "CaVitaminD")
 Samlet_Bisfosfonat_GCA <-
   samle3aar(Sdomdebut, oppf_6mnd, oppf_12mnd,
             diaggr = "Storkarsvaskulitt (LVV)",
-            sisteaar = 2024,
+            sisteaar = rap_aar,
             variabel = "BisfosfonatEllerTilsvarende")
 Samlet_CaVitaminD_ANCA <-
   samle3aar(Sdomdebut, oppf_6mnd, oppf_12mnd,
             diaggr = "ANCA assosiert vaskulitt (AAV)",
-            sisteaar = 2024,
+            sisteaar = rap_aar,
             variabel = "CaVitaminD")
 Samlet_Bisfosfonat_ANCA <-
   samle3aar(Sdomdebut, oppf_6mnd, oppf_12mnd,
             diaggr = "ANCA assosiert vaskulitt (AAV)",
-            sisteaar = 2024,
+            sisteaar = rap_aar,
             variabel = "BisfosfonatEllerTilsvarende")
 Samlet_TrimetoprimSulfa_ANCA <-
   samle3aar(Sdomdebut, oppf_6mnd, oppf_12mnd,
             diaggr = "ANCA assosiert vaskulitt (AAV)",
-            sisteaar = 2024,
+            sisteaar = rap_aar,
             variabel = "TrimetoprimSulfa")
 Samlet_Annenantibiotikaprofylakse_ANCA <-
   samle3aar(Sdomdebut, oppf_6mnd, oppf_12mnd,
             diaggr = "ANCA assosiert vaskulitt (AAV)",
-            sisteaar = 2024,
+            sisteaar = rap_aar,
             variabel = "Annenantibiotikaprofylakse")
 
-write.csv2(Samlet_CaVitaminD_GCA, "~/mydata/norvas/CaVitaminD_GCA.csv", row.names = F,
+write.csv2(Samlet_CaVitaminD_GCA, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/CaVitaminD_GCA.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
-write.csv2(Samlet_Bisfosfonat_GCA, "~/mydata/norvas/Bisfosfonat_GCA.csv", row.names = F,
+write.csv2(Samlet_Bisfosfonat_GCA, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/Bisfosfonat_GCA.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
-write.csv2(Samlet_CaVitaminD_ANCA, "~/mydata/norvas/CaVitaminD_ANCA.csv", row.names = F,
+write.csv2(Samlet_CaVitaminD_ANCA, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/CaVitaminD_ANCA.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
-write.csv2(Samlet_Bisfosfonat_ANCA, "~/mydata/norvas/Bisfosfonat_ANCA.csv", row.names = F,
+write.csv2(Samlet_Bisfosfonat_ANCA, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/Bisfosfonat_ANCA.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
-write.csv2(Samlet_TrimetoprimSulfa_ANCA, "~/mydata/norvas/TrimetoprimSulfa_ANCA.csv", row.names = F,
+write.csv2(Samlet_TrimetoprimSulfa_ANCA, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/TrimetoprimSulfa_ANCA.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
 write.csv2(Samlet_Annenantibiotikaprofylakse_ANCA,
-           "~/mydata/norvas/Annenantibiotikaprofylakse_ANCA.csv", row.names = F,
+           "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/Annenantibiotikaprofylakse_ANCA.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
 
 
@@ -266,7 +266,7 @@ Diag_aar <- Inklusjon %>%
   dplyr::filter(DiagnoseAar >= rap_aar-2) %>%
   janitor::adorn_totals()
 
-write.csv2(Diag_aar, "~/mydata/norvas/Diag_aar.csv", row.names = F,
+write.csv2(Diag_aar, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/Diag_aar.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
 
 
@@ -311,7 +311,7 @@ inkl_ritux <- dplyr::left_join(
                      names_from = "Inklusjonsaar",
                      values_from = andel)
 
-write.csv2(inkl_ritux, "~/mydata/norvas/rituksimab_inklaar_anca.csv", row.names = F,
+write.csv2(inkl_ritux, "C:/Users/kth200/regdata/norvas/aarsrapp2025/tabfolder/rituksimab_inklaar_anca.csv", row.names = F,
            fileEncoding = "Latin1", na = "")
 
 
