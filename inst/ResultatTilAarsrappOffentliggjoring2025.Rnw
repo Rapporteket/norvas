@@ -65,6 +65,45 @@ Labskjema <- aarrappdata$Labskjema
 Pasientsvar <- aarrappdata$Pasientsvar
 VaskulittIntervensjon <- aarrappdata$VaskulittIntervensjon
 
+# write.csv2(Inklusjon,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Inklusjon.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(Oppfolging,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Oppfolging.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(Diagnoser,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Diagnoser.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(Medisiner,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Medisiner.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(BVAS,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/BVAS.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(KERR,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/KERR.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(VDI,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/VDI.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(
+#   Alvorlig_infeksjon,
+#   "C:/Users/kth200/regdata/norvas/utleveringer/Alvorlig_infeksjon.csv",
+#   row.names = F, fileEncoding = "Latin1")
+# write.csv2(Utredning,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Utredning.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(Labskjema,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Labskjema.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(Pasientsvar,
+#            "C:/Users/kth200/regdata/norvas/utleveringer/Pasientsvar.csv",
+#            row.names = F, fileEncoding = "Latin1")
+# write.csv2(
+#   VaskulittIntervensjon,
+#   "C:/Users/kth200/regdata/norvas/utleveringer/VaskulittIntervensjon.csv",
+#   row.names = F, fileEncoding = "Latin1")
+
 #### KOBLING MELLEOM UNITID OG SYKEHUSNAVN
 kobl_unitid_shusnavn_norvas <-
   Inklusjon[match(unique(Inklusjon$UnitId),
