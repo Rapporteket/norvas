@@ -12,7 +12,7 @@ lesogprosesser <- function(rap_aar = 2024,
   Inklusjon <- rapbase::loadRegData(
     "data",
     "SELECT * FROM inklusjonskjema_1"
-    )
+  )
   Oppfolging <- rapbase::loadRegData(
     "data",
     "SELECT * FROM oppfoelgingskjema_2"
@@ -92,7 +92,7 @@ lesogprosesser <- function(rap_aar = 2024,
   VaskulittIntervensjon <- norvas::norvasPreprosess(VaskulittIntervensjon)
 
   ### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
-  Medisiner <- Medisiner[!(Medisiner$LegemiddelNr %in% c(0, 999)), ]
+  Medisiner <- Medisiner[!(Medisiner$LegemiddelType %in% c(0, 999)), ]
   ###############################################################################
 
   sykehusnavn <- sort(unique(Inklusjon$Sykehusnavn))
@@ -123,41 +123,77 @@ lesogprosesser <- function(rap_aar = 2024,
   Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
   Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUID), ]
 
-  Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
-  Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
+  Diagnoser <- Diagnoser[
+    order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
+  Diagnoser <- Diagnoser[
+    match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
-  Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
-                     by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
-  Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                              "Diag_gr", "Diagnose", "ICD10")],
-                     by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
+  Diagnoser <- merge(
+    Diagnoser,
+    Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
+  Inklusjon <- merge(
+    Inklusjon,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr",
+                  "Diag_gr", "Diagnose", "ICD10")],
+    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
   if (fjern_andre_diagnoser) {
     Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr %in% 1:2)
   }
 
-  BVAS <- merge(BVAS, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                by = 'HovedskjemaGUID', all.x = T)
-  BVAS <- merge(BVAS, Inklusjon[, c('SkjemaGUID', "InklusjonDato")], by.x = 'HovedskjemaGUID',
-                by.y = 'SkjemaGUID', all.x = T)
-  Oppfolging <- merge(Oppfolging, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                      by = 'HovedskjemaGUID', all.x = T)
-  Oppfolging <- merge(Oppfolging, Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
-                      by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
-  KERR <- merge(KERR, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                by = 'HovedskjemaGUID', all.x = T)
-  KERR <- merge(KERR, Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
-                by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
-  VDI <- merge(VDI, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-               by = 'HovedskjemaGUID', all.x = T)
-  Medisiner <- merge(Medisiner, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                     by = 'HovedskjemaGUID', all.x = T)
-  Alvorlig_infeksjon <- merge(Alvorlig_infeksjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                              by = 'HovedskjemaGUID', all.x = T)
-  Labskjema <- merge(Labskjema, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
+  BVAS <- merge(
+    BVAS,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  BVAS <- merge(
+    BVAS,
+    Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
+    by.x = 'HovedskjemaGUID',
+    by.y = 'SkjemaGUID', all.x = T)
+  Oppfolging <- merge(
+    Oppfolging,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Oppfolging <- merge(
+    Oppfolging,
+    Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
+    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
+  KERR <- merge(
+    KERR,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  KERR <- merge(
+    KERR,
+    Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
+    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
+  VDI <- merge(
+    VDI,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Medisiner <- merge(
+    Medisiner,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Alvorlig_infeksjon <- merge(
+    Alvorlig_infeksjon,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Labskjema <- merge(
+    Labskjema,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
                      by = 'HovedskjemaGUID', all.x = T)
 
   Inklusjon$Diagnose_ny_30 <- NA
-  Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
+  Inklusjon$Diagnose_ny_30[
+    abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
                                         Inklusjon$InklusjonDato, units = 'days')) <= 30] <- 1
   Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
                                         Inklusjon$InklusjonDato, units = 'days')) > 30] <- 0

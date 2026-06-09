@@ -12,47 +12,88 @@
 norvasPreprosess <- function(RegData) {
 
   RegData <- dplyr::as_tibble(RegData)
-  datovars <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Dato/tid')]
+  datovars <- norvas::kodebok_norvas$Variabelnavn[
+    which(norvas::kodebok_norvas$Felttype == 'Dato/tid')]
   datovars <- intersect(datovars, names(RegData))
-  flyttall <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Tall')]
+  flyttall <- norvas::kodebok_norvas$Variabelnavn[
+    which(norvas::kodebok_norvas$Felttype == 'Tall')]
   flyttall <- intersect(flyttall, names(RegData))
-  boolsk <- kodebok_norvas$Variabelnavn[which(kodebok_norvas$Felttype == 'Avkrysning')]
+  boolsk <- norvas::kodebok_norvas$Variabelnavn[
+    which(norvas::kodebok_norvas$Felttype == 'Avkrysning')]
   boolsk <- intersect(boolsk, names(RegData))
-  RegData <- RegData %>% dplyr::mutate_at(datovars, function(x){as.Date(x, format="%d.%m.%Y")})
-  RegData <- RegData %>% dplyr::mutate_at(flyttall, function(x){as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
-  RegData <- RegData %>% dplyr::mutate_at(boolsk, function(x){as.logical(x)}) # Gjør booske variabler til logicals
+  RegData <- RegData |>
+    dplyr::mutate_at(datovars, function(x){
+      as.Date(x, format="%d.%m.%Y")})
+  RegData <- RegData |>
+    dplyr::mutate_at(flyttall, function(x){
+      as.numeric(gsub(',', '\\.', x))}) # les desimaltall som tall
+  RegData <- RegData |>
+    dplyr::mutate_at(boolsk, function(x){
+      as.logical(x)}) # Gjør booske variabler til logicals
 
   ######### AD-HOC : Flytt ous hf til rh og konsolider drammen ############
   RegData$UnitId[RegData$UnitId==4001031] <- 4210431
   RegData$UnitId[RegData$UnitId==103300] <- 103725
-  mapEnhet <- data.frame(
-    UnitId = c(102977, 104579, 105274, 106841, 601159, 700701, 105776, 4210431,
-               103725, 104092, 104209, 110353, 110629, 102708, 4210614, 108054,
-               701344, 103300, 4001031, 101865),
-    Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde', 'Haugesund', 'UNN',
-                    'Nordlandsykehuset', 'Levanger', 'Rikshospitalet',
-                    'Drammen', 'Kristiansand', 'Betanien', 'Lillehammer',
-                    'Martina Hansen', 'Ålesund', 'Helgelandssykehuset',
-                    'Moss', 'Stavanger', 'Drammen', 'Rikshospitalet',
-                    'Hammerfest'))
-  RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[match(RegData$UnitId, mapEnhet$UnitId)]
+  # mapEnhet <- data.frame(
+  #   UnitId = c(102977, 104579, 105274, 106841,
+  #              601159, 700701, 105776, 4210431,
+  #              103725, 104092, 104209, 110353,
+  #              110629, 102708, 4210614, 108054,
+  #              701344, 103300, 4001031, 101865),
+  #   Sykehusnavn = c('Haukeland', 'St. Olavs', 'Førde',
+  #                   'Haugesund', 'UNN',
+  #                   'Nordlandsykehuset', 'Levanger',
+  #                   'Rikshospitalet',
+  #                   'Drammen', 'Kristiansand',
+  #                   'Betanien', 'Lillehammer',
+  #                   'Martina Hansen', 'Ålesund',
+  #                   'Helgelandssykehuset',
+  #                   'Moss', 'Stavanger', 'Drammen',
+  #                   'Rikshospitalet',
+  #                   'Hammerfest'))
+  mapEnhet <- tribble(
+    ~kortnavn, ~Sykehusnavn, ~UnitId,
+    "Ålesund", "Helse Møre og Romsdal", 102708,
+    "UNN", "Universitetssykehuset Nord-Norge", 601159,
+    "Stavanger", "Helse Stavanger", 701344,
+    "St. Olavs ", "St. Olavs hospital", 104579,
+    "Rikshospitalet", "Oslo universitetssykehus", 4210431,
+    "Nordlandssykehuset", "Nordlandssykehuset", 700701,
+    "Moss", "Sykehuset Østfold", 108054,
+    "Levanger", "Helse Nord-Trøndelag", 105776,
+    "Kristiansand", "Sørlandet Sykehus", 104092,
+    "Helgelandssykehuset", "Helgelandssykehuset", 4210614,
+    "Haukeland", "Helse Bergen", 102977,
+    "Hammerfest", "Finnmarkssykehuset", 101865,
+    "Førde", "Helse Førde", 105274,
+    "Drammen", "Vestre Viken", 103725,
+    "Betanien", "Betanien hospital Skien", 104209,
+    "Haugesund", "HSR", 106841,
+    "Martina Hansen", "Martina Hansen", 110629,
+    "Lillehammer", "RS Lillehammer", 110353
+  )
+
+
+  RegData$Sykehusnavn <- mapEnhet$Sykehusnavn[
+    match(RegData$UnitId, mapEnhet$UnitId)]
   RegData$ErMann <- RegData$PatientGender
   RegData$ErMann[RegData$PatientGender==2] <- 0
 
   fiksDiagnoserStOlav <- data.frame(
-    diagnose = c("Behcets sykdom",
-                 "Eosinofilisk Granulomatøs Polyangitt (Churg-Strauss)",
-                 "Granulomatøs Polyangitt (Wegener’s)",
-                 "Kjempecelle Arteritt",
-                 "Kjempecellearteritt med polymyalgia rheumatica",
-                 "Kjempecellearteritt med polymyalgia rheumatica (GCA2)",
-                 "Polymyalgia Rheumatica",
-                 "Mikroskopisk Polyangiitis",
-                 "Primær nekrotiserende systemisk vaskulitt",
-                 "Systemisk Vaskulitt sykdom",
-                 "Takayasu Arteritt",
-                 "Uspesifisert nekrotiserende vaskulitt",
-                 "Juvenil temporalisarteritt"),
+    diagnose = c(
+      "Behcets sykdom",
+      "Eosinofilisk Granulomatøs Polyangitt (Churg-Strauss)",
+      "Granulomatøs Polyangitt (Wegener’s)",
+      "Kjempecelle Arteritt",
+      "Kjempecellearteritt med polymyalgia rheumatica",
+      "Kjempecellearteritt med polymyalgia rheumatica (GCA2)",
+      "Polymyalgia Rheumatica",
+      "Mikroskopisk Polyangiitis",
+      "Primær nekrotiserende systemisk vaskulitt",
+      "Systemisk Vaskulitt sykdom",
+      "Takayasu Arteritt",
+      "Uspesifisert nekrotiserende vaskulitt",
+      "Juvenil temporalisarteritt"),
     DiagnoseNr = c(13, 8, 7, 4, 4, 4, 98, 9, 14, 14, 3, 14, 97)
   )
   mapDiagKode <- data.frame(
@@ -130,80 +171,120 @@ norvasPreprosess <- function(RegData) {
     tmp <- RegData[is.na(RegData$DiagnoseNr), ]
     RegData <- RegData[!is.na(RegData$DiagnoseNr), ]
     tmp$DiagnoseNr <-
-      fiksDiagnoserStOlav$DiagnoseNr[match(tmp$Diagnose, fiksDiagnoserStOlav$diagnose)]
+      fiksDiagnoserStOlav$DiagnoseNr[
+        match(tmp$Diagnose, fiksDiagnoserStOlav$diagnose)]
     RegData <- dplyr::bind_rows(RegData, tmp)
-    # RegData$Diagnose <- mapDiagKode$navn[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
-    RegData$Diagnose <- mapDiagKode$navn_ny[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
-    RegData$Diagnose_kortnavn <- mapDiagKode$navn_ny[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
-    RegData$tid_symp_diagnose <- difftime(RegData$Diagnose_Klinisk_Dato, RegData$SymptomStartDato, units = 'days')
+    RegData$Diagnose <- mapDiagKode$navn_ny[
+      match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
+    RegData$Diagnose_kortnavn <- mapDiagKode$navn_ny[
+      match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
+    RegData$tid_symp_diagnose <- difftime(
+      RegData$Diagnose_Klinisk_Dato, RegData$SymptomStartDato,
+      units = 'days')
     RegData <- RegData[!is.na(RegData$DiagnoseNr), ]
-    RegData$Diag_gr_nr <- mapDiagKode$gr_nr[match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
-    RegData$Diag_gr <- factor(RegData$Diag_gr_nr, levels = 1:2, labels = c('Storkarsvaskulitt (LVV)',
-                                                                           'ANCA assosiert vaskulitt (AAV)'))
+    RegData$Diag_gr_nr <- mapDiagKode$gr_nr[
+      match(RegData$DiagnoseNr, mapDiagKode$gtiKode)]
+    RegData$Diag_gr <- factor(
+      RegData$Diag_gr_nr, levels = 1:2,
+      labels = c('Storkarsvaskulitt (LVV)',
+                 'ANCA assosiert vaskulitt (AAV)'))
     RegData$Navn <- RegData$Diagnose
-    icd10_map <- data.frame(diagnr = c(3,4,7,8,9,15),
-                            icd10 = c("M31.4", "M31.5/M31.6", "M31.3",
-                                      "M30.1", "M31.7", "I77.6"))
-    RegData$ICD10 <- icd10_map$icd10[match(RegData$DiagnoseNr, icd10_map$diagnr)]
+    icd10_map <- data.frame(
+      diagnr = c(3,4,7,8,9,15),
+      icd10 = c("M31.4", "M31.5/M31.6", "M31.3",
+                "M30.1", "M31.7", "I77.6"))
+    RegData$ICD10 <- icd10_map$icd10[
+      match(RegData$DiagnoseNr, icd10_map$diagnr)]
 
   }
 
-  kode <- c(1, 2, 3, 4, 5, 6, 8, 12, 14, 15, 16, 18, 19, 20, 22, 23, 24, 25, 26, 28, 30,
-            31, 32, 33, 34, 35, 36, 38, 39, 40, 42, 43, 999)
-  Legemiddelgruppe <- c("Biologiske legemidler", "Biologiske legemidler",
-                        "Biologiske legemidler", "Biologiske legemidler",
-                        "Biologiske legemidler", "Biologiske legemidler",
-                        "Biologiske legemidler", "Biologiske legemidler",
-                        "Biologiske legemidler",
-                        "DMARD", "DMARD", "DMARD", "Kortikosteroider", "DMARD",
-                        "DMARD", "Kortikosteroider", "DMARD", "DMARD", "Syklofosfamid",
-                        "Biologiske legemidler", "Biologiske legemidler",
-                        "DMARD", "DMARD", "DMARD", "DMARD", "DMARD", "Immunglobulin",
-                        "Kortikosteroider", "Biologiske legemidler",
-                        "Rituksimab", "Biologiske legemidler", "DMARD", "Annet")
-  kobl_gruppe_kode <- data.frame(kode, Legemiddelgruppe)
-
-  varnavn <- kodebok_norvas[which(!is.na(kodebok_norvas$Variabelnavn)), c("Variabelnavn", "skjema")]
+  varnavn <- norvas::kodebok_norvas[
+    which(!is.na(norvas::kodebok_norvas$Variabelnavn)),
+    c("Variabelnavn", "skjema")]
 
   if ('LegemiddelType2019' %in% names(RegData)){
-    RegData <- RegData[RegData$LegemiddelNr != 17, ] ## Folsyre fjernes
-    RegData <- RegData[!is.na(RegData$Med_StartDato), ]
-    #
-    indekser_kodebok <- which(
-      kodebok_norvas$Variabelnavn == 'LegemiddelType2023' &
-        kodebok_norvas$skjema == 'MedisineringSkjema'):
-      (which(kodebok_norvas$Variabelnavn ==
-               varnavn$Variabelnavn[
-                 which(varnavn$Variabelnavn=='LegemiddelType2023' &
-                         varnavn$skjema == 'MedisineringSkjema')+1])-1)
-    kobl_generisknavn_kode <- data.frame(kode=as.numeric(
-      kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])]),
-      label=kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
-
-    gml_medisinnr <- which(RegData$LegemiddelType2019 != "")
-    RegData$LegemiddelNr[gml_medisinnr] <- as.numeric(
-      norvas::mapping_med$ny_nr[match(RegData$LegemiddelNr[gml_medisinnr],
-                                      norvas::mapping_med$gml_nr)])
-    RegData$LegemiddelGenerisk <- NA
-    RegData$LegemiddelGenerisk<- kobl_generisknavn_kode$label[
-      match(RegData$LegemiddelNr, kobl_generisknavn_kode$kode)]
-    RegData$LegemiddelTypeLabel <- factor(
-      RegData$LegemiddelNr,
-      levels = kodebok_norvas$kode[c(indekser_kodebok[-1], indekser_kodebok[1])],
-      labels = kodebok_norvas$label[c(indekser_kodebok[-1], indekser_kodebok[1])])
-    RegData$Medikamentgruppe[RegData$Medikamentgruppe == ""] <- "Andre"
-    RegData$Legemiddelgruppe <- kobl_gruppe_kode$Legemiddelgruppe[
-      match(RegData$LegemiddelNr, kobl_gruppe_kode$kode)]
+    RegData <- RegData[RegData$LegemiddelType2019 != 17, ] ## Folsyre fjernes
+    RegData <- RegData[!is.na(RegData$Med_StartDato), ] # Fjerner reg uten dato
+    ### OBS: Må oppdateres ved innføring av nye medisiner
+    med2023 <- norvas::kodebok_norvas[which(
+      norvas::kodebok_norvas$Variabelnavn == 'LegemiddelType2023' &
+        norvas::kodebok_norvas$skjema == 'MedisineringSkjema'):
+        (which(norvas::kodebok_norvas$Variabelnavn ==
+                 varnavn$Variabelnavn[
+                   which(varnavn$Variabelnavn=='LegemiddelType2023' &
+                           varnavn$skjema == 'MedisineringSkjema')+1])-1),
+      c("kode", "label")] |>
+      merge(norvas::mapping_medgr |>
+              dplyr::select(kode, NyGruppe),
+            by = "kode", all = T)
+    RegData <- RegData |>
+      dplyr::mutate(
+        LegemiddelType2019 = dplyr::if_else(
+          LegemiddelType2019 == 0, 0,
+          as.numeric(norvas::mapping_med$ny_nr[
+            match(LegemiddelType2019,
+                  norvas::mapping_med$gml_nr)])),
+        LegemiddelType2019 = dplyr::if_else(
+          LegemiddelType2019==999, -1, LegemiddelType2019),
+        LegemiddelType2020 = dplyr::if_else(
+          LegemiddelType2020==999, -1, LegemiddelType2020),
+        LegemiddelType2022 = dplyr::if_else(
+          LegemiddelType2022==999, -1, LegemiddelType2022),
+        LegemiddelType2023 = dplyr::if_else(
+          LegemiddelType2023==999, -1, LegemiddelType2023),
+        LegemiddelType = pmax(LegemiddelType2019,
+                              LegemiddelType2020,
+                              LegemiddelType2022,
+                              LegemiddelType2023),
+        LegemiddelType = dplyr::case_when(
+          LegemiddelType == 32 ~ 16,
+          LegemiddelType == 59 ~ 40,
+          .default = LegemiddelType
+        )
+      ) |>
+      dplyr::filter(
+        !(LegemiddelType %in% c(35, 43)),
+        !(Legemiddel == "Folsyre" & LegemiddelType == 0)) |>
+      dplyr::mutate(
+        Legemiddel = dplyr::case_when(
+          Legemiddel == "Methotrexate" ~ "Metotreksat",
+          Legemiddel == "Azathioprin" ~ "Azatioprin",
+          Legemiddel == "Infliximab" ~ "Infliksimab",
+          Legemiddel == "Colchicine" ~ "Kolkisin",
+          Legemiddel == "Tacrolimus" ~ "Takrolimus",
+          Legemiddel == "Mycofenolat mofetil" ~ "Mykofenolsyre",
+          substr(Legemiddel, 1, 10) == "LEFLUNOMID" ~ "Leflunomid",
+          .default = Legemiddel
+        ),
+        LegemiddelType = ifelse(
+          LegemiddelType %in% c(0, 999) & Legemiddel %in% med2023$label,
+          med2023$kode[match(Legemiddel, med2023$label)],
+          LegemiddelType
+        ),
+        Legemiddelgruppe = med2023$NyGruppe[
+          match(LegemiddelType, med2023$kode)],
+        Legemiddelgruppe = ifelse(Legemiddelgruppe == "",
+                                  "Ingen", Legemiddelgruppe),
+        LegemiddelGenerisk = med2023$label[
+          match(LegemiddelType, med2023$kode)],
+        LegemiddelNr = LegemiddelType
+      )
 
     tmp <- RegData %>%
-      dplyr::group_by(PasientGUID, Med_StartDato, LegemiddelGenerisk) %>%
-      dplyr::summarise('ant_samme_startdato' = dplyr::n(),
-                       Med_SluttDato_min = if (sum(!is.na(Med_SluttDato))>0) {
-                         min(Med_SluttDato, na.rm = T)} else {NA},
-                       SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {SkjemaGUID[1]}
-                       else {SkjemaGUID[which(Med_SluttDato == Med_SluttDato_min)[1]]})
-    RegData <- merge(RegData, tmp[, c("SkjemaGUID_min", "ant_samme_startdato")],
-                     by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
+      dplyr::summarise(
+        'ant_samme_startdato' = dplyr::n(),
+        Med_SluttDato_min = if (sum(!is.na(Med_SluttDato))>0) {
+          min(Med_SluttDato, na.rm = T)} else {NA},
+        SkjemaGUID_min = if (is.na(Med_SluttDato_min)) {
+          SkjemaGUID[1]}
+        else {
+          SkjemaGUID[which(Med_SluttDato == Med_SluttDato_min)[1]]},
+        .by = c(PasientGUID, Med_StartDato,
+                LegemiddelType))
+    RegData <- merge(
+      RegData,
+      tmp[, c("SkjemaGUID_min", "ant_samme_startdato")],
+      by.x = "SkjemaGUID", by.y = "SkjemaGUID_min")
   }
 
   if ('BvasPersistentTotal' %in% names(RegData)){
