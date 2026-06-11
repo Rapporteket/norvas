@@ -3487,7 +3487,7 @@ Indikatorer <- Indikatorer |>
 #                                 'norvas_andel_ct_thorax_anca',
 #                                 'norvas_minimum_2oppf')))
 write.csv2(
-  Indikatorer,
+  Indikatorer |> dplyr::filter(year <= rap_aar),
   paste0("C:/Users/kth200/regdata/norvas/behandlingskvalitet/Indikatorer_", Sys.Date(), ".csv"),
   row.names = F)
 
