@@ -5,7 +5,7 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
-rap_aar <- 2024
+rap_aar <- 2025
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
 Oppfolging <- aarrappdata$Oppfolging
@@ -49,8 +49,9 @@ orgnr_table <-
     105776, 974754118,
     102977, 974557746
   )
-kobl_unitid_shusnavn_norvas <- merge(kobl_unitid_shusnavn_norvas, orgnr_table,
-                                     by = "UnitId", all.x = TRUE)
+kobl_unitid_shusnavn_norvas <- merge(
+  kobl_unitid_shusnavn_norvas, orgnr_table,
+  by = "UnitId", all.x = TRUE)
 
 figfolder <- "C:/Users/kth200/OneDrive - Helse Nord RHF/Dokumenter/regdata/norvas/aarsrapp2024/figfolder/"
 if (!dir.exists(figfolder)) {

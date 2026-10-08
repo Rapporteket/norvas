@@ -5,6 +5,8 @@ library(tidyverse)
 rm(list = ls())
 options(dplyr.summarise.inform = FALSE)
 
+
+
 rap_aar <- 2025
 aarrappdata <- norvas::lesogprosesser(rap_aar = rap_aar)
 Inklusjon <- aarrappdata$Inklusjon
@@ -43,7 +45,7 @@ names(Pasientsvar)[
         toupper(stringr::str_remove(names(Pasientsvar), pattern = "Prom_")))] <-
   overlapp_oppf_pas
 Pasientsvar_oppf <- Pasientsvar |>
-  select(overlapp_oppf_pas, SvarDato) |>
+  select(all_of(c(overlapp_oppf_pas, "SvarDato"))) |>
   rename(OppfolgingsDato = SvarDato)
 
 Oppfolging2 <- bind_rows(Oppfolging, Pasientsvar_oppf)
@@ -163,12 +165,14 @@ Oppfolging3siste_pr_pas <- Oppfolging %>%
   arrange(Sykehusnavn)
 
 
-write.csv2(Oppfolging3siste,
-           "C:/regdata/norvas/KompletthetProm3sisteaar.csv",
-           row.names = F, fileEncoding = "Latin1")
-write.csv2(Oppfolging3siste_pr_pas,
-           "C:/regdata/norvas/UtfyltProm_v_alle_oppf_3sisteaar.csv",
-           row.names = F, fileEncoding = "Latin1")
+write.csv2(
+  Oppfolging3siste,
+  "C:/Users/kth200/regdata/norvas/aarsrapp2025/KompletthetProm3sisteaar.csv",
+  row.names = F, fileEncoding = "Latin1")
+write.csv2(
+  Oppfolging3siste_pr_pas,
+  "C:/Users/kth200/regdata/norvas/aarsrapp2025/UtfyltProm_v_alle_oppf_3sisteaar.csv",
+  row.names = F, fileEncoding = "Latin1")
 
 Kompletthet <- bind_rows(
   Kompletthet,
@@ -286,7 +290,7 @@ vdi <- merge(Oppfolging, VDI[, c("Cataract", "PasientGUID", "VDI_Dato")],
 
 # vdi_v2 <-
 
-  Kompletthet <- bind_rows(Kompletthet, vdi)
+Kompletthet <- bind_rows(Kompletthet, vdi)
 
 
 ########## Selvrapportert infeksjon ############################################
@@ -317,6 +321,8 @@ Kompletthet$Kompletthet <- Kompletthet$Antall_utfylt/Kompletthet$N*100
 
 
 
-# write.csv2(Kompletthet, "~/regdata/norvas/aarsrapp2024/Kompletthet2024.csv", row.names = F,
-#            fileEncoding = "Latin1")
+write.csv2(
+  Kompletthet,
+  "C:/Users/kth200/regdata/norvas/aarsrapp2025/Kompletthet2025.csv", row.names = F,
+  fileEncoding = "Latin1")
 

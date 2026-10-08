@@ -1,0 +1,51 @@
+kode;label;Legemiddelgruppe;NyGruppe;Kommentar
+0;Ingen;;;
+1;Certolizumab pegol;Biologiske legemidler;bDMARD;
+2;Etanercept;Biologiske legemidler;bDMARD;
+3;Adalimumab;Biologiske legemidler;bDMARD;
+4;Canakinumab;Biologiske legemidler;bDMARD;
+5;Infliksimab;Biologiske legemidler;bDMARD;
+6;Anakinra;Biologiske legemidler;bDMARD;
+8;Abatacept;Biologiske legemidler;bDMARD;
+12;Tocilizumab;Biologiske legemidler;bDMARD;
+14;Golimumab;Biologiske legemidler;bDMARD;
+15;Leflunomid;DMARD;csDMARD;
+16;Mykofenolsyre;DMARD;csDMARD;Mappes sammen med 32
+18;Azatioprin;DMARD;csDMARD;
+19;Prednison;Kortikosteroider;Glukokortikoid;
+20;Metotreksat;DMARD;csDMARD;
+22;Hydroksyklorokin;DMARD;csDMARD;
+23;Prednisolon;Kortikosteroider;Glukokortikoid;
+24;Sulfasalazin;DMARD;csDMARD;
+25;Ciklosporin;DMARD;csDMARD;
+26;Syklofosfamid;Syklofosfamid;Syklofosfamid;
+28;Ustekinumab;Biologiske legemidler;bDMARD;
+30;Sekukinumab;Biologiske legemidler;bDMARD;
+31;Everolimus;DMARD;csDMARD;
+32;Mykofenolsyre;DMARD;csDMARD;Mappes sammen med 16
+33;Sirolimus;DMARD;csDMARD;
+34;Takrolimus;DMARD;csDMARD;
+35;Talidomid;DMARD;;Utelates fra figurer
+36;Humant Immunoglobulin G;Immunglobulin;Immunglobulin;
+38;Metylprednisolon;Kortikosteroider;Glukokortikoid;
+39;Mepolizumab;Biologiske legemidler;bDMARD;
+40;Rituksimab;Rituksimab;Rituksimab;
+42;Belimumab;Biologiske legemidler;bDMARD;
+43;Kolkisin;DMARD;;Utelates fra figurer
+44;Baricitinib;;tsDMARD;Brukes i stedet for JAK-hemmer
+45;Filgotinib;;tsDMARD;Brukes i stedet for JAK-hemmer
+46;Tofacitinib;;tsDMARD;Brukes i stedet for JAK-hemmer
+47;Upadacitinib;;tsDMARD;Brukes i stedet for JAK-hemmer
+48;Brodalumab;;bDMARD;
+49;Guselkumab;;bDMARD;
+50;Iksekizumab;;bDMARD;
+51;Okrelizumab;;bDMARD;
+52;Risankizumab;;bDMARD;
+53;Sarilumab;;bDMARD;
+54;Avakopan;;Avakopan;
+55;Benralizumab;;bDMARD;
+56;Tezepelumab;;bDMARD;
+57;Dupilumab;;bDMARD;
+58;Bimekizumab;;bDMARD;Kommer i den nye versjonen av MRS
+59;Obinutuzumab;;;Kommer i den nye versjonen av MRS, slås da sammen med ritukismab
+999;Annet (importert);Annet;;

@@ -9,129 +9,74 @@
 lesogprosesser <- function(rap_aar = 2024,
                            fjern_andre_diagnoser = TRUE) {
 
-
-  Inklusjon <- read.table(
-    "C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2026-01-08_1248.csv",
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Oppfolging <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2026-01-08_1248.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Diagnoser <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Medisiner <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2026-01-08_1248.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  MedisinerHistorisk <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringHistoriskDoseSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  MedisinerInfusjonslogg <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  BVAS <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  KERR <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_KerrsKriterierSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  VDI <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_VdiSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Labskjema <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_BlodprøvesvarSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Komorbid <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_KomorbidTilstandSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Pasientsvar <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Svar+fra+pasienten_2026-01-08_1249.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  DiagnoseKriterier <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2026-01-08_1250.csv',
-    header=TRUE, sep=";",
-    stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Alvorlig_infeksjon <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  Utredning <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_Utredning_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-  VaskulittIntervensjon <- read.table(
-    'C:/Users/kth200/regdata/norvas/datadump/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2026-01-08_1249.csv',
-    header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#
-#   Inklusjon <- read.table(
-#     "C:/regdata/norvas/datadump/DataDump_MRS-PROD_Inklusjonskjema_2025-11-18_1546.csv",
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Oppfolging <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_OppfølgingSkjema_2025-11-18_1546.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Diagnoser <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_DiagnoseSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Medisiner <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   MedisinerHistorisk <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringHistoriskDoseSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   MedisinerInfusjonslogg <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringInfusjonsLoggSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   BVAS <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_BvasSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   KERR <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_KerrsKriterierSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   VDI <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_VdiSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Labskjema <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_BlodprøvesvarSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Komorbid <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_KomorbidTilstandSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Pasientsvar <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_Svar+fra+pasienten_2025-11-18_1547.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   DiagnoseKriterier <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_Klassifikasjonskriterierskjema_2025-11-18_1548.csv',
-#     header=TRUE, sep=";",
-#     stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Alvorlig_infeksjon <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_SelvrapportertAlvorligInfeksjonSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   Utredning <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_Utredning_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-#   VaskulittIntervensjon <- read.table(
-#     'C:/regdata/norvas/datadump/DataDump_MRS-PROD_VaskulittIntervensjonSkjema_2025-11-18_1547.csv',
-#     header=TRUE, sep=";", stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
-
+  Inklusjon <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM inklusjonskjema_1"
+  )
+  Oppfolging <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM oppfoelgingskjema_2"
+  )
+  Medisiner <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM medisineringskjema_3"
+  )
+  Bivirkningsskjema <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM bivirkningskjema_4"
+  )
+  Komorbid <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM komorbidtilstandskjema_5"
+  )
+  VDI <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM vdiskjema_6"
+  )
+  BVAS <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM bvasskjema_7"
+  )
+  VaskulittIntervensjon <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM vaskulittintervensjonskje_8"
+  )
+  Diagnoser <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM diagnoseskjema_9"
+  )
+  MedisinerHistorisk <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM medisineringhistoriskdose_19"
+  )
+  MedisinerInfusjonslogg <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM medisineringinfusjonslogg_20"
+  )
+  KERR <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM kerrskriterierskjema_18"
+  )
+  Labskjema <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM blodproevesvarskjema_10"
+  )
+  Pasientsvar <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM svar_fra_pasienten_21"
+  )
+  DiagnoseKriterier <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM klassifikasjonskriteriers_22"
+  )
+  Alvorlig_infeksjon <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM selvrapportertalvorliginf_12"
+  )
+  Utredning <- rapbase::loadRegData(
+    "data",
+    "SELECT * FROM utredning_11"
+  )
 
   Inklusjon <- norvas::norvasPreprosess(Inklusjon)
   Oppfolging <- norvas::norvasPreprosess(Oppfolging)
@@ -147,7 +92,7 @@ lesogprosesser <- function(rap_aar = 2024,
   VaskulittIntervensjon <- norvas::norvasPreprosess(VaskulittIntervensjon)
 
   ### Ny 18.10.2021: Fjerner medikamenter i kategorien "Andre"
-  Medisiner <- Medisiner[!(Medisiner$LegemiddelNr %in% c(0, 999)), ]
+  Medisiner <- Medisiner[!(Medisiner$LegemiddelType %in% c(0, 999)), ]
   ###############################################################################
 
   sykehusnavn <- sort(unique(Inklusjon$Sykehusnavn))
@@ -178,41 +123,77 @@ lesogprosesser <- function(rap_aar = 2024,
   Inklusjon <- Inklusjon[order(Inklusjon$InklusjonDato), ]
   Inklusjon <- Inklusjon[match(unique(Inklusjon$PasientGUID), Inklusjon$PasientGUID), ]
 
-  Diagnoser <- Diagnoser[order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
-  Diagnoser <- Diagnoser[match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
+  Diagnoser <- Diagnoser[
+    order(Diagnoser$Diagnose_Klinisk_Dato, decreasing = T), ]
+  Diagnoser <- Diagnoser[
+    match(unique(Diagnoser$PasientGUID), Diagnoser$PasientGUID), ]
 
-  Diagnoser <- merge(Diagnoser, Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
-                     by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
-  Inklusjon <- merge(Inklusjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr",
-                                              "Diag_gr", "Diagnose", "ICD10")],
-                     by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
+  Diagnoser <- merge(
+    Diagnoser,
+    Inklusjon[, c("SkjemaGUID", "InklusjonDato")],
+    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID')
+  Inklusjon <- merge(
+    Inklusjon,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr",
+                  "Diag_gr", "Diagnose", "ICD10")],
+    by.x = 'SkjemaGUID', by.y = 'HovedskjemaGUID', all.x = T)
   if (fjern_andre_diagnoser) {
     Inklusjon <- Inklusjon %>% dplyr::filter(Diag_gr_nr %in% 1:2)
   }
 
-  BVAS <- merge(BVAS, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                by = 'HovedskjemaGUID', all.x = T)
-  BVAS <- merge(BVAS, Inklusjon[, c('SkjemaGUID', "InklusjonDato")], by.x = 'HovedskjemaGUID',
-                by.y = 'SkjemaGUID', all.x = T)
-  Oppfolging <- merge(Oppfolging, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                      by = 'HovedskjemaGUID', all.x = T)
-  Oppfolging <- merge(Oppfolging, Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
-                      by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
-  KERR <- merge(KERR, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                by = 'HovedskjemaGUID', all.x = T)
-  KERR <- merge(KERR, Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
-                by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
-  VDI <- merge(VDI, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-               by = 'HovedskjemaGUID', all.x = T)
-  Medisiner <- merge(Medisiner, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                     by = 'HovedskjemaGUID', all.x = T)
-  Alvorlig_infeksjon <- merge(Alvorlig_infeksjon, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
-                              by = 'HovedskjemaGUID', all.x = T)
-  Labskjema <- merge(Labskjema, Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato', "Diag_gr_nr")],
+  BVAS <- merge(
+    BVAS,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  BVAS <- merge(
+    BVAS,
+    Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
+    by.x = 'HovedskjemaGUID',
+    by.y = 'SkjemaGUID', all.x = T)
+  Oppfolging <- merge(
+    Oppfolging,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Oppfolging <- merge(
+    Oppfolging,
+    Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
+    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
+  KERR <- merge(
+    KERR,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  KERR <- merge(
+    KERR,
+    Inklusjon[, c('SkjemaGUID', "InklusjonDato")],
+    by.x = 'HovedskjemaGUID', by.y = 'SkjemaGUID', all.x = T)
+  VDI <- merge(
+    VDI,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Medisiner <- merge(
+    Medisiner,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Alvorlig_infeksjon <- merge(
+    Alvorlig_infeksjon,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
+    by = 'HovedskjemaGUID', all.x = T)
+  Labskjema <- merge(
+    Labskjema,
+    Diagnoser[, c('HovedskjemaGUID', 'Diagnose_Klinisk_Dato',
+                  "Diag_gr_nr")],
                      by = 'HovedskjemaGUID', all.x = T)
 
   Inklusjon$Diagnose_ny_30 <- NA
-  Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
+  Inklusjon$Diagnose_ny_30[
+    abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
                                         Inklusjon$InklusjonDato, units = 'days')) <= 30] <- 1
   Inklusjon$Diagnose_ny_30[abs(difftime(Inklusjon$Diagnose_Klinisk_Dato,
                                         Inklusjon$InklusjonDato, units = 'days')) > 30] <- 0

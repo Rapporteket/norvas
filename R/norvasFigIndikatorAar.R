@@ -91,9 +91,12 @@ norvasFigIndikatorAar <- function(indikatordata,
 
   cexgr <- skriftStr
   if (inkl_konf) {
-    andeler$Sykehusnavn <- paste0(andeler$Sykehusnavn, ' (', purrr::as_vector(N[, dim(N)[2]]), ')')
+    andeler$Sykehusnavn <-
+      paste0(andeler$Sykehusnavn,
+      ' (', purrr::as_vector(N[, dim(N)[2]]), ')')
     andeler <- rbind(andeler, c(NA,NA,NA))
-    andeler$Sykehusnavn[dim(andeler)[1]] <- paste0('(N, ', names(andeler)[dim(andeler)[2]], ')')
+    andeler$Sykehusnavn[dim(andeler)[1]] <-
+      paste0('(N, ', names(andeler)[dim(andeler)[2]], ')')
     KI <- cbind(c(NA, NA), KI, c(NA, NA))
   } else {
     andeler <- rbind(andeler, NA)
@@ -107,7 +110,7 @@ norvasFigIndikatorAar <- function(indikatordata,
   vmarg <- max(0, strwidth(andeler$Sykehusnavn, units='figure', cex=cexgr)*0.75)
   # par('fig'=c(vmarg, 1, 0, 1))
   # x11()
-  par('mar'=c(5.1, 10.1, 5.1, 9.1))
+  par('mar'=c(5.1, 17.1, 5.1, 9.1))
   # par('oma'=c(0,1,0,0))
 
   if (is.na(xmax)){

@@ -22,10 +22,6 @@ Diagnoser <- aarrappdata$Diagnoser
 DiagnoseKriterier <- aarrappdata$DiagnoseKriterier
 VaskulittIntervensjon <- aarrappdata$VaskulittIntervensjon
 Medisiner <- aarrappdata$Medisiner
-Medisiner2 <- read.table(
-  'C:/regdata/norvas/datadump/DataDump_MRS-PROD_MedisineringSkjema_2025-11-18_1547.csv',
-  header=TRUE, sep=";",
-  stringsAsFactors = F, fileEncoding = 'UTF-8-BOM')
 BVAS <- aarrappdata$BVAS
 KERR <- aarrappdata$KERR
 VDI <- aarrappdata$VDI
@@ -34,8 +30,10 @@ Utredning <- aarrappdata$Utredning
 Labskjema <- aarrappdata$Labskjema
 Pasientsvar <- aarrappdata$Pasientsvar
 Labskjema$BT_utfort <- rowSums(
-  !is.na(Labskjema[, c("BlodtrykkSystoliskVenstre", "BlodtrykkDiastoliskVenstre",
-                       "BlodtrykkDiastolisk", "BlodtrykkSystolisk",
+  !is.na(Labskjema[, c("BlodtrykkSystoliskVenstre",
+                       "BlodtrykkDiastoliskVenstre",
+                       "BlodtrykkDiastolisk", 
+                       "BlodtrykkSystolisk",
                        "BlodtrykkSystoliskHoyre", "BlodtrykkSystoliskVenstre")]))
 Labskjema$BT_utfort[Labskjema$BT_utfort > 0] <- 1
 ```
@@ -59,22 +57,27 @@ prom_v_kontroll <- Oppfolging %>%
       mutate(Aar = Inklusjonsaar,
              Dato = InklusjonDato) %>%
       rowwise() %>%
-      mutate(rand_sum = sum(c_across(contains("Rand12Q")), na.rm = TRUE),
-             rand_sum = ifelse(rand_sum > 0, 1, rand_sum)) %>%
+      mutate(
+        rand_sum = sum(c_across(contains("Rand12Q")), na.rm = TRUE),
+        rand_sum = ifelse(rand_sum > 0, 1, rand_sum)) %>%
       ungroup() |>
       select(PasientGUID, Dato, Sykehusnavn, Aar, Tretthet,
              PasientGlobalSykdomsaktivitet, Pasientsmerter, rand_sum) %>%
       filter(Aar %in% (rap_aar-2):rap_aar)) %>%
-  merge(Pasientsvar |> 
-          rowwise() %>%
-          mutate(Prom_rand_sum = sum(c_across(contains("Rand12Q")), na.rm = TRUE),
-                 Prom_rand_sum = ifelse(Prom_rand_sum > 0, 1, Prom_rand_sum)) %>%
-          ungroup() |> 
-          select(PasientGUID, FormDate, Prom_Tretthet,
-                 Prom_PasientGlobalSykdomsaktivitet,
-                 Prom_PasientSmerter, Prom_AntallInfeksjoner, Prom_rand_sum),
-        by.x = c("PasientGUID", "Dato"),
-        by.y = c("PasientGUID", "FormDate"), all.x = TRUE) |> 
+  merge(
+    Pasientsvar |> 
+      rowwise() %>%
+      mutate(
+        Prom_rand_sum = sum(c_across(contains("Rand12Q")), 
+                            na.rm = TRUE),
+        Prom_rand_sum = ifelse(Prom_rand_sum > 0, 1, 
+                               Prom_rand_sum)) %>%
+      ungroup() |> 
+      select(PasientGUID, FormDate, Prom_Tretthet,
+             Prom_PasientGlobalSykdomsaktivitet,
+             Prom_PasientSmerter, Prom_AntallInfeksjoner, Prom_rand_sum),
+    by.x = c("PasientGUID", "Dato"),
+    by.y = c("PasientGUID", "FormDate"), all.x = TRUE) |> 
   merge(Alvorlig_infeksjon |> 
           select(PasientGUID, SelvrapportertAlvorligInfeksjon_Registrert_Dato,
                  AntallInfeksjoner),
@@ -159,7 +162,8 @@ div_v_kontroll <- bind_rows(
     rename(Dato = InklusjonDato,
            Aar = Inklusjonsaar),
   Oppfolging |> 
-    select(HovedskjemaGUID, PasientGUID, OppfolgingsDato, Oppfolgingsaar,
+    select(HovedskjemaGUID, PasientGUID, 
+           OppfolgingsDato, Oppfolgingsaar,
            Diag_gr_nr, Sykehusnavn, UnitId) |>
     rename(SkjemaGUID = HovedskjemaGUID,
            Dato = OppfolgingsDato,
@@ -182,14 +186,16 @@ div_v_kontroll <- bind_rows(
     VaskulittIntervensjon[, c("Skjematype", "HovedskjemaGUID",
                               "VaskulittIntervensjon_Dato")],
     by.x = c('SkjemaGUID', "Dato"),
-    by.y = c('HovedskjemaGUID','VaskulittIntervensjon_Dato'), all.x = T) |> 
+    by.y = c('HovedskjemaGUID','VaskulittIntervensjon_Dato'), 
+    all.x = T) |> 
   merge(
-    Medisiner2[, c("HovedskjemaGUID", "FormDate")] |> 
-      mutate(FormDate = as.Date(FormDate, format="%d.%m.%Y")) |> 
+    Medisiner[, c("HovedskjemaGUID", "FormDate")] |> 
+      # mutate(FormDate = as.Date(FormDate, format="%d.%m.%Y")) |> 
       summarise(ant_skjema = n(), .by = c(HovedskjemaGUID, FormDate)),
     by.x = c('SkjemaGUID', "Dato"),
     by.y = c('HovedskjemaGUID','FormDate'), all.x = T) |> 
-  merge(VDI[ , c("HovedskjemaGUID", "VDI_Dato", "DeformingErosiveArthritis")],
+  merge(VDI[ , c("HovedskjemaGUID", "VDI_Dato",
+                 "DeformingErosiveArthritis")],
         by.x = c('SkjemaGUID', "Dato"),
         by.y = c('HovedskjemaGUID','VDI_Dato'), all.x = T)
 
@@ -238,8 +244,10 @@ datatable(Tabell,
             dom = 'Bfrtip',
             buttons = list(
               list(extend = 'copy'), 
-              list(extend = 'csv', filename = 'var_kompletthet_anca_export'), 
-              list(extend = 'excel', filename = 'var_kompletthet_anca_export'), 
+              list(extend = 'csv', 
+                   filename = 'var_kompletthet_anca_export'), 
+              list(extend = 'excel', 
+                   filename = 'var_kompletthet_anca_export'), 
               list(extend = 'print')
             ),
             pageLength = 20),
@@ -281,21 +289,24 @@ div_v_kontroll <- bind_rows(
   mutate(anca = ((PR3AncaPositiv %in% c(0,1))  |
                    (MPO_AncaPositiv %in% c(0,1)))) |> 
   merge(
-    KERR[, c("SykdomsvurderingLabel", "HovedskjemaGUID", "KerrsKriterier_Dato")],
+    KERR[, c("SykdomsvurderingLabel", "HovedskjemaGUID", 
+             "KerrsKriterier_Dato")],
     by.x = c('SkjemaGUID', "Dato"),
     by.y = c('HovedskjemaGUID','KerrsKriterier_Dato'), all.x = T) |> 
   merge(
     VaskulittIntervensjon[, c("Skjematype", "HovedskjemaGUID",
                               "VaskulittIntervensjon_Dato")],
     by.x = c('SkjemaGUID', "Dato"),
-    by.y = c('HovedskjemaGUID','VaskulittIntervensjon_Dato'), all.x = T) |> 
+    by.y = c('HovedskjemaGUID','VaskulittIntervensjon_Dato'), 
+    all.x = T) |> 
   merge(
-    Medisiner2[, c("HovedskjemaGUID", "FormDate")] |> 
+    Medisiner[, c("HovedskjemaGUID", "FormDate")] |> 
       mutate(FormDate = as.Date(FormDate, format="%d.%m.%Y")) |> 
       summarise(ant_skjema = n(), .by = c(HovedskjemaGUID, FormDate)),
     by.x = c('SkjemaGUID', "Dato"),
     by.y = c('HovedskjemaGUID','FormDate'), all.x = T) |> 
-  merge(VDI[ , c("HovedskjemaGUID", "VDI_Dato", "DeformingErosiveArthritis")],
+  merge(VDI[ , c("HovedskjemaGUID", "VDI_Dato",
+                 "DeformingErosiveArthritis")],
         by.x = c('SkjemaGUID', "Dato"),
         by.y = c('HovedskjemaGUID','VDI_Dato'), all.x = T)
 
@@ -362,10 +373,10 @@ datatable(Tabell_storkar,
 
 ```{r "Klassifikasjonskriterier", echo=FALSE}
 Klassifikasjonskriterier <- Inklusjon |>
-    select(SkjemaGUID, PasientGUID, InklusjonDato, Inklusjonsaar,
-           Diag_gr_nr, Diag_gr, Sykehusnavn, UnitId) |>
-    rename(Dato = InklusjonDato,
-           Aar = Inklusjonsaar) |> 
+  select(SkjemaGUID, PasientGUID, InklusjonDato, Inklusjonsaar,
+         Diag_gr_nr, Diag_gr, Sykehusnavn, UnitId) |>
+  rename(Dato = InklusjonDato,
+         Aar = Inklusjonsaar) |> 
   filter(Aar %in% (rap_aar-2):rap_aar) |>
   merge(DiagnoseKriterier |> summarise(N = n(), .by = PasientGUID),
         by = "PasientGUID", all.x = TRUE) |> 

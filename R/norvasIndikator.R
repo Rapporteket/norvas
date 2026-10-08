@@ -93,7 +93,7 @@ norvasIndikator <- function(indikatordata,
   vmarg <- max(0, strwidth(andeler$Sykehusnavn, units='figure', cex=cexgr)*0.75)
   # par('fig'=c(vmarg, 1, 0, 1))
   # x11()
-  par('mar'=c(5.1, 10.1, 4.1, 5.1))
+  par('mar'=c(5.1, 17.1, 4.1, 5.1))
 
   if (is.na(xmax)){
     xmax <- min(100, 1.15*max(andeler[,-1], na.rm = T))
